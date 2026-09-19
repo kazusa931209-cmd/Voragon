@@ -1,0 +1,41 @@
+# Dev-Steps Index
+
+Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step until the current PR is merged.
+
+**Workflow:** [Dev-Step Template](dev-step-template.md) · Cursor rule: `.cursor/rules/dev-workflow.mdc`
+
+## Status Legend
+
+| Status | Meaning |
+|--------|---------|
+| `planned` | Defined in markdown; not started |
+| `in-progress` | Implementation underway; PR open or pending |
+| `done` | PR merged; completion recorded |
+
+## Active Step
+
+| ID | Title | Status | Doc |
+|----|-------|--------|-----|
+| **P1-001** | Backend scaffold and health endpoint | planned | [dev-step-p1-001-backend-scaffold.md](dev-step-p1-001-backend-scaffold.md) |
+
+---
+
+## Phase 1: Local Single-User ASR Prototype
+
+| ID | Title | Status | PR | Doc |
+|----|-------|--------|-----|-----|
+| P1-001 | Backend scaffold and health endpoint | planned | — | [dev-step-p1-001-backend-scaffold.md](dev-step-p1-001-backend-scaffold.md) |
+| P1-002 | WebSocket connect and `session.started` | planned | — | _create doc before start_ |
+| P1-003 | `audio.start` and binary `audio.chunk` reception | planned | — | _create doc before start_ |
+| P1-004 | VAD integration (Silero) | planned | — | _create doc before start_ |
+| P1-005 | ASR adapter and model load | planned | — | _create doc before start_ |
+| P1-006 | `transcript.partial` and `transcript.final` | planned | — | _create doc before start_ |
+| P1-007 | Minimal test client (mic → transcript) | planned | — | _create doc before start_ |
+
+**Phase 1 exit:** Speak into microphone via test client; receive partial and final English transcripts.
+
+---
+
+## Phase 2+
+
+Dev-steps will be added to this index when Phase 1 is complete. See [phases.md](phases.md).

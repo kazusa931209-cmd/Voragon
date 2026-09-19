@@ -1,0 +1,65 @@
+---
+description: Voragon dev-step workflow — one PR per step, spec-first, strict sequencing
+alwaysApply: true
+---
+
+# Voragon Dev-Step Workflow
+
+## Core Rules
+
+1. **One dev-step = one PR.** Default scope: one verifiable behavior unless the dev-step doc defines broader scope.
+2. **Dev-step doc must exist before implementation.** Path: `docs/roadmap/dev-step-{phase}-{id}-{short-title}.md` (e.g. `dev-step-p1-001-backend-scaffold.md`).
+3. **Strict sequencing.** Do not start the next dev-step until the current dev-step PR is **merged**. Check `docs/roadmap/dev-steps-index.md` for the active step.
+4. **Spec is authoritative.** If implementation conflicts with spec, **stop**, update spec/docs in the **same PR**, then continue. Never implement against outdated spec silently.
+5. **Same PR** for code + spec + dev-step doc updates.
+
+## Before Coding
+
+- Read the active dev-step doc and linked spec sections.
+- Confirm status is `planned` in `docs/roadmap/dev-steps-index.md`.
+- Set dev-step status to `in-progress` when starting work.
+
+## Implementation
+
+- Touch only what the dev-step scope requires.
+- **Tests:** automated tests required for whatever code the dev-step touches (backend, desktop, Rust).
+- **Bugfixes** outside scope: fold into the current dev-step.
+- **Refactors:** require a separate dev-step.
+- **Dependency bumps:** no separate dev-step; include with the step that needs them.
+
+## After Implementation (agent)
+
+- Update acceptance criteria checkboxes in the dev-step doc.
+- Fill the **Completion** section (summary, spec changes, test commands).
+- Update `docs/roadmap/dev-steps-index.md` — leave status `in-progress` until PR merges.
+- **Do not commit** unless the user explicitly asks.
+- **Do not open a PR** unless the user explicitly asks.
+
+## User (manual)
+
+- Manually verify against the dev-step **Manual test** checklist.
+- Open PR: branch `dev-step/p1-001-short-title`, title `[P1-001] Short title`.
+- After merge: set dev-step status to `done` and add PR link in dev-step doc + index.
+
+## PR Body Template
+
+```
+## Dev-step
+P1-001 — <title>
+docs/roadmap/dev-step-p1-001-<short-title>.md
+
+## Spec
+- <linked docs changed, or "none">
+
+## Manual test
+- [ ] <from dev-step doc>
+
+## Automated tests
+- <command run, e.g. pytest>
+```
+
+## Reference
+
+- Index: `docs/roadmap/dev-steps-index.md`
+- Template: `docs/roadmap/dev-step-template.md`
+- Phases: `docs/roadmap/phases.md`
