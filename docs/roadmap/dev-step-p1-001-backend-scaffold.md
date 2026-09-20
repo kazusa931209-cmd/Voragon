@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P1-001 |
 | **Phase** | 1 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **PR** | — |
 | **Branch** | `dev-step/p1-001-backend-scaffold` |
 
@@ -35,12 +35,12 @@ One verifiable behavior: **a runnable FastAPI backend with project structure and
 
 ## Acceptance Criteria
 
-- [ ] `backend/` directory exists with planned structure (`app/main.py`, `app/config.py`, `tests/`)
-- [ ] `pip install -e ".[dev]"` succeeds
-- [ ] `python -m app.main` (or equivalent) starts the server on configured port
-- [ ] `GET http://localhost:8000/health` returns `200` with JSON body indicating healthy status
-- [ ] Automated tests cover the health endpoint
-- [ ] No Whisper, VAD, or WebSocket code introduced
+- [x] `backend/` directory exists with planned structure (`app/main.py`, `app/config.py`, `tests/`)
+- [x] `pip install -e ".[dev]"` succeeds
+- [x] `python -m app.main` (or equivalent) starts the server on configured port
+- [x] `GET http://localhost:8000/health` returns `200` with JSON body indicating healthy status
+- [x] Automated tests cover the health endpoint
+- [x] No Whisper, VAD, or WebSocket code introduced
 
 ## Manual Test
 
@@ -70,23 +70,26 @@ _Fill in after implementation, before PR._
 
 ### Summary
 
-- …
+- Added `backend/` with FastAPI app, pydantic-settings config (`HOST`, `PORT`, `LOG_LEVEL`), and `GET /health`
+- Added `pyproject.toml` with runtime and dev dependencies; `backend/README.md` with setup/run instructions
+- Added `tests/test_health.py` covering health endpoint response shape
 
 ### Spec Changes
 
-- …
+- `docs/architecture/backend.md` — noted P1-001 implemented modules
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pytest -v
+# 1 passed in 0.98s
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [ ] Pass — _pending your verification_
 
 ### PR
 
-- **URL:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/2
 - **Merged:** —

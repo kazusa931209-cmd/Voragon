@@ -1,0 +1,40 @@
+# Voragon Backend
+
+Python FastAPI realtime backend for Voragon.
+
+## Setup
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+```
+
+## Run
+
+```bash
+python -m app.main
+```
+
+Server listens on `http://0.0.0.0:8000` by default.
+
+### Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `HOST` | `0.0.0.0` | Bind address |
+| `PORT` | `8000` | Bind port |
+| `LOG_LEVEL` | `info` | Logging level |
+
+## Health Check
+
+```bash
+curl http://localhost:8000/health
+```
+
+## Tests
+
+```bash
+pytest
+```
