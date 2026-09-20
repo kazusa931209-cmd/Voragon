@@ -91,5 +91,5 @@ cd backend && pytest -v
 
 ### PR
 
-- **URL:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/2
 - **Merged:** —
