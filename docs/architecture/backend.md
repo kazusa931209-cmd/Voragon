@@ -72,7 +72,7 @@ backend/
 └── Dockerfile                  # (Phase 4)
 ```
 
-This structure is planned, not implemented.
+**P1-001 implemented:** `app/main.py`, `app/config.py`, `tests/`. Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction
 
