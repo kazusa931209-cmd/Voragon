@@ -45,7 +45,7 @@ Dev-steps for implementation: [dev-steps-index.md](dev-steps-index.md)
 
 ## Phase 1: Local Single-User ASR Prototype
 
-**Status:** In progress — [P1-004](dev-steps-index.md) (VAD integration) is next; create dev-step doc before starting.
+**Status:** In progress — [P1-004](dev-step-p1-004-vad-integration.md) is ready to implement.
 
 **Goal:** Validate the core audio → VAD → ASR → transcript pipeline on a single machine.
 
@@ -303,7 +303,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-**[P1-004: VAD integration (Silero)](dev-steps-index.md)** — create dev-step doc, then implement
+**[P1-004: VAD integration (Silero)](dev-step-p1-004-vad-integration.md)**
 
 See [dev-steps-index.md](dev-steps-index.md) for the full Phase 1 breakdown.
 
