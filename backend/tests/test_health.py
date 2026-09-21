@@ -1,14 +1,16 @@
-from httpx import ASGITransport, AsyncClient
+from fastapi.testclient import TestClient
 
 from app.main import app
 
 
-async def test_health_returns_200_and_status() -> None:
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
-        response = await client.get("/health")
+def test_health_returns_200_and_status() -> None:
+    with TestClient(app) as client:
+        response = client.get("/health")
 
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "healthy"
     assert body["service"] == "voragon-realtime-backend"
+    assert body["asr"]["ready"] is True
+    assert body["asr"]["backend"] == "mock"
+    assert body["asr"]["model"] == "large-v3-turbo"
