@@ -5,11 +5,18 @@ from typing import Any
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
+from app.asr.base import ASREngine, ASRInferenceError
 from app.config import Settings, get_settings
 from app.pipeline.audio_buffer import BufferedAudioFrame
 from app.pipeline.vad import SegmentClosed, SegmentOpened, VadError
 from app.websocket.audio_frame import AudioFrameError, parse_audio_frame
-from app.websocket.messages import buffer_overflow, error_message, session_started
+from app.websocket.messages import (
+    buffer_overflow,
+    error_message,
+    session_started,
+    transcript_final,
+    transcript_partial,
+)
 from app.websocket.session import AudioConfig, Session
 
 logger = logging.getLogger(__name__)
@@ -43,7 +50,9 @@ async def realtime_websocket(websocket: WebSocket) -> None:
                     websocket, session, session_id, message["text"], settings
                 )
             elif "bytes" in message:
-                await _handle_binary_message(websocket, session, session_id, message["bytes"])
+                await _handle_binary_message(
+                    websocket, session, session_id, message["bytes"], settings
+                )
     except WebSocketDisconnect:
         logger.debug("WebSocket disconnected session_id=%s", session_id)
 
@@ -220,6 +229,7 @@ async def _handle_binary_message(
     session: Session,
     session_id: str,
     data: bytes,
+    settings: Settings,
 ) -> None:
     if not session.audio_started or session.audio_config is None:
         await websocket.send_json(
@@ -255,7 +265,11 @@ async def _handle_binary_message(
     if dropped:
         await websocket.send_json(buffer_overflow(session_id, dropped))
 
-    await _process_vad_frame(websocket, session, session_id, frame.pcm_data)
+    session.advance_elapsed_ms(session.audio_config.frame_duration_ms)
+    asr_engine: ASREngine = websocket.app.state.asr_engine
+    await _process_vad_frame(
+        websocket, session, session_id, frame.pcm_data, settings, asr_engine
+    )
 
 
 async def _process_vad_frame(
@@ -263,8 +277,10 @@ async def _process_vad_frame(
     session: Session,
     session_id: str,
     pcm_data: bytes,
+    settings: Settings,
+    asr_engine: ASREngine,
 ) -> None:
-    if session.vad_stream is None:
+    if session.vad_stream is None or session.audio_config is None:
         return
 
     loop = asyncio.get_running_loop()
@@ -300,6 +316,7 @@ async def _process_vad_frame(
             None, session.vad_stream.process_degraded_frame, pcm_data
         )
 
+    segment_closed_this_frame = False
     for event in events:
         if isinstance(event, SegmentOpened):
             logger.debug(
@@ -307,6 +324,7 @@ async def _process_vad_frame(
                 session_id,
                 event.segment_id,
             )
+            session.begin_segment_asr(str(event.segment_id), session.session_elapsed_ms)
         elif isinstance(event, SegmentClosed):
             logger.debug(
                 "segment_closed session_id=%s segment_id=%s duration_ms=%s",
@@ -314,3 +332,140 @@ async def _process_vad_frame(
                 event.segment_id,
                 event.duration_ms,
             )
+            segment_closed_this_frame = True
+            await _emit_transcript_final(
+                websocket,
+                session,
+                session_id,
+                str(event.segment_id),
+                event.pcm_data,
+                settings,
+                asr_engine,
+            )
+
+    if segment_closed_this_frame or session.segment_asr is None:
+        return
+
+    if session.should_emit_partial(settings.asr_partial_interval_ms):
+        await _emit_transcript_partial(websocket, session, session_id, settings, asr_engine)
+
+
+def _get_active_segment_pcm(session: Session) -> bytes | None:
+    if session.vad_stream is None:
+        return None
+    tracker = getattr(session.vad_stream, "tracker", None)
+    if tracker is None or tracker.active_segment is None:
+        return None
+    return bytes(tracker.active_segment.pcm_data)
+
+
+async def _emit_transcript_partial(
+    websocket: WebSocket,
+    session: Session,
+    session_id: str,
+    settings: Settings,
+    asr_engine: ASREngine,
+) -> None:
+    if session.segment_asr is None or session.audio_config is None:
+        return
+
+    pcm_data = _get_active_segment_pcm(session)
+    if not pcm_data:
+        return
+
+    segment_id = session.segment_asr.segment_id
+    language = session.audio_config.language
+
+    try:
+        result = await asr_engine.transcribe_partial(pcm_data, segment_id, language)
+    except ASRInferenceError as exc:
+        logger.warning(
+            "ASR partial failed session_id=%s segment_id=%s error=%s",
+            session_id,
+            segment_id,
+            exc,
+        )
+        await websocket.send_json(
+            error_message(
+                session_id,
+                "ASR_INFERENCE_FAILED",
+                f"ASR inference failed for segment {segment_id}",
+                True,
+            )
+        )
+        session.clear_segment_asr()
+        return
+
+    session.mark_partial_emitted()
+    if not result.text:
+        return
+
+    sequence = session.next_sequence()
+    await websocket.send_json(
+        transcript_partial(
+            session_id,
+            segment_id,
+            sequence,
+            result.text,
+            result.language,
+            result.confidence,
+        )
+    )
+
+
+async def _emit_transcript_final(
+    websocket: WebSocket,
+    session: Session,
+    session_id: str,
+    segment_id: str,
+    pcm_data: bytes,
+    settings: Settings,
+    asr_engine: ASREngine,
+) -> None:
+    if session.audio_config is None:
+        return
+
+    segment_asr = session.segment_asr
+    start_ms = segment_asr.start_ms if segment_asr is not None else session.session_elapsed_ms
+    end_ms = session.session_elapsed_ms
+    language = session.audio_config.language
+
+    try:
+        result = await asr_engine.transcribe_final(pcm_data, segment_id, language)
+    except ASRInferenceError as exc:
+        logger.warning(
+            "ASR final failed session_id=%s segment_id=%s error=%s",
+            session_id,
+            segment_id,
+            exc,
+        )
+        await websocket.send_json(
+            error_message(
+                session_id,
+                "ASR_INFERENCE_FAILED",
+                f"ASR inference failed for segment {segment_id}",
+                True,
+            )
+        )
+        session.clear_segment_asr()
+        return
+
+    if not result.text:
+        session.clear_segment_asr()
+        return
+
+    sequence = segment_asr.sequence + 1 if segment_asr is not None else 1
+    session.clear_segment_asr()
+
+    await websocket.send_json(
+        transcript_final(
+            session_id,
+            segment_id,
+            sequence,
+            result.text,
+            result.language,
+            start_ms,
+            end_ms,
+            result.confidence,
+        )
+    )

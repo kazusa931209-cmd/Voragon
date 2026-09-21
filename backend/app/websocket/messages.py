@@ -59,3 +59,52 @@ def error_message(
             "details": details or {},
         },
     )
+
+
+def _transcript_payload(
+    segment_id: str,
+    sequence: int,
+    text: str,
+    language: str,
+    confidence: float | None,
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {
+        "segment_id": segment_id,
+        "sequence": sequence,
+        "text": text,
+        "language": language,
+    }
+    if confidence is not None:
+        payload["confidence"] = confidence
+    return payload
+
+
+def transcript_partial(
+    session_id: str,
+    segment_id: str,
+    sequence: int,
+    text: str,
+    language: str,
+    confidence: float | None = None,
+) -> dict[str, Any]:
+    return make_envelope(
+        "transcript.partial",
+        session_id,
+        _transcript_payload(segment_id, sequence, text, language, confidence),
+    )
+
+
+def transcript_final(
+    session_id: str,
+    segment_id: str,
+    sequence: int,
+    text: str,
+    language: str,
+    start_ms: int,
+    end_ms: int,
+    confidence: float | None = None,
+) -> dict[str, Any]:
+    payload = _transcript_payload(segment_id, sequence, text, language, confidence)
+    payload["start_ms"] = start_ms
+    payload["end_ms"] = end_ms
+    return make_envelope("transcript.final", session_id, payload)

@@ -5,8 +5,8 @@
 | ---------- | ----------------------------- |
 | **ID**     | P1-005                        |
 | **Phase**  | 1                             |
-| **Status** | in-progress                   |
-| **PR**     | —                             |
+| **Status** | done                          |
+| **PR**     | [#6](https://github.com/kazusa931209-cmd/Voragon/pull/6) |
 | **Branch** | `dev-step/p1-005-asr-adapter` |
 
 
@@ -121,10 +121,10 @@ cd backend && pytest -v
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-09-22, ASR warmup via lifespan; `/health` reports `asr.ready`; mock adapter transcribe script OK
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/6
+- **Merged:** 2026-09-21
 
