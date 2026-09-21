@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     vad_min_speech_duration_ms: int = 250
     vad_min_silence_duration_ms: int = 500
     vad_speech_pad_ms: int = 300
+    asr_backend: str = "faster_whisper"
+    asr_model: str = "large-v3-turbo"
 
 
 def get_settings() -> Settings:

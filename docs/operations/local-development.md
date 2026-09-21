@@ -102,6 +102,26 @@ On first run, the ASR backend downloads model weights:
 
 Model download is a one-time operation per machine.
 
+Use `ASR_BACKEND=mock` for fast local runs and automated tests without downloading Whisper weights.
+
+### Health Check
+
+`GET /health` returns service status and ASR readiness:
+
+```json
+{
+  "status": "healthy",
+  "service": "voragon-realtime-backend",
+  "asr": {
+    "ready": true,
+    "backend": "faster_whisper",
+    "model": "large-v3-turbo"
+  }
+}
+```
+
+When ASR warmup has not completed, `status` is `degraded` and `asr.ready` is `false`.
+
 ## Development Workflow
 
 ```mermaid
