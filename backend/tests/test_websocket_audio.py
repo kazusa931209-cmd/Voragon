@@ -2,6 +2,7 @@ import struct
 
 from fastapi.testclient import TestClient
 
+from app.config import get_settings
 from app.main import app
 from app.pipeline.audio_buffer import BufferedAudioFrame
 from app.websocket.audio_frame import HEADER_FORMAT, build_audio_frame
@@ -29,7 +30,7 @@ def test_audio_start_accepts_default_config() -> None:
 def test_session_stores_audio_config_after_audio_start() -> None:
     session = Session.create()
     config = AudioConfig(language="en", sample_rate=16000)
-    session.start_audio(config, buffer_seconds=30)
+    session.start_audio(config, buffer_seconds=30, settings=get_settings())
 
     assert session.audio_started is True
     assert session.audio_config == config
@@ -39,7 +40,7 @@ def test_session_stores_audio_config_after_audio_start() -> None:
 
 def test_session_buffers_audio_frames() -> None:
     session = Session.create()
-    session.start_audio(AudioConfig(), buffer_seconds=30)
+    session.start_audio(AudioConfig(), buffer_seconds=30, settings=get_settings())
     pcm = b"\x00" * 640
 
     dropped = session.append_audio_frame(

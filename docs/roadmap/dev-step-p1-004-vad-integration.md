@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P1-004 |
 | **Phase** | 1 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **PR** | — |
 | **Branch** | `dev-step/p1-004-vad-integration` |
 
@@ -43,15 +43,15 @@ One verifiable behavior: **after `audio.start`, each received audio frame is pro
 
 ## Acceptance Criteria
 
-- [ ] `app/pipeline/vad.py` defines a swappable VAD interface
-- [ ] Silero VAD implementation processes 16 kHz mono s16le frames
-- [ ] Session opens a new `segment_id` on speech onset and closes it on speech offset (per timing params)
-- [ ] Segments shorter than `min_speech_duration_ms` are discarded (no segment opened)
-- [ ] Open segment accumulates PCM bytes for later ASR consumption
-- [ ] VAD inference runs after each valid `audio.chunk` without blocking the event loop unduly (executor acceptable for CPU work)
-- [ ] `VAD_FAILED` error is emitted on recoverable VAD errors; session stays open
-- [ ] Automated tests cover segment state machine with mocked VAD and at least one Silero integration path (synthetic or fixture audio)
-- [ ] Existing P1-001–P1-003 tests still pass
+- [x] `app/pipeline/vad.py` defines a swappable VAD interface
+- [x] Silero VAD implementation processes 16 kHz mono s16le frames
+- [x] Session opens a new `segment_id` on speech onset and closes it on speech offset (per timing params)
+- [x] Segments shorter than `min_speech_duration_ms` are discarded (no segment opened)
+- [x] Open segment accumulates PCM bytes for later ASR consumption
+- [x] VAD inference runs after each valid `audio.chunk` without blocking the event loop unduly (executor acceptable for CPU work)
+- [x] `VAD_FAILED` error is emitted on recoverable VAD errors; session stays open
+- [x] Automated tests cover segment state machine with mocked VAD and at least one Silero integration path (synthetic or fixture audio)
+- [x] Existing P1-001–P1-003 tests still pass
 
 ## Manual Test
 
@@ -110,21 +110,27 @@ _Fill in after implementation, before PR._
 
 ### Summary
 
-- …
+- Added `app/pipeline/vad.py` (VAD interface, config, factory) and `segment_tracker.py` (segment lifecycle + PCM accumulation)
+- Added `app/pipeline/silero_vad.py` — Silero VAD with 512-sample window buffering for 20 ms frames
+- Added `app/pipeline/mock_vad.py` for fast tests (`VAD_BACKEND=mock`)
+- Wired VAD into WebSocket handler via executor; `VAD_FAILED` degraded mode
+- Added VAD settings to `config.py`; dependencies: `silero-vad`, `torch`, `torchaudio`, `onnxruntime`
+- Added `tests/test_segment_tracker.py`, `test_vad_handler.py`, `test_silero_vad.py`; `conftest.py` auto-mocks VAD
 
 ### Spec Changes
 
-- …
+- `docs/architecture/backend.md` — noted P1-004 implemented VAD modules
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pytest -v
+# 27 passed in 1.54s
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-09-22, 100 silent frames over live WebSocket with Silero VAD; no errors
 
 ### PR
 
