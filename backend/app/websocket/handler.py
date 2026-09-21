@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 from typing import Any
@@ -6,6 +7,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.config import Settings, get_settings
 from app.pipeline.audio_buffer import BufferedAudioFrame
+from app.pipeline.vad import SegmentClosed, SegmentOpened, VadError
 from app.websocket.audio_frame import AudioFrameError, parse_audio_frame
 from app.websocket.messages import buffer_overflow, error_message, session_started
 from app.websocket.session import AudioConfig, Session
@@ -135,7 +137,7 @@ async def _handle_audio_start(
         )
         return
 
-    session.start_audio(config, settings.audio_buffer_seconds)
+    session.start_audio(config, settings.audio_buffer_seconds, settings)
     logger.debug(
         "Audio started session_id=%s sample_rate=%s channels=%s",
         session_id,
@@ -252,3 +254,63 @@ async def _handle_binary_message(
     )
     if dropped:
         await websocket.send_json(buffer_overflow(session_id, dropped))
+
+    await _process_vad_frame(websocket, session, session_id, frame.pcm_data)
+
+
+async def _process_vad_frame(
+    websocket: WebSocket,
+    session: Session,
+    session_id: str,
+    pcm_data: bytes,
+) -> None:
+    if session.vad_stream is None:
+        return
+
+    loop = asyncio.get_running_loop()
+
+    try:
+        if session.vad_degraded:
+            events = await loop.run_in_executor(
+                None, session.vad_stream.process_degraded_frame, pcm_data
+            )
+        else:
+            events = await loop.run_in_executor(
+                None, session.vad_stream.process_frame, pcm_data
+            )
+    except VadError as exc:
+        logger.warning(
+            "VAD failed session_id=%s error=%s",
+            session_id,
+            exc,
+        )
+        session.vad_degraded = True
+        session.vad_stream.enter_degraded_mode()
+        if not session.vad_error_sent:
+            await websocket.send_json(
+                error_message(
+                    session_id,
+                    "VAD_FAILED",
+                    "VAD processing failed; continuing in degraded mode",
+                    True,
+                )
+            )
+            session.vad_error_sent = True
+        events = await loop.run_in_executor(
+            None, session.vad_stream.process_degraded_frame, pcm_data
+        )
+
+    for event in events:
+        if isinstance(event, SegmentOpened):
+            logger.debug(
+                "segment_opened session_id=%s segment_id=%s",
+                session_id,
+                event.segment_id,
+            )
+        elif isinstance(event, SegmentClosed):
+            logger.debug(
+                "segment_closed session_id=%s segment_id=%s duration_ms=%s",
+                session_id,
+                event.segment_id,
+                event.duration_ms,
+            )

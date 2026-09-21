@@ -3,7 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from uuid import UUID, uuid4
 
+from app.config import Settings
 from app.pipeline.audio_buffer import AudioBuffer, BufferedAudioFrame
+from app.pipeline.vad import VadStream, create_vad_engine, vad_config_from_settings
 
 
 @dataclass(frozen=True)
@@ -29,6 +31,9 @@ class Session:
     session_id: UUID
     audio_config: AudioConfig | None = None
     audio_buffer: AudioBuffer | None = None
+    vad_stream: VadStream | None = None
+    vad_degraded: bool = False
+    vad_error_sent: bool = False
 
     @classmethod
     def create(cls) -> Session:
@@ -38,9 +43,15 @@ class Session:
     def audio_started(self) -> bool:
         return self.audio_config is not None
 
-    def start_audio(self, config: AudioConfig, buffer_seconds: int) -> None:
+    def start_audio(self, config: AudioConfig, buffer_seconds: int, settings: Settings) -> None:
         self.audio_config = config
         self.audio_buffer = AudioBuffer(config.max_buffer_bytes(buffer_seconds))
+        vad_config = vad_config_from_settings(
+            settings,
+            sample_rate=config.sample_rate,
+            frame_duration_ms=config.frame_duration_ms,
+        )
+        self.vad_stream = create_vad_engine(settings).create_stream(vad_config)
 
     def append_audio_frame(self, frame: BufferedAudioFrame) -> int:
         if self.audio_buffer is None:

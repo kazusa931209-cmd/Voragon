@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     log_level: str = "info"
     reconnect_window_s: int = 30
     audio_buffer_seconds: int = 30
+    vad_backend: str = "silero"
+    vad_speech_threshold: float = 0.5
+    vad_min_speech_duration_ms: int = 250
+    vad_min_silence_duration_ms: int = 500
+    vad_speech_pad_ms: int = 300
 
 
 def get_settings() -> Settings:
