@@ -89,6 +89,7 @@ pnpm tauri dev
 | `PORT` | `8000` | Bind port |
 | `ASR_BACKEND` | `faster_whisper` | ASR adapter (`faster_whisper`, `whisper_cpp`) |
 | `ASR_MODEL` | `large-v3-turbo` | Model identifier |
+| `ASR_PARTIAL_INTERVAL_MS` | `300` | Minimum interval between partial transcript inferences |
 | `LOG_LEVEL` | `debug` | Log level for development |
 
 ## Model Download
