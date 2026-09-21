@@ -25,7 +25,7 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
 | P1-001 | Backend scaffold and health endpoint | done | [#2](https://github.com/kazusa931209-cmd/Voragon/pull/2) | [dev-step-p1-001-backend-scaffold.md](dev-step-p1-001-backend-scaffold.md) |
-| P1-002 | WebSocket connect and `session.started` | in-progress | — | [dev-step-p1-002-websocket-session-started.md](dev-step-p1-002-websocket-session-started.md) |
+| P1-002 | WebSocket connect and `session.started` | in-progress | [#3](https://github.com/kazusa931209-cmd/Voragon/pull/3) | [dev-step-p1-002-websocket-session-started.md](dev-step-p1-002-websocket-session-started.md) |
 | P1-003 | `audio.start` and binary `audio.chunk` reception | planned | — | _create doc before start_ |
 | P1-004 | VAD integration (Silero) | planned | — | _create doc before start_ |
 | P1-005 | ASR adapter and model load | planned | — | _create doc before start_ |
