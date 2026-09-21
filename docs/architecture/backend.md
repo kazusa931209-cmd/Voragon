@@ -74,6 +74,7 @@ backend/
 
 **P1-001 implemented:** `app/main.py`, `app/config.py`, `tests/`.
 **P1-002 implemented:** `app/websocket/handler.py`, `messages.py`, `session.py` — WebSocket `/v1/realtime` and `session.started`.
+**P1-003 implemented:** `app/pipeline/audio_buffer.py`, `app/websocket/audio_frame.py` — `audio.start` and binary `audio.chunk` reception with per-session ring buffer.
 Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction

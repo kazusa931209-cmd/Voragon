@@ -45,7 +45,7 @@ Dev-steps for implementation: [dev-steps-index.md](dev-steps-index.md)
 
 ## Phase 1: Local Single-User ASR Prototype
 
-**Status:** In progress — [P1-002](dev-step-p1-002-websocket-session-started.md) is ready to implement.
+**Status:** In progress — [P1-003](dev-step-p1-003-audio-start-chunk.md) is in progress.
 
 **Goal:** Validate the core audio → VAD → ASR → transcript pipeline on a single machine.
 
@@ -303,7 +303,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-**[P1-002: WebSocket connect and `session.started`](dev-step-p1-002-websocket-session-started.md)**
+**[P1-003: `audio.start` and binary `audio.chunk` reception](dev-step-p1-003-audio-start-chunk.md)**
 
 See [dev-steps-index.md](dev-steps-index.md) for the full Phase 1 breakdown.
 

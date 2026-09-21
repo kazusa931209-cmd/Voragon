@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     port: int = 8000
     log_level: str = "info"
     reconnect_window_s: int = 30
+    audio_buffer_seconds: int = 30
 
 
 def get_settings() -> Settings:

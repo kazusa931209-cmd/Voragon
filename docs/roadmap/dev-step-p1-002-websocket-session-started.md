@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P1-002 |
 | **Phase** | 1 |
-| **Status** | in-progress |
+| **Status** | done |
 | **PR** | [#3](https://github.com/kazusa931209-cmd/Voragon/pull/3) |
 | **Branch** | `dev-step/p1-002-websocket-session-started` |
 
@@ -119,4 +119,4 @@ cd backend && pytest -v
 ### PR
 
 - **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/3
-- **Merged:** —
+- **Merged:** 2026-09-21

@@ -34,6 +34,14 @@ def session_started(session_id: str, reconnect_window_s: int) -> dict[str, Any]:
     )
 
 
+def buffer_overflow(session_id: str, dropped_frames: int) -> dict[str, Any]:
+    return make_envelope(
+        "buffer.overflow",
+        session_id,
+        {"dropped_frames": dropped_frames},
+    )
+
+
 def error_message(
     session_id: str,
     code: str,

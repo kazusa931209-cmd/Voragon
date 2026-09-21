@@ -82,7 +82,7 @@ Audio frames are sent as **binary WebSocket messages** (not JSON). Each binary f
 
 ```
 ┌──────────────────────────────────────────┐
-│ Header (16 bytes)                        │
+│ Header (17 bytes)                        │
 ├──────────┬──────────┬──────────┬─────────┤
 │ version  │ seq_num  │ timestamp│ payload │
 │ (1 byte) │ (4 bytes)│ (8 bytes)│ length  │

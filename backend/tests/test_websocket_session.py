@@ -27,7 +27,7 @@ def test_websocket_unknown_message_type_error() -> None:
     with TestClient(app) as client:
         with client.websocket_connect("/v1/realtime") as websocket:
             websocket.receive_json()
-            websocket.send_json({"type": "audio.start", "payload": {}})
+            websocket.send_json({"type": "ping", "payload": {}})
 
             error = websocket.receive_json()
 
