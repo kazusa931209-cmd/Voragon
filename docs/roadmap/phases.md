@@ -45,7 +45,7 @@ Dev-steps for implementation: [dev-steps-index.md](dev-steps-index.md)
 
 ## Phase 1: Local Single-User ASR Prototype
 
-**Status:** In progress — [P1-003](dev-step-p1-003-audio-start-chunk.md) is in progress.
+**Status:** In progress — [P1-003](dev-step-p1-003-audio-start-chunk.md) implemented on `dev`; PR pending.
 
 **Goal:** Validate the core audio → VAD → ASR → transcript pipeline on a single machine.
 
@@ -303,7 +303,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-**[P1-003: `audio.start` and binary `audio.chunk` reception](dev-step-p1-003-audio-start-chunk.md)**
+**Open PR for [P1-003](dev-step-p1-003-audio-start-chunk.md), then start P1-004 (VAD integration)**
 
 See [dev-steps-index.md](dev-steps-index.md) for the full Phase 1 breakdown.
 
