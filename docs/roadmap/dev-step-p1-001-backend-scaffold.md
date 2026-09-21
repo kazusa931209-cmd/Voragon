@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P1-001 |
 | **Phase** | 1 |
-| **Status** | in-progress |
-| **PR** | — |
+| **Status** | done |
+| **PR** | [#2](https://github.com/kazusa931209-cmd/Voragon/pull/2) |
 | **Branch** | `dev-step/p1-001-backend-scaffold` |
 
 ## Spec References
@@ -87,9 +87,9 @@ cd backend && pytest -v
 
 ### Manual Test Result
 
-- [ ] Pass — _pending your verification_
+- [x] Pass — 2026-09-20
 
 ### PR
 
 - **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/2
-- **Merged:** —
+- **Merged:** 2026-09-20

@@ -15,4 +15,4 @@ Full technical documentation is in [`docs/`](docs/README.md):
 
 ## Quick Start
 
-Implementation uses **dev-steps** (one PR each). See [Dev-Steps Index](docs/roadmap/dev-steps-index.md). Active step: **[P1-001 Backend scaffold](docs/roadmap/dev-step-p1-001-backend-scaffold.md)**.
+Implementation uses **dev-steps** (one PR each). See [Dev-Steps Index](docs/roadmap/dev-steps-index.md). Active step: **P1-002** (create dev-step doc before start).

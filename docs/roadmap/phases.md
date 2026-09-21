@@ -45,7 +45,7 @@ Dev-steps for implementation: [dev-steps-index.md](dev-steps-index.md)
 
 ## Phase 1: Local Single-User ASR Prototype
 
-**Status:** In progress — [P1-001](dev-step-p1-001-backend-scaffold.md) is the active dev-step.
+**Status:** In progress — next dev-step: **P1-002** (create doc before start).
 
 **Goal:** Validate the core audio → VAD → ASR → transcript pipeline on a single machine.
 
@@ -303,7 +303,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-**[P1-001: Backend scaffold and health endpoint](dev-step-p1-001-backend-scaffold.md)**
+**P1-002: WebSocket connect and `session.started`** — create dev-step doc, then implement.
 
 See [dev-steps-index.md](dev-steps-index.md) for the full Phase 1 breakdown.
 
