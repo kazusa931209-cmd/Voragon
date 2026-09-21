@@ -4,9 +4,9 @@
 |-------|-------|
 | **ID** | P1-003 |
 | **Phase** | 1 |
-| **Status** | in-progress |
-| **PR** | — (pending) |
-| **Branch** | `dev-step/p1-003-audio-start-chunk` (committed to `dev` as `6192ca1`) |
+| **Status** | done |
+| **PR** | [#4](https://github.com/kazusa931209-cmd/Voragon/pull/4) |
+| **Branch** | `dev-step/p1-003-websocket-audio-chunk` |
 
 ## Spec References
 
@@ -124,6 +124,5 @@ cd backend && pytest -v
 
 ### PR
 
-- **URL:** — (not opened yet)
-- **Merged:** —
-- **Note:** Implementation committed directly to `dev` (`6192ca1`, 2026-09-22). Per workflow, status remains `in-progress` until a PR is merged.
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/4
+- **Merged:** 2026-09-21
