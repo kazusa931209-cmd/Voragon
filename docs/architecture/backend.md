@@ -72,7 +72,9 @@ backend/
 └── Dockerfile                  # (Phase 4)
 ```
 
-**P1-001 implemented:** `app/main.py`, `app/config.py`, `tests/`. Remaining modules are planned for later dev-steps.
+**P1-001 implemented:** `app/main.py`, `app/config.py`, `tests/`.
+**P1-002 implemented:** `app/websocket/handler.py`, `messages.py`, `session.py` — WebSocket `/v1/realtime` and `session.started`.
+Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction
 

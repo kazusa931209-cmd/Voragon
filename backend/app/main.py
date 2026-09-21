@@ -13,12 +13,14 @@ import uvicorn
 from fastapi import FastAPI
 
 from app.config import get_settings
+from app.websocket.handler import router as websocket_router
 
 settings = get_settings()
 
 logging.basicConfig(level=settings.log_level.upper())
 
 app = FastAPI(title="Voragon Realtime Backend", version="0.1.0")
+app.include_router(websocket_router)
 
 
 @app.get("/health")

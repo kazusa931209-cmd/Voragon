@@ -15,4 +15,4 @@ Full technical documentation is in [`docs/`](docs/README.md):
 
 ## Quick Start
 
-Implementation uses **dev-steps** (one PR each). See [Dev-Steps Index](docs/roadmap/dev-steps-index.md). Active step: **P1-002** (create dev-step doc before start).
+Implementation uses **dev-steps** (one PR each). See [Dev-Steps Index](docs/roadmap/dev-steps-index.md). Active step: **[P1-002 WebSocket session.started](docs/roadmap/dev-step-p1-002-websocket-session-started.md)**.

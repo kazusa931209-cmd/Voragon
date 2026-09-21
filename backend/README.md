@@ -33,6 +33,10 @@ Server listens on `http://0.0.0.0:8000` by default.
 curl http://localhost:8000/health
 ```
 
+## WebSocket
+
+Connect to `ws://localhost:8000/v1/realtime`. The server sends `session.started` immediately after the connection is accepted.
+
 ## Tests
 
 ```bash
