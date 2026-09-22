@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P2-003 |
 | **Phase** | 2 |
-| **Status** | in-progress |
-| **PR** | — |
+| **Status** | done |
+| **PR** | [#11](https://github.com/kazusa931209-cmd/Voragon/pull/11) |
 | **Branch** | `dev-step/p2-003-audio-seq-ordering` |
 
 ## Spec References
@@ -84,5 +84,5 @@ cd backend && .venv/bin/pytest -v
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/11
+- **Merged:** 2026-09-23

@@ -4,11 +4,9 @@
 |-------|-------|
 | **ID** | P2-002 |
 | **Phase** | 2 |
-| **Status** | in-progress |
-| **PR** | — |
+| **Status** | done |
+| **PR** | [#10](https://github.com/kazusa931209-cmd/Voragon/pull/10) |
 | **Branch** | `dev-step/p2-002-session-ended` |
-
-Implementation complete; status stays `in-progress` until the PR merges.
 
 ## Spec References
 
@@ -86,5 +84,5 @@ cd backend && .venv/bin/pytest -v
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/10
+- **Merged:** 2026-09-22

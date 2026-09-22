@@ -16,9 +16,7 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 | ID | Title | Status | Doc |
 |----|-------|--------|-----|
-| **P2-003** | Audio frame `seq_num` ordering | in-progress | [dev-step-p2-003-audio-seq-ordering.md](dev-step-p2-003-audio-seq-ordering.md) |
-
-**Also in progress (merge before starting follow-on work):** [P2-002](dev-step-p2-002-session-ended.md) — `session.ended` lifecycle (implementation complete; PR pending).
+| **P2-004** | `buffer.overflow` and `BUFFER_OVERFLOW` | planned | [dev-step-p2-004-buffer-overflow.md](dev-step-p2-004-buffer-overflow.md) |
 
 ---
 
@@ -43,8 +41,8 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
 | P2-001 | `ping` / `pong` heartbeat | done | [#9](https://github.com/kazusa931209-cmd/Voragon/pull/9) | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
-| P2-002 | `session.ended` lifecycle | in-progress | — | [dev-step-p2-002-session-ended.md](dev-step-p2-002-session-ended.md) |
-| P2-003 | Audio frame `seq_num` ordering | in-progress | — | [dev-step-p2-003-audio-seq-ordering.md](dev-step-p2-003-audio-seq-ordering.md) |
+| P2-002 | `session.ended` lifecycle | done | [#10](https://github.com/kazusa931209-cmd/Voragon/pull/10) | [dev-step-p2-002-session-ended.md](dev-step-p2-002-session-ended.md) |
+| P2-003 | Audio frame `seq_num` ordering | done | [#11](https://github.com/kazusa931209-cmd/Voragon/pull/11) | [dev-step-p2-003-audio-seq-ordering.md](dev-step-p2-003-audio-seq-ordering.md) |
 | P2-004 | `buffer.overflow` and `BUFFER_OVERFLOW` | planned | — | [dev-step-p2-004-buffer-overflow.md](dev-step-p2-004-buffer-overflow.md) |
 | P2-005 | Session registry and reconnect window | planned | — | [dev-step-p2-005-session-registry-reconnect-window.md](dev-step-p2-005-session-registry-reconnect-window.md) |
 | P2-006 | `session.resume` reconnection | planned | — | [dev-step-p2-006-session-resume.md](dev-step-p2-006-session-resume.md) |

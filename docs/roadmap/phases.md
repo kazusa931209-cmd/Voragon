@@ -76,7 +76,7 @@ Test Client → WebSocket → Backend → VAD → ASR → Transcript
 
 ## Phase 2: Realtime Production-Like Backend
 
-**Status:** In progress — [P2-002](dev-step-p2-002-session-ended.md) is active ([dev-steps index](dev-steps-index.md)).
+**Status:** In progress — [P2-004](dev-step-p2-004-buffer-overflow.md) is next ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Harden the backend for production patterns.
 
@@ -305,7 +305,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-**[P2-002: `session.ended` lifecycle](dev-step-p2-002-session-ended.md)**
+**[P2-004: `buffer.overflow` and `BUFFER_OVERFLOW`](dev-step-p2-004-buffer-overflow.md)**
 
 See [dev-steps-index.md](dev-steps-index.md) for the full Phase 2 breakdown (P2-001–P2-009).
 
