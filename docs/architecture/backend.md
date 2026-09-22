@@ -79,6 +79,7 @@ backend/
 **P1-005 implemented:** `app/asr/base.py`, `faster_whisper.py`, `mock_asr.py` — ASR engine abstraction, model load/warmup at startup, mock adapter for tests.
 **P1-006 implemented:** WebSocket handler emits `transcript.partial` / `transcript.final` from VAD segments via in-process ASR.
 **P1-007 implemented:** `audio.stop` flushes open VAD segments; `tools/realtime-cli/` test client for mic/file replay.
+**P2-001 (in progress):** `ping` / `pong` and per-connection idle timeout — see [Realtime WebSocket API](../api/realtime-websocket.md#heartbeat).
 Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction
@@ -132,6 +133,7 @@ Each session maintains:
 | Field | Type | Description |
 |-------|------|-------------|
 | `session_id` | UUID | Unique session identifier |
+| `last_activity_at` | timestamp | Last inbound WebSocket message (liveness / idle timer) |
 | `created_at` | timestamp | Session creation time |
 | `language` | string | BCP-47 language code (default: `en`) |
 | `model` | string | Capability alias (e.g., `asr.default`) |
@@ -142,6 +144,7 @@ Each session maintains:
 ### Concurrency Model
 
 - Each WebSocket connection maps to one session.
+- A background idle task per connection closes the WebSocket when `HEARTBEAT_IDLE_TIMEOUT_S` elapses with no inbound messages (see [heartbeat](../api/realtime-websocket.md#heartbeat)).
 - Audio frame processing is async per session (asyncio).
 - VAD and ASR calls are awaited; multiple sessions run concurrently on the same event loop.
 - For CPU-bound ASR inference, a thread pool or process pool executor is used to avoid blocking the event loop.
@@ -175,8 +178,8 @@ See [Realtime WebSocket API](../api/realtime-websocket.md) and [AI Gateway](ai-g
 | `ASR_MODEL` | `large-v3-turbo` | Model identifier |
 | `VAD_BACKEND` | `silero` | VAD implementation |
 | `AI_GATEWAY_URL` | — | AI Gateway URL (production only) |
-| `SESSION_TIMEOUT_S` | `300` | Max idle session duration |
-| `RECONNECT_WINDOW_S` | `30` | Session state retention after disconnect |
+| `HEARTBEAT_IDLE_TIMEOUT_S` | `45` | Close WebSocket when no inbound message for this duration |
+| `RECONNECT_WINDOW_S` | `30` | Session state retention after disconnect (P2-005+) |
 | `LOG_LEVEL` | `info` | Logging level |
 | `OTEL_EXPORTER_ENDPOINT` | — | OpenTelemetry collector endpoint |
 
@@ -189,7 +192,7 @@ Errors are delivered to the client as `error` WebSocket messages. The backend do
 | Invalid message format | Send `error`, continue session |
 | ASR inference failure | Send `error`, retry once, then skip segment |
 | VAD failure | Send `error`, pass all audio to ASR (degraded mode) |
-| Session timeout | Send `session.ended`, close connection |
+| Heartbeat idle timeout | Close WebSocket; `session.ended` `timeout` in P2-002 |
 | Unrecoverable error | Send `error` + `session.ended`, close connection |
 
 See [Error Handling](../api/error-handling.md) for error codes and client recovery behavior.

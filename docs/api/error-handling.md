@@ -4,7 +4,7 @@
 
 This document defines error codes, error message format, client recovery behavior, and reconnection protocol for the Voragon Realtime WebSocket API.
 
-**Status:** Documented, not implemented.
+**Status:** Partially implemented — error envelope and selected codes in Phase 1; full alignment in [P2-007](../roadmap/dev-step-p2-007-api-error-handling.md). Heartbeat idle close in [P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md) / `session.ended` in [P2-002](../roadmap/dev-step-p2-002-session-ended.md).
 
 ## Error Message Format
 
@@ -48,7 +48,7 @@ Errors are delivered as `error` WebSocket messages:
 | Code | Recoverable | Description | Client Action |
 |------|-------------|-------------|---------------|
 | `SESSION_NOT_FOUND` | No | Session ID not found (resume failed) | Start new session |
-| `SESSION_EXPIRED` | No | Session exceeded idle timeout | Start new session |
+| `SESSION_EXPIRED` | No | Session exceeded idle timeout (heartbeat or server-side expiry) | Start new session |
 | `SESSION_LIMIT_REACHED` | No | Server at max concurrent sessions | Wait and retry |
 
 ### Audio Errors
@@ -172,6 +172,17 @@ On successful reconnect within the window:
 | `CONNECTION_REJECTED` | Client retries with backoff (up to 5 attempts) |
 | `AUTH_EXPIRED` | Client refreshes token and reconnects |
 | `BUFFER_OVERFLOW` | No retry; client may reduce frame rate (future) |
+
+## Heartbeat Idle Timeout
+
+When the server closes a connection for heartbeat idle timeout ([Realtime WebSocket API — Heartbeat](realtime-websocket.md#heartbeat)):
+
+| Phase | Server behavior | Client behavior |
+|-------|-----------------|-----------------|
+| P2-001 | WebSocket close without `session.ended` | Treat as connection loss; may reconnect |
+| P2-002+ | `session.ended` with `reason: "timeout"` then close | Same; optional `SESSION_EXPIRED` if resume fails |
+
+No `error` message is required solely for idle timeout.
 
 ## Server Error Handling Guidelines
 

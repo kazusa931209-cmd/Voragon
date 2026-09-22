@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P2-001 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **PR** | — |
 | **Branch** | `dev-step/p2-001-ping-pong-heartbeat` |
 
@@ -53,7 +53,14 @@ cd backend && pytest -v
 
 ## Spec Changes
 
-Expected: none
+Documented before implementation (P2-001 spec PR):
+
+- [Realtime WebSocket API](../api/realtime-websocket.md) — `ping`/`pong` rules, expanded [Heartbeat](../api/realtime-websocket.md#heartbeat) (liveness, idle timer, P2-001 vs P2-002)
+- [Error Handling](../api/error-handling.md) — heartbeat idle timeout behavior
+- [Backend Architecture](../architecture/backend.md) — `HEARTBEAT_IDLE_TIMEOUT_S`, idle task, session `last_activity_at`
+- [Realtime Audio Pipeline](../architecture/realtime-audio.md) — heartbeat alignment
+- [Local Development](../operations/local-development.md) — env var
+- `backend/.env.example` — `HEARTBEAT_IDLE_TIMEOUT_S`
 
 ---
 
