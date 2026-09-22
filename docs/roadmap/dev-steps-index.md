@@ -16,7 +16,7 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 | ID | Title | Status | Doc |
 |----|-------|--------|-----|
-| **P2-001** | `ping` / `pong` heartbeat | planned | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
+| **P2-001** | `ping` / `pong` heartbeat | in-progress | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
 
 ---
 
@@ -40,7 +40,7 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
-| P2-001 | `ping` / `pong` heartbeat | planned | — | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
+| P2-001 | `ping` / `pong` heartbeat | in-progress | — | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
 | P2-002 | `session.ended` lifecycle | planned | — | [dev-step-p2-002-session-ended.md](dev-step-p2-002-session-ended.md) |
 | P2-003 | Audio frame `seq_num` ordering | planned | — | [dev-step-p2-003-audio-seq-ordering.md](dev-step-p2-003-audio-seq-ordering.md) |
 | P2-004 | `buffer.overflow` and `BUFFER_OVERFLOW` | planned | — | [dev-step-p2-004-buffer-overflow.md](dev-step-p2-004-buffer-overflow.md) |

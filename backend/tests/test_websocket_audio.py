@@ -211,8 +211,8 @@ def test_unknown_message_type_still_returns_error() -> None:
             started = websocket.receive_json()
             websocket.send_json(
                 {
-                    "type": "ping",
-                    "id": "msg-ping",
+                    "type": "not.a.real.message",
+                    "id": "msg-unknown",
                     "session_id": started["session_id"],
                     "timestamp": utc_timestamp(),
                     "payload": {},

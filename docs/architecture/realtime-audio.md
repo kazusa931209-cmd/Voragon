@@ -269,13 +269,17 @@ On reconnect within the window:
 
 ## Heartbeat
 
+Aligned with [Realtime WebSocket API — Heartbeat](../api/realtime-websocket.md#heartbeat).
+
 | Parameter | Value |
 |-----------|-------|
-| Interval | 15 s |
-| Timeout | 45 s (3 missed heartbeats) |
+| Client `ping` interval (idle, not streaming) | 15 s |
+| Server idle timeout | 45 s (`HEARTBEAT_IDLE_TIMEOUT_S`) |
 | Message | `ping` / `pong` (JSON control messages) |
 
-If the server does not receive a heartbeat within the timeout, it closes the session and emits `session.ended`.
+**Liveness:** Any inbound WebSocket message (including `audio.chunk`) resets the idle timer. Clients **SHOULD** send `ping` every 15 s when connected without audio streaming.
+
+**On idle timeout:** P2-001 closes the WebSocket; [P2-002](../roadmap/dev-step-p2-002-session-ended.md) adds `session.ended` with `reason: "timeout"`.
 
 ## Ordering Guarantees
 

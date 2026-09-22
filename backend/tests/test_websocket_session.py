@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.websocket.messages import utc_timestamp
 
 ISO_8601_UTC_PATTERN = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$"
@@ -26,8 +27,16 @@ def test_websocket_session_started_on_connect() -> None:
 def test_websocket_unknown_message_type_error() -> None:
     with TestClient(app) as client:
         with client.websocket_connect("/v1/realtime") as websocket:
-            websocket.receive_json()
-            websocket.send_json({"type": "ping", "payload": {}})
+            started = websocket.receive_json()
+            websocket.send_json(
+                {
+                    "type": "not.a.real.message",
+                    "id": "msg-unknown",
+                    "session_id": started["session_id"],
+                    "timestamp": utc_timestamp(),
+                    "payload": {},
+                }
+            )
 
             error = websocket.receive_json()
 

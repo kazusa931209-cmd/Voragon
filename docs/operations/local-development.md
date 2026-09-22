@@ -94,6 +94,8 @@ Copy [`backend/.env.example`](../../backend/.env.example) to `backend/.env` for 
 | `ASR_BACKEND` | `faster_whisper` | ASR adapter (`faster_whisper`, `whisper_cpp`) |
 | `ASR_MODEL` | `large-v3-turbo` | Model identifier |
 | `ASR_PARTIAL_INTERVAL_MS` | `300` | Minimum interval between partial transcript inferences |
+| `RECONNECT_WINDOW_S` | `30` | Advertised in `session.started` (resume in P2-006) |
+| `HEARTBEAT_IDLE_TIMEOUT_S` | `45` | Close idle WebSocket if no inbound messages (P2-001) |
 | `LOG_LEVEL` | `debug` | Log level for development |
 
 ## Model Download

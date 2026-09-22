@@ -76,7 +76,7 @@ Test Client → WebSocket → Backend → VAD → ASR → Transcript
 
 ## Phase 2: Realtime Production-Like Backend
 
-**Status:** Planned — [P2-001](dev-step-p2-001-ping-pong-heartbeat.md) is next ([dev-steps index](dev-steps-index.md)).
+**Status:** In progress — [P2-001](dev-step-p2-001-ping-pong-heartbeat.md) is active ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Harden the backend for production patterns.
 

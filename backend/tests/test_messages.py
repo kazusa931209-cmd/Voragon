@@ -1,4 +1,12 @@
-from app.websocket.messages import transcript_final, transcript_partial
+from app.websocket.messages import pong, transcript_final, transcript_partial
+
+
+def test_pong_message_shape() -> None:
+    message = pong("session-1")
+
+    assert message["type"] == "pong"
+    assert message["session_id"] == "session-1"
+    assert message["payload"] == {}
 
 
 def test_transcript_partial_includes_confidence_when_present() -> None:

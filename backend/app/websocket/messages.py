@@ -23,6 +23,10 @@ def make_envelope(message_type: str, session_id: str, payload: dict[str, Any]) -
     }
 
 
+def pong(session_id: str) -> dict[str, Any]:
+    return make_envelope("pong", session_id, {})
+
+
 def session_started(session_id: str, reconnect_window_s: int) -> dict[str, Any]:
     return make_envelope(
         "session.started",

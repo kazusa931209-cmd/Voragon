@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     port: int = 8000
     log_level: str = "info"
     reconnect_window_s: int = 30
+    heartbeat_idle_timeout_s: int = 45
     audio_buffer_seconds: int = 30
     vad_backend: str = "silero"
     vad_speech_threshold: float = 0.5
