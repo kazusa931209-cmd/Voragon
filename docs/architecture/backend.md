@@ -80,7 +80,8 @@ backend/
 **P1-006 implemented:** WebSocket handler emits `transcript.partial` / `transcript.final` from VAD segments via in-process ASR.
 **P1-007 implemented:** `audio.stop` flushes open VAD segments; `tools/realtime-cli/` test client for mic/file replay.
 **P2-001 implemented:** `ping` / `pong` and per-connection idle timeout (`HEARTBEAT_IDLE_TIMEOUT_S`) — see [Realtime WebSocket API](../api/realtime-websocket.md#heartbeat).
-**P2-002 (in progress):** `session.ended` on `audio.stop`, idle `timeout`, disconnect `client_stop`, and app shutdown `server_shutdown` via `connection_registry`.
+**P2-002 implemented:** `session.ended` on `audio.stop`, idle `timeout`, disconnect `client_stop`, and app shutdown `server_shutdown` via `connection_registry`.
+**P2-003 (in progress):** `app/pipeline/audio_sequence.py` — per-session `seq_num` reorder buffer (`AUDIO_REORDER_BUFFER_MS`) and recoverable `AUDIO_SEQUENCE_GAP`.
 Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction

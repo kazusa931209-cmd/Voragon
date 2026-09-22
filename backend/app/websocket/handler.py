@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import json
 import logging
+import time
 from collections.abc import Awaitable, Callable
 from typing import Any
 
@@ -10,6 +11,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.asr.base import ASREngine, ASRInferenceError
 from app.config import Settings, get_settings
 from app.pipeline.audio_buffer import BufferedAudioFrame
+from app.pipeline.audio_sequence import SequenceGap, SequenceProcessResult
 from app.pipeline.vad import SegmentClosed, SegmentOpened, VadError
 from app.websocket.audio_frame import AudioFrameError, parse_audio_frame
 from app.websocket.connection_registry import RegisteredConnection, register, unregister
@@ -86,6 +88,52 @@ async def realtime_websocket(websocket: WebSocket) -> None:
     registered = RegisteredConnection(session_id, end_session)
     await register(registered)
 
+    reorder_flush_task: asyncio.Task[None] | None = None
+
+    async def cancel_reorder_flush() -> None:
+        nonlocal reorder_flush_task
+        if reorder_flush_task is not None and not reorder_flush_task.done():
+            reorder_flush_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await reorder_flush_task
+        reorder_flush_task = None
+
+    async def deliver_sequenced(result: SequenceProcessResult) -> None:
+        await _emit_sequence_gaps(websocket, session_id, result.gaps)
+        await _deliver_sequenced_frames(
+            websocket, session, session_id, settings, result.ready
+        )
+
+    async def flush_reorder_buffer(*, force: bool = False) -> None:
+        result = session.flush_sequenced_frames(time.monotonic(), force=force)
+        await deliver_sequenced(result)
+        if (
+            not force
+            and session.audio_sequence is not None
+            and session.audio_sequence.waiting_for_reorder
+        ):
+            await schedule_reorder_flush()
+        else:
+            await cancel_reorder_flush()
+
+    async def schedule_reorder_flush() -> None:
+        nonlocal reorder_flush_task
+        if session.audio_sequence is None:
+            await cancel_reorder_flush()
+            return
+        deadline = session.audio_sequence.flush_deadline()
+        if deadline is None:
+            await cancel_reorder_flush()
+            return
+        delay = max(0.0, deadline - time.monotonic())
+        await cancel_reorder_flush()
+
+        async def wait_and_flush() -> None:
+            await asyncio.sleep(delay)
+            await flush_reorder_buffer(force=False)
+
+        reorder_flush_task = asyncio.create_task(wait_and_flush())
+
     try:
         while not session_closed:
             message = await websocket.receive()
@@ -102,16 +150,24 @@ async def realtime_websocket(websocket: WebSocket) -> None:
                     message["text"],
                     settings,
                     end_session,
+                    flush_reorder_buffer,
                 )
             elif "bytes" in message:
                 await _handle_binary_message(
-                    websocket, session, session_id, message["bytes"], settings
+                    websocket,
+                    session,
+                    session_id,
+                    message["bytes"],
+                    settings,
+                    deliver_sequenced,
+                    schedule_reorder_flush,
                 )
             if session_closed:
                 break
     except WebSocketDisconnect:
         logger.debug("WebSocket disconnected session_id=%s", session_id)
     finally:
+        await cancel_reorder_flush()
         await unregister(registered)
         if not watchdog.done():
             watchdog.cancel()
@@ -128,6 +184,7 @@ async def _handle_text_message(
     text: str,
     settings: Settings,
     end_session: Callable[[str], Awaitable[None]],
+    flush_reorder_buffer: Callable[..., Awaitable[None]],
 ) -> None:
     try:
         data = json.loads(text)
@@ -148,7 +205,13 @@ async def _handle_text_message(
         return
     if message_type == "audio.stop":
         await _handle_audio_stop(
-            websocket, session, session_id, data, settings, end_session
+            websocket,
+            session,
+            session_id,
+            data,
+            settings,
+            end_session,
+            flush_reorder_buffer,
         )
         return
     if message_type == "ping":
@@ -268,6 +331,7 @@ async def _handle_audio_stop(
     data: dict[str, Any],
     settings: Settings,
     end_session: Callable[[str], Awaitable[None]],
+    flush_reorder_buffer: Callable[..., Awaitable[None]],
 ) -> None:
     if data.get("session_id") != session_id:
         await websocket.send_json(
@@ -292,6 +356,7 @@ async def _handle_audio_stop(
         return
 
     asr_engine: ASREngine = websocket.app.state.asr_engine
+    await flush_reorder_buffer(force=True)
     await _flush_open_segments(websocket, session, session_id, settings, asr_engine)
     logger.debug("Audio stopped session_id=%s", session_id)
     await end_session("client_stop")
@@ -411,6 +476,8 @@ async def _handle_binary_message(
     session_id: str,
     data: bytes,
     settings: Settings,
+    deliver_sequenced: Callable[[SequenceProcessResult], Awaitable[None]],
+    schedule_reorder_flush: Callable[[], Awaitable[None]],
 ) -> None:
     if not session.audio_started or session.audio_config is None:
         await websocket.send_json(
@@ -436,15 +503,59 @@ async def _handle_binary_message(
         )
         return
 
-    dropped = session.append_audio_frame(
-        BufferedAudioFrame(
-            seq_num=frame.seq_num,
-            timestamp_us=frame.timestamp_us,
-            pcm_data=frame.pcm_data,
-        )
+    buffered = BufferedAudioFrame(
+        seq_num=frame.seq_num,
+        timestamp_us=frame.timestamp_us,
+        pcm_data=frame.pcm_data,
     )
+    result = session.ingest_sequenced_frame(buffered, time.monotonic())
+    await deliver_sequenced(result)
+    if session.audio_sequence is not None and session.audio_sequence.waiting_for_reorder:
+        await schedule_reorder_flush()
+
+
+async def _emit_sequence_gaps(
+    websocket: WebSocket,
+    session_id: str,
+    gaps: list[SequenceGap],
+) -> None:
+    for gap in gaps:
+        if gap.first_missing == gap.last_missing:
+            detail = f"Missing audio frame sequence number {gap.first_missing}"
+        else:
+            detail = (
+                "Missing audio frame sequence numbers "
+                f"{gap.first_missing}-{gap.last_missing}"
+            )
+        await websocket.send_json(
+            error_message(session_id, "AUDIO_SEQUENCE_GAP", detail, True)
+        )
+
+
+async def _deliver_sequenced_frames(
+    websocket: WebSocket,
+    session: Session,
+    session_id: str,
+    settings: Settings,
+    frames: list[BufferedAudioFrame],
+) -> None:
+    for frame in frames:
+        await _deliver_audio_frame(websocket, session, session_id, frame, settings)
+
+
+async def _deliver_audio_frame(
+    websocket: WebSocket,
+    session: Session,
+    session_id: str,
+    frame: BufferedAudioFrame,
+    settings: Settings,
+) -> None:
+    dropped = session.append_audio_frame(frame)
     if dropped:
         await websocket.send_json(buffer_overflow(session_id, dropped))
+
+    if session.audio_config is None:
+        return
 
     session.advance_elapsed_ms(session.audio_config.frame_duration_ms)
     asr_engine: ASREngine = websocket.app.state.asr_engine
