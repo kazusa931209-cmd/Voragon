@@ -14,9 +14,7 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 ## Active Step
 
-| ID | Title | Status | Doc |
-|----|-------|--------|-----|
-| **P1-007** | Minimal test client (mic → transcript) | in-progress | [dev-step-p1-007-minimal-test-client.md](dev-step-p1-007-minimal-test-client.md) |
+*None — Phase 1 complete. Add the first Phase 2 dev-step to this section when planning starts.*
 
 ---
 
@@ -30,7 +28,7 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 | P1-004 | VAD integration (Silero) | done | [#5](https://github.com/kazusa931209-cmd/Voragon/pull/5) | [dev-step-p1-004-vad-integration.md](dev-step-p1-004-vad-integration.md) |
 | P1-005 | ASR adapter and model load | done | [#6](https://github.com/kazusa931209-cmd/Voragon/pull/6) | [dev-step-p1-005-asr-adapter.md](dev-step-p1-005-asr-adapter.md) |
 | P1-006 | `transcript.partial` and `transcript.final` | done | [#7](https://github.com/kazusa931209-cmd/Voragon/pull/7) | [dev-step-p1-006-transcript-partial-final.md](dev-step-p1-006-transcript-partial-final.md) |
-| P1-007 | Minimal test client (mic → transcript) | in-progress | — | [dev-step-p1-007-minimal-test-client.md](dev-step-p1-007-minimal-test-client.md) |
+| P1-007 | Minimal test client (mic → transcript) | done | [#8](https://github.com/kazusa931209-cmd/Voragon/pull/8) | [dev-step-p1-007-minimal-test-client.md](dev-step-p1-007-minimal-test-client.md) |
 
 **Phase 1 exit:** Speak into microphone via test client; receive partial and final English transcripts.
 
@@ -38,4 +36,4 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 ## Phase 2+
 
-Dev-steps will be added to this index when Phase 1 is complete. See [phases.md](phases.md).
+Phase 1 is complete. Dev-steps for Phase 2 will be added here when defined. See [phases.md](phases.md).

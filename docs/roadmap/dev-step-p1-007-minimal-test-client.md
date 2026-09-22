@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P1-007 |
 | **Phase** | 1 |
-| **Status** | in-progress |
-| **PR** | — |
+| **Status** | done |
+| **PR** | [#8](https://github.com/kazusa931209-cmd/Voragon/pull/8) |
 | **Branch** | `dev-step/p1-007-minimal-test-client` |
 
 ## Spec References
@@ -124,5 +124,5 @@ cd backend && pytest -v
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/8
+- **Merged:** 2026-09-22

@@ -45,7 +45,7 @@ Dev-steps for implementation: [dev-steps-index.md](dev-steps-index.md)
 
 ## Phase 1: Local Single-User ASR Prototype
 
-**Status:** In progress — [P1-007](dev-step-p1-007-minimal-test-client.md) is active (Phase 1 exit step).
+**Status:** Complete — [P1-001](dev-step-p1-001-backend-scaffold.md) through [P1-007](dev-step-p1-007-minimal-test-client.md) merged ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Validate the core audio → VAD → ASR → transcript pipeline on a single machine.
 
