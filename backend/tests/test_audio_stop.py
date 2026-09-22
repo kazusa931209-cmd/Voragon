@@ -9,6 +9,16 @@ from app.websocket.audio_frame import build_audio_frame
 from app.websocket.messages import utc_timestamp
 
 
+def _ping_message(session_id: str) -> dict:
+    return {
+        "type": "ping",
+        "id": "msg-ping",
+        "session_id": session_id,
+        "timestamp": utc_timestamp(),
+        "payload": {},
+    }
+
+
 class OpenSegmentVadStream:
     """Opens a segment on first frame and keeps it open until flush."""
 
@@ -102,11 +112,10 @@ def test_audio_stop_discards_short_open_segment() -> None:
                 websocket.send_json(_audio_start_message(session_id))
                 websocket.send_bytes(build_audio_frame(speech_pcm, seq_num=0))
                 websocket.send_json(_audio_stop_message(session_id))
-                websocket.send_json({"type": "ping", "payload": {}})
+                websocket.send_json(_ping_message(session_id))
                 response = websocket.receive_json()
 
-    assert response["type"] == "error"
-    assert response["payload"]["code"] == "UNKNOWN_MESSAGE_TYPE"
+    assert response["type"] == "pong"
 
 
 def test_audio_stop_before_audio_start_returns_error() -> None:

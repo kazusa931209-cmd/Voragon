@@ -32,11 +32,11 @@ One verifiable behavior: **the server responds to client `ping` with `pong` and 
 
 ## Acceptance Criteria
 
-- [ ] Valid `ping` receives `pong` with correct envelope
-- [ ] No `ping` for 45 s (configurable) ends the connection (idle timeout hook for P2-002)
-- [ ] Malformed `ping` receives recoverable `error` (align with P2-007 when merged; until then, match existing error style)
-- [ ] Automated WebSocket tests cover ping/pong and idle timeout (use short timeout in test settings)
-- [ ] Existing backend test suite still passes
+- [x] Valid `ping` receives `pong` with correct envelope
+- [x] No `ping` for 45 s (configurable) ends the connection (idle timeout hook for P2-002)
+- [x] Malformed `ping` receives recoverable `error` (align with P2-007 when merged; until then, match existing error style)
+- [x] Automated WebSocket tests cover ping/pong and idle timeout (use short timeout in test settings)
+- [x] Existing backend test suite still passes
 
 ## Manual Test
 
@@ -68,16 +68,20 @@ Documented before implementation (P2-001 spec PR):
 
 ### Summary
 
-- …
+- Added `HEARTBEAT_IDLE_TIMEOUT_S` (default 45) in `app/config.py`
+- `pong()` builder in `messages.py`; `_handle_ping()` and per-connection idle watchdog in `handler.py`
+- Any inbound WebSocket message resets the idle timer; expiry closes with code 1000 (no `session.ended` until P2-002)
+- Tests: `tests/test_heartbeat.py`; updated session/audio/transcript tests for `ping` handling
 
 ### Spec Changes
 
-- …
+- See **Spec Changes** section above (documented before code)
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v
+# 51 passed, 1 skipped
 ```
 
 ### Manual Test Result

@@ -79,7 +79,7 @@ backend/
 **P1-005 implemented:** `app/asr/base.py`, `faster_whisper.py`, `mock_asr.py` — ASR engine abstraction, model load/warmup at startup, mock adapter for tests.
 **P1-006 implemented:** WebSocket handler emits `transcript.partial` / `transcript.final` from VAD segments via in-process ASR.
 **P1-007 implemented:** `audio.stop` flushes open VAD segments; `tools/realtime-cli/` test client for mic/file replay.
-**P2-001 (in progress):** `ping` / `pong` and per-connection idle timeout — see [Realtime WebSocket API](../api/realtime-websocket.md#heartbeat).
+**P2-001 implemented:** `ping` / `pong` and per-connection idle timeout (`HEARTBEAT_IDLE_TIMEOUT_S`) — see [Realtime WebSocket API](../api/realtime-websocket.md#heartbeat).
 Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction

@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import json
 import logging
 from typing import Any
@@ -13,6 +14,7 @@ from app.websocket.audio_frame import AudioFrameError, parse_audio_frame
 from app.websocket.messages import (
     buffer_overflow,
     error_message,
+    pong,
     session_started,
     transcript_final,
     transcript_partial,
@@ -38,9 +40,31 @@ async def realtime_websocket(websocket: WebSocket) -> None:
         session_started(session_id, settings.reconnect_window_s)
     )
 
+    activity = asyncio.Event()
+    activity.set()
+
+    async def idle_watchdog() -> None:
+        timeout = settings.heartbeat_idle_timeout_s
+        while True:
+            try:
+                await asyncio.wait_for(activity.wait(), timeout=timeout)
+            except asyncio.TimeoutError:
+                logger.debug(
+                    "heartbeat idle timeout session_id=%s timeout_s=%s",
+                    session_id,
+                    timeout,
+                )
+                with contextlib.suppress(Exception):
+                    await websocket.close(code=1000)
+                return
+            activity.clear()
+
+    watchdog = asyncio.create_task(idle_watchdog())
+
     try:
         while True:
             message = await websocket.receive()
+            activity.set()
 
             if message.get("type") == "websocket.disconnect":
                 break
@@ -55,6 +79,10 @@ async def realtime_websocket(websocket: WebSocket) -> None:
                 )
     except WebSocketDisconnect:
         logger.debug("WebSocket disconnected session_id=%s", session_id)
+    finally:
+        watchdog.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await watchdog
 
 
 async def _handle_text_message(
@@ -84,6 +112,9 @@ async def _handle_text_message(
     if message_type == "audio.stop":
         await _handle_audio_stop(websocket, session, session_id, data, settings)
         return
+    if message_type == "ping":
+        await _handle_ping(websocket, session_id, data)
+        return
 
     await websocket.send_json(
         error_message(
@@ -93,6 +124,39 @@ async def _handle_text_message(
             True,
         )
     )
+
+
+async def _handle_ping(
+    websocket: WebSocket,
+    session_id: str,
+    data: dict[str, Any],
+) -> None:
+    envelope_error = _validate_client_envelope(session_id, data)
+    if envelope_error is not None:
+        await websocket.send_json(
+            error_message(session_id, "INVALID_MESSAGE", envelope_error, True)
+        )
+        return
+
+    payload = data.get("payload")
+    if payload is not None and not isinstance(payload, dict):
+        await websocket.send_json(
+            error_message(
+                session_id,
+                "INVALID_MESSAGE",
+                "ping payload must be an object",
+                True,
+            )
+        )
+        return
+
+    await websocket.send_json(pong(session_id))
+
+
+def _validate_client_envelope(session_id: str, data: dict[str, Any]) -> str | None:
+    if data.get("session_id") != session_id:
+        return "session_id does not match active session"
+    return None
 
 
 async def _handle_audio_start(

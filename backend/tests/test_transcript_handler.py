@@ -39,6 +39,16 @@ class ScriptedVadStream:
         return self.tracker.process_degraded_frame(pcm_data)
 
 
+def _ping_message(session_id: str) -> dict:
+    return {
+        "type": "ping",
+        "id": "msg-ping",
+        "session_id": session_id,
+        "timestamp": utc_timestamp(),
+        "payload": {},
+    }
+
+
 def _audio_start_message(session_id: str) -> dict:
     return {
         "type": "audio.start",
@@ -125,11 +135,10 @@ def test_empty_asr_result_emits_no_transcript() -> None:
                     session_id = started["session_id"]
                     websocket.send_json(_audio_start_message(session_id))
                     _stream_frames(websocket, 20, quiet_pcm)
-                    websocket.send_json({"type": "ping", "payload": {}})
+                    websocket.send_json(_ping_message(session_id))
                     response = websocket.receive_json()
 
-    assert response["type"] == "error"
-    assert response["payload"]["code"] == "UNKNOWN_MESSAGE_TYPE"
+    assert response["type"] == "pong"
 
 
 def test_asr_inference_failed_emits_error_and_keeps_session_open() -> None:
@@ -154,15 +163,14 @@ def test_asr_inference_failed_emits_error_and_keeps_session_open() -> None:
 
                     partial = websocket.receive_json()
                     error = websocket.receive_json()
-                    websocket.send_json({"type": "ping", "payload": {}})
+                    websocket.send_json(_ping_message(session_id))
                     ping_response = websocket.receive_json()
 
     assert partial["type"] == "transcript.partial"
     assert error["type"] == "error"
     assert error["payload"]["code"] == "ASR_INFERENCE_FAILED"
     assert error["payload"]["recoverable"] is True
-    assert ping_response["type"] == "error"
-    assert ping_response["payload"]["code"] == "UNKNOWN_MESSAGE_TYPE"
+    assert ping_response["type"] == "pong"
 
 
 def test_partial_transcription_is_throttled() -> None:

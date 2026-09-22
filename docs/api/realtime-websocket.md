@@ -4,7 +4,7 @@
 
 The Realtime WebSocket API is the primary communication channel between the Voragon desktop application and the Realtime Backend. It handles session management, audio streaming, and transcript delivery.
 
-**Status:** Partially implemented — Phase 1 covers connect, audio, and transcripts; Phase 2 adds heartbeat ([P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md)), session end, reconnect, and ordering.
+**Status:** Partially implemented — Phase 1 covers connect, audio, and transcripts; Phase 2 heartbeat ([P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md)) is implemented; session end, reconnect, and ordering remain planned.
 
 ## Endpoint
 
