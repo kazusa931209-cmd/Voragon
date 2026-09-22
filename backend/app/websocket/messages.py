@@ -27,6 +27,10 @@ def pong(session_id: str) -> dict[str, Any]:
     return make_envelope("pong", session_id, {})
 
 
+def session_ended(session_id: str, reason: str) -> dict[str, Any]:
+    return make_envelope("session.ended", session_id, {"reason": reason})
+
+
 def session_started(session_id: str, reconnect_window_s: int) -> dict[str, Any]:
     return make_envelope(
         "session.started",

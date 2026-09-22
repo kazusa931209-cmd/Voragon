@@ -376,9 +376,7 @@ While the client is streaming audio, frequent `audio.chunk` frames keep the sess
 1. After `session.started`, start the idle timer (45 s unless configured otherwise).
 2. On each inbound message, reset the idle timer.
 3. On valid `ping`, send `pong` then continue processing.
-4. If the idle timer expires:
-   - **P2-001:** Close the WebSocket (normal closure). `session.ended` with `reason: "timeout"` is added in [P2-002](../roadmap/dev-step-p2-002-session-ended.md).
-   - Clients treat an unexpected close as a connection loss and may reconnect per [Error Handling](error-handling.md).
+4. If the idle timer expires: emit `session.ended` with `reason: "timeout"`, then close the WebSocket (normal closure). Clients may reconnect per [Error Handling](error-handling.md).
 
 ### Client behavior (reference)
 

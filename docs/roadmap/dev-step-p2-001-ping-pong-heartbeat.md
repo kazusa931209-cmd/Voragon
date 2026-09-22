@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P2-001 |
 | **Phase** | 2 |
-| **Status** | in-progress |
-| **PR** | — |
+| **Status** | done |
+| **PR** | [#9](https://github.com/kazusa931209-cmd/Voragon/pull/9) |
 | **Branch** | `dev-step/p2-001-ping-pong-heartbeat` |
 
 ## Spec References
@@ -86,9 +86,9 @@ cd backend && .venv/bin/pytest -v
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-09-22 — ping/pong and idle timeout verified locally
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/9
+- **Merged:** 2026-09-22

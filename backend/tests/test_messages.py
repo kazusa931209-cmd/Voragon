@@ -1,4 +1,10 @@
-from app.websocket.messages import pong, transcript_final, transcript_partial
+from app.websocket.messages import pong, session_ended, transcript_final, transcript_partial
+
+
+def test_session_ended_message_shape() -> None:
+    message = session_ended("session-1", "timeout")
+    assert message["type"] == "session.ended"
+    assert message["payload"]["reason"] == "timeout"
 
 
 def test_pong_message_shape() -> None:

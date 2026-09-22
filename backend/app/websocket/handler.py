@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import json
 import logging
+from collections.abc import Awaitable, Callable
 from typing import Any
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -11,10 +12,12 @@ from app.config import Settings, get_settings
 from app.pipeline.audio_buffer import BufferedAudioFrame
 from app.pipeline.vad import SegmentClosed, SegmentOpened, VadError
 from app.websocket.audio_frame import AudioFrameError, parse_audio_frame
+from app.websocket.connection_registry import RegisteredConnection, register, unregister
 from app.websocket.messages import (
     buffer_overflow,
     error_message,
     pong,
+    session_ended,
     session_started,
     transcript_final,
     transcript_partial,
@@ -42,6 +45,27 @@ async def realtime_websocket(websocket: WebSocket) -> None:
 
     activity = asyncio.Event()
     activity.set()
+    session_closed = False
+
+    async def end_session(reason: str) -> None:
+        nonlocal session_closed
+        if session_closed:
+            return
+        session_closed = True
+        if not watchdog.done():
+            watchdog.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await watchdog
+        try:
+            await websocket.send_json(session_ended(session_id, reason))
+        except Exception:
+            logger.debug(
+                "session.ended not delivered session_id=%s reason=%s",
+                session_id,
+                reason,
+            )
+        with contextlib.suppress(Exception):
+            await websocket.close(code=1000)
 
     async def idle_watchdog() -> None:
         timeout = settings.heartbeat_idle_timeout_s
@@ -54,15 +78,16 @@ async def realtime_websocket(websocket: WebSocket) -> None:
                     session_id,
                     timeout,
                 )
-                with contextlib.suppress(Exception):
-                    await websocket.close(code=1000)
+                await end_session("timeout")
                 return
             activity.clear()
 
     watchdog = asyncio.create_task(idle_watchdog())
+    registered = RegisteredConnection(session_id, end_session)
+    await register(registered)
 
     try:
-        while True:
+        while not session_closed:
             message = await websocket.receive()
             activity.set()
 
@@ -71,18 +96,29 @@ async def realtime_websocket(websocket: WebSocket) -> None:
 
             if "text" in message:
                 await _handle_text_message(
-                    websocket, session, session_id, message["text"], settings
+                    websocket,
+                    session,
+                    session_id,
+                    message["text"],
+                    settings,
+                    end_session,
                 )
             elif "bytes" in message:
                 await _handle_binary_message(
                     websocket, session, session_id, message["bytes"], settings
                 )
+            if session_closed:
+                break
     except WebSocketDisconnect:
         logger.debug("WebSocket disconnected session_id=%s", session_id)
     finally:
-        watchdog.cancel()
-        with contextlib.suppress(asyncio.CancelledError):
-            await watchdog
+        await unregister(registered)
+        if not watchdog.done():
+            watchdog.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await watchdog
+        if not session_closed:
+            await end_session("client_stop")
 
 
 async def _handle_text_message(
@@ -91,6 +127,7 @@ async def _handle_text_message(
     session_id: str,
     text: str,
     settings: Settings,
+    end_session: Callable[[str], Awaitable[None]],
 ) -> None:
     try:
         data = json.loads(text)
@@ -110,7 +147,9 @@ async def _handle_text_message(
         await _handle_audio_start(websocket, session, session_id, data, settings)
         return
     if message_type == "audio.stop":
-        await _handle_audio_stop(websocket, session, session_id, data, settings)
+        await _handle_audio_stop(
+            websocket, session, session_id, data, settings, end_session
+        )
         return
     if message_type == "ping":
         await _handle_ping(websocket, session_id, data)
@@ -228,6 +267,7 @@ async def _handle_audio_stop(
     session_id: str,
     data: dict[str, Any],
     settings: Settings,
+    end_session: Callable[[str], Awaitable[None]],
 ) -> None:
     if data.get("session_id") != session_id:
         await websocket.send_json(
@@ -254,6 +294,7 @@ async def _handle_audio_stop(
     asr_engine: ASREngine = websocket.app.state.asr_engine
     await _flush_open_segments(websocket, session, session_id, settings, asr_engine)
     logger.debug("Audio stopped session_id=%s", session_id)
+    await end_session("client_stop")
 
 
 async def _flush_open_segments(

@@ -16,7 +16,7 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 | ID | Title | Status | Doc |
 |----|-------|--------|-----|
-| **P2-001** | `ping` / `pong` heartbeat | in-progress | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
+| **P2-002** | `session.ended` lifecycle | in-progress | [dev-step-p2-002-session-ended.md](dev-step-p2-002-session-ended.md) |
 
 ---
 
@@ -40,8 +40,8 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
-| P2-001 | `ping` / `pong` heartbeat | in-progress | — | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
-| P2-002 | `session.ended` lifecycle | planned | — | [dev-step-p2-002-session-ended.md](dev-step-p2-002-session-ended.md) |
+| P2-001 | `ping` / `pong` heartbeat | done | [#9](https://github.com/kazusa931209-cmd/Voragon/pull/9) | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
+| P2-002 | `session.ended` lifecycle | in-progress | — | [dev-step-p2-002-session-ended.md](dev-step-p2-002-session-ended.md) |
 | P2-003 | Audio frame `seq_num` ordering | planned | — | [dev-step-p2-003-audio-seq-ordering.md](dev-step-p2-003-audio-seq-ordering.md) |
 | P2-004 | `buffer.overflow` and `BUFFER_OVERFLOW` | planned | — | [dev-step-p2-004-buffer-overflow.md](dev-step-p2-004-buffer-overflow.md) |
 | P2-005 | Session registry and reconnect window | planned | — | [dev-step-p2-005-session-registry-reconnect-window.md](dev-step-p2-005-session-registry-reconnect-window.md) |
