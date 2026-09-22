@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P1-006 |
 | **Phase** | 1 |
-| **Status** | in-progress |
-| **PR** | — |
+| **Status** | done |
+| **PR** | [#7](https://github.com/kazusa931209-cmd/Voragon/pull/7) |
 | **Branch** | `dev-step/p1-006-transcript` |
 
 ## Spec References
@@ -141,9 +141,9 @@ cd backend && pytest -v
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-09-22, mock ASR/VAD WebSocket tests; partial + final emission verified
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/7
+- **Merged:** 2026-09-21

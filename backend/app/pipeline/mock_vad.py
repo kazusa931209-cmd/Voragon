@@ -21,3 +21,6 @@ class MockVadStream:
 
     def process_degraded_frame(self, pcm_data: bytes) -> list[VadEvent]:
         return self.tracker.process_degraded_frame(pcm_data)
+
+    def flush_active_segment(self) -> list[VadEvent]:
+        return self.tracker.flush_active_segment()

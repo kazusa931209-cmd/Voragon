@@ -27,7 +27,11 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     app_settings = get_settings()
     asr_engine = create_asr_engine(app_settings)
-    logger.info("Warming up ASR backend: %s", app_settings.asr_backend)
+    logger.info(
+        "Warming up ASR backend=%s model=%s",
+        app_settings.asr_backend,
+        app_settings.asr_model,
+    )
     await asr_engine.warmup()
     app.state.asr_engine = asr_engine
     yield

@@ -2,7 +2,7 @@
 
 Local-first, realtime AI assistant platform.
 
-**Status:** Architecture and documentation phase.
+**Status:** Phase 1 ASR prototype in progress.
 
 ## Documentation
 
@@ -10,9 +10,27 @@ Full technical documentation is in [`docs/`](docs/README.md):
 
 - [Architecture Overview](docs/architecture/overview.md)
 - [Development Phases](docs/roadmap/phases.md)
-- [Architecture Decision Records](docs/decisions/ADR-001-tauri-react-typescript.md)
+- [Dev-Steps Index](docs/roadmap/dev-steps-index.md)
 - [Realtime WebSocket API](docs/api/realtime-websocket.md)
 
 ## Quick Start
 
-Implementation uses **dev-steps** (one PR each). See [Dev-Steps Index](docs/roadmap/dev-steps-index.md). Active step: **[P1-002 WebSocket session.started](docs/roadmap/dev-step-p1-002-websocket-session-started.md)**.
+Active dev-step: **[P1-007 Minimal test client](docs/roadmap/dev-step-p1-007-minimal-test-client.md)**.
+
+```bash
+# Backend
+cd backend && python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]" && python -m app.main
+
+# Test client (another terminal)
+cd tools/realtime-cli && python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]" && python -m realtime_cli --duration 15
+```
+
+Speak into the microphone; partial and final transcripts print to stdout.
+
+File replay:
+
+```bash
+python -m realtime_cli --file tools/realtime-cli/sample-mono-16khz.wav --tail 90
+```
