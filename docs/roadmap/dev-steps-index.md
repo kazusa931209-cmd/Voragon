@@ -14,7 +14,9 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 ## Active Step
 
-*None — Phase 1 complete. Add the first Phase 2 dev-step to this section when planning starts.*
+| ID | Title | Status | Doc |
+|----|-------|--------|-----|
+| **P2-001** | `ping` / `pong` heartbeat | planned | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
 
 ---
 
@@ -34,6 +36,26 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 
 ---
 
-## Phase 2+
+## Phase 2: Realtime Production-Like Backend
 
-Phase 1 is complete. Dev-steps for Phase 2 will be added here when defined. See [phases.md](phases.md).
+| ID | Title | Status | PR | Doc |
+|----|-------|--------|-----|-----|
+| P2-001 | `ping` / `pong` heartbeat | planned | — | [dev-step-p2-001-ping-pong-heartbeat.md](dev-step-p2-001-ping-pong-heartbeat.md) |
+| P2-002 | `session.ended` lifecycle | planned | — | [dev-step-p2-002-session-ended.md](dev-step-p2-002-session-ended.md) |
+| P2-003 | Audio frame `seq_num` ordering | planned | — | [dev-step-p2-003-audio-seq-ordering.md](dev-step-p2-003-audio-seq-ordering.md) |
+| P2-004 | `buffer.overflow` and `BUFFER_OVERFLOW` | planned | — | [dev-step-p2-004-buffer-overflow.md](dev-step-p2-004-buffer-overflow.md) |
+| P2-005 | Session registry and reconnect window | planned | — | [dev-step-p2-005-session-registry-reconnect-window.md](dev-step-p2-005-session-registry-reconnect-window.md) |
+| P2-006 | `session.resume` reconnection | planned | — | [dev-step-p2-006-session-resume.md](dev-step-p2-006-session-resume.md) |
+| P2-007 | API error handling alignment | planned | — | [dev-step-p2-007-api-error-handling.md](dev-step-p2-007-api-error-handling.md) |
+| P2-008 | Prometheus `/metrics` | planned | — | [dev-step-p2-008-prometheus-metrics.md](dev-step-p2-008-prometheus-metrics.md) |
+| P2-009 | Structured JSON logging | planned | — | [dev-step-p2-009-structured-json-logging.md](dev-step-p2-009-structured-json-logging.md) |
+
+**Phase 2 exit:** Reconnect within window; `/metrics` live; errors match API spec; tests pass. See [phases.md](phases.md).
+
+**Suggested order:** P2-001 → P2-002 → P2-003 → P2-004 → P2-005 → P2-006 → P2-007 → P2-008 → P2-009 (P2-007 may be partially folded into earlier steps; finish alignment in P2-007).
+
+---
+
+## Phase 3+
+
+Dev-steps for Phase 3 (desktop) and beyond will be added when Phase 2 is complete. See [phases.md](phases.md).
