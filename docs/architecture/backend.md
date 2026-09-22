@@ -78,6 +78,7 @@ backend/
 **P1-004 implemented:** `app/pipeline/vad.py`, `silero_vad.py`, `segment_tracker.py` — Silero VAD per-frame processing and speech segment tracking.
 **P1-005 implemented:** `app/asr/base.py`, `faster_whisper.py`, `mock_asr.py` — ASR engine abstraction, model load/warmup at startup, mock adapter for tests.
 **P1-006 implemented:** WebSocket handler emits `transcript.partial` / `transcript.final` from VAD segments via in-process ASR.
+**P1-007 implemented:** `audio.stop` flushes open VAD segments; `tools/realtime-cli/` test client for mic/file replay.
 Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction

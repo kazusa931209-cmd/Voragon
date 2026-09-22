@@ -81,6 +81,9 @@ async def _handle_text_message(
     if message_type == "audio.start":
         await _handle_audio_start(websocket, session, session_id, data, settings)
         return
+    if message_type == "audio.stop":
+        await _handle_audio_stop(websocket, session, session_id, data, settings)
+        return
 
     await websocket.send_json(
         error_message(
@@ -153,6 +156,79 @@ async def _handle_audio_start(
         config.sample_rate,
         config.channels,
     )
+
+
+async def _handle_audio_stop(
+    websocket: WebSocket,
+    session: Session,
+    session_id: str,
+    data: dict[str, Any],
+    settings: Settings,
+) -> None:
+    if data.get("session_id") != session_id:
+        await websocket.send_json(
+            error_message(
+                session_id,
+                "INVALID_MESSAGE",
+                "session_id does not match active session",
+                True,
+            )
+        )
+        return
+
+    if not session.audio_started:
+        await websocket.send_json(
+            error_message(
+                session_id,
+                "AUDIO_NOT_STARTED",
+                "Send audio.start before audio.stop",
+                True,
+            )
+        )
+        return
+
+    asr_engine: ASREngine = websocket.app.state.asr_engine
+    await _flush_open_segments(websocket, session, session_id, settings, asr_engine)
+    logger.debug("Audio stopped session_id=%s", session_id)
+
+
+async def _flush_open_segments(
+    websocket: WebSocket,
+    session: Session,
+    session_id: str,
+    settings: Settings,
+    asr_engine: ASREngine,
+) -> None:
+    if session.vad_stream is None:
+        return
+
+    loop = asyncio.get_running_loop()
+    flush = getattr(session.vad_stream, "flush_active_segment", None)
+    if flush is None:
+        tracker = getattr(session.vad_stream, "tracker", None)
+        if tracker is None:
+            return
+        events = await loop.run_in_executor(None, tracker.flush_active_segment)
+    else:
+        events = await loop.run_in_executor(None, flush)
+
+    for event in events:
+        if isinstance(event, SegmentClosed):
+            logger.debug(
+                "segment_flushed session_id=%s segment_id=%s duration_ms=%s",
+                session_id,
+                event.segment_id,
+                event.duration_ms,
+            )
+            await _emit_transcript_final(
+                websocket,
+                session,
+                session_id,
+                str(event.segment_id),
+                event.pcm_data,
+                settings,
+                asr_engine,
+            )
 
 
 def _parse_audio_start_payload(payload: dict[str, Any]) -> tuple[AudioConfig | None, str | None]:

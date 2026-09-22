@@ -50,6 +50,13 @@ class SegmentTracker:
         return SegmentOpened(segment_id=self._active.segment_id)
 
     def on_speech_end(self) -> list[VadEvent]:
+        return self._close_active_segment()
+
+    def flush_active_segment(self) -> list[VadEvent]:
+        """Force-close the open segment (e.g. on audio.stop). Same rules as speech end."""
+        return self._close_active_segment()
+
+    def _close_active_segment(self) -> list[VadEvent]:
         if self._active is None:
             return []
 

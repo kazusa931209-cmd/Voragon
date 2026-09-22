@@ -54,6 +54,8 @@ voragon/
 ├── backend/                # FastAPI realtime service
 │   ├── app/
 │   └── tests/
+├── tools/
+│   └── realtime-cli/       # Phase 1 CLI test client (mic → transcript)
 ├── docs/                   # This documentation
 ├── docker/                 # Docker Compose (Phase 4)
 └── k8s/                    # Kubernetes manifests (Phase 5+)
@@ -82,6 +84,8 @@ pnpm tauri dev
 ```
 
 ## Environment Variables (Backend)
+
+Copy [`backend/.env.example`](../../backend/.env.example) to `backend/.env` for persistent local config. Shell env vars override `.env`.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -122,6 +126,29 @@ Use `ASR_BACKEND=mock` for fast local runs and automated tests without downloadi
 ```
 
 When ASR warmup has not completed, `status` is `degraded` and `asr.ready` is `false`.
+
+## Test Client (Phase 1)
+
+Minimal CLI for end-to-end local testing without the Tauri desktop app:
+
+```bash
+# Terminal 1 — backend
+cd backend && source .venv/bin/activate && python -m app.main
+
+# Terminal 2 — test client
+cd tools/realtime-cli && source .venv/bin/activate && pip install -e ".[dev]"
+python -m realtime_cli --duration 15
+```
+
+File replay (no microphone; fast upload + `audio.stop` flush + tail wait):
+
+```bash
+python -m realtime_cli --file sample-mono-16khz.wav --tail 90
+```
+
+Use a longer `--tail` on CPU ASR with long files, or set `ASR_MODEL=tiny` on the backend for faster local runs.
+
+See [tools/realtime-cli/README.md](../../tools/realtime-cli/README.md).
 
 ## Development Workflow
 

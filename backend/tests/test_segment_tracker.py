@@ -53,6 +53,21 @@ def test_short_segment_discarded() -> None:
     assert tracker.closed_segments == []
 
 
+def test_flush_active_segment_closes_open_segment() -> None:
+    tracker = _tracker(min_speech_ms=40)
+    tracker.on_speech_start()
+    pcm = b"\x00" * 640
+
+    for _ in range(3):
+        tracker.append_frame(pcm)
+
+    events = tracker.flush_active_segment()
+
+    assert len(events) == 1
+    assert isinstance(events[0], SegmentClosed)
+    assert tracker.active_segment is None
+
+
 def test_degraded_mode_opens_segment_and_accumulates_pcm() -> None:
     tracker = _tracker()
     pcm = b"\x01" * 640

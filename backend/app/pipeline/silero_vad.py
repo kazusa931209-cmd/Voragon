@@ -84,6 +84,12 @@ class SileroVadStream:
         self._pending.clear()
         return self._tracker.process_degraded_frame(pcm_data)
 
+    def flush_active_segment(self) -> list[VadEvent]:
+        self._pending.clear()
+        events = self._tracker.flush_active_segment()
+        self._iterator.reset_states()
+        return events
+
     @staticmethod
     def _pcm_to_tensor(pcm_data: bytes) -> torch.Tensor:
         audio_int16 = np.frombuffer(pcm_data, dtype=np.int16)
