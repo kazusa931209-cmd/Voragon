@@ -9,16 +9,6 @@ from app.websocket.audio_frame import build_audio_frame
 from app.websocket.messages import utc_timestamp
 
 
-def _ping_message(session_id: str) -> dict:
-    return {
-        "type": "ping",
-        "id": "msg-ping",
-        "session_id": session_id,
-        "timestamp": utc_timestamp(),
-        "payload": {},
-    }
-
-
 class OpenSegmentVadStream:
     """Opens a segment on first frame and keeps it open until flush."""
 
@@ -86,13 +76,19 @@ def test_audio_stop_flushes_open_segment_and_emits_final() -> None:
 
                 websocket.send_json(_audio_stop_message(session_id))
 
-                messages = [websocket.receive_json()]
-                if messages[0]["type"] != "transcript.final":
-                    messages.append(websocket.receive_json())
+                messages: list[dict] = []
+                while True:
+                    msg = websocket.receive_json()
+                    messages.append(msg)
+                    if msg["type"] == "session.ended":
+                        break
 
     finals = [m for m in messages if m["type"] == "transcript.final"]
     assert len(finals) == 1
     assert finals[0]["payload"]["text"].startswith("final-")
+    ended = messages[-1]
+    assert ended["type"] == "session.ended"
+    assert ended["payload"]["reason"] == "client_stop"
 
 
 def test_audio_stop_discards_short_open_segment() -> None:
@@ -112,10 +108,10 @@ def test_audio_stop_discards_short_open_segment() -> None:
                 websocket.send_json(_audio_start_message(session_id))
                 websocket.send_bytes(build_audio_frame(speech_pcm, seq_num=0))
                 websocket.send_json(_audio_stop_message(session_id))
-                websocket.send_json(_ping_message(session_id))
-                response = websocket.receive_json()
+                ended = websocket.receive_json()
 
-    assert response["type"] == "pong"
+    assert ended["type"] == "session.ended"
+    assert ended["payload"]["reason"] == "client_stop"
 
 
 def test_audio_stop_before_audio_start_returns_error() -> None:

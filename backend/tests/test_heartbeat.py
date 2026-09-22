@@ -73,5 +73,8 @@ def test_heartbeat_idle_timeout_closes_connection(
         with client.websocket_connect("/v1/realtime") as websocket:
             websocket.receive_json()
             time.sleep(1.25)
+            ended = websocket.receive_json()
+            assert ended["type"] == "session.ended"
+            assert ended["payload"]["reason"] == "timeout"
             with pytest.raises(WebSocketDisconnect):
                 websocket.receive_json()

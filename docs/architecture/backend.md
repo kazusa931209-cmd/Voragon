@@ -80,6 +80,7 @@ backend/
 **P1-006 implemented:** WebSocket handler emits `transcript.partial` / `transcript.final` from VAD segments via in-process ASR.
 **P1-007 implemented:** `audio.stop` flushes open VAD segments; `tools/realtime-cli/` test client for mic/file replay.
 **P2-001 implemented:** `ping` / `pong` and per-connection idle timeout (`HEARTBEAT_IDLE_TIMEOUT_S`) — see [Realtime WebSocket API](../api/realtime-websocket.md#heartbeat).
+**P2-002 (in progress):** `session.ended` on `audio.stop`, idle `timeout`, disconnect `client_stop`, and app shutdown `server_shutdown` via `connection_registry`.
 Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction
@@ -192,7 +193,7 @@ Errors are delivered to the client as `error` WebSocket messages. The backend do
 | Invalid message format | Send `error`, continue session |
 | ASR inference failure | Send `error`, retry once, then skip segment |
 | VAD failure | Send `error`, pass all audio to ASR (degraded mode) |
-| Heartbeat idle timeout | Close WebSocket; `session.ended` `timeout` in P2-002 |
+| Heartbeat idle timeout | `session.ended` `timeout`, then close WebSocket |
 | Unrecoverable error | Send `error` + `session.ended`, close connection |
 
 See [Error Handling](../api/error-handling.md) for error codes and client recovery behavior.

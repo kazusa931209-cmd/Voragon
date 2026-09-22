@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P2-002 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **PR** | — |
 | **Branch** | `dev-step/p2-002-session-ended` |
 
@@ -31,11 +31,11 @@ One verifiable behavior: **the server emits `session.ended` when a session ends 
 
 ## Acceptance Criteria
 
-- [ ] Client disconnect produces `session.ended` with `client_stop` (or documented mapping) before socket close when possible
-- [ ] Defined `audio.stop` end-of-session behavior matches spec and docs
-- [ ] Server shutdown sends `server_shutdown` to connected clients
-- [ ] Automated tests cover disconnect and `audio.stop` paths
-- [ ] Existing backend test suite still passes
+- [x] Client disconnect produces `session.ended` with `client_stop` (or documented mapping) before socket close when possible
+- [x] Defined `audio.stop` end-of-session behavior matches spec and docs
+- [x] Server shutdown sends `server_shutdown` to connected clients
+- [x] Automated tests cover disconnect and `audio.stop` paths
+- [x] Existing backend test suite still passes
 
 ## Manual Test
 
@@ -60,16 +60,22 @@ Expected: update `docs/architecture/backend.md` session lifecycle note if behavi
 
 ### Summary
 
-- …
+- `session_ended()` in `messages.py`; `end_session(reason)` in WebSocket handler
+- `audio.stop` → flush → `session.ended` `client_stop` → close
+- Idle timeout → `session.ended` `timeout` → close
+- Handler `finally` → `client_stop` when the client disconnects without a prior end
+- `connection_registry` + `shutdown_all()` on app lifespan exit for `server_shutdown`
+- Tests: `tests/test_session_ended.py`; updated audio/heartbeat tests
 
 ### Spec Changes
 
-- …
+- `docs/architecture/backend.md`, `docs/api/realtime-websocket.md`, `docs/api/error-handling.md`
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v
+# 56 passed, 1 skipped
 ```
 
 ### Manual Test Result

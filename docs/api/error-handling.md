@@ -179,8 +179,7 @@ When the server closes a connection for heartbeat idle timeout ([Realtime WebSoc
 
 | Phase | Server behavior | Client behavior |
 |-------|-----------------|-----------------|
-| P2-001 | WebSocket close without `session.ended` | Treat as connection loss; may reconnect |
-| P2-002+ | `session.ended` with `reason: "timeout"` then close | Same; optional `SESSION_EXPIRED` if resume fails |
+| P2-002+ | `session.ended` with `reason: "timeout"` then close | Treat as connection loss; may reconnect; optional `SESSION_EXPIRED` if resume fails |
 
 No `error` message is required solely for idle timeout.
 

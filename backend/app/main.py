@@ -15,6 +15,7 @@ from fastapi import FastAPI, Request
 
 from app.asr.base import ASREngine, create_asr_engine
 from app.config import get_settings
+from app.websocket.connection_registry import shutdown_all
 from app.websocket.handler import router as websocket_router
 
 settings = get_settings()
@@ -35,6 +36,8 @@ async def lifespan(app: FastAPI):
     await asr_engine.warmup()
     app.state.asr_engine = asr_engine
     yield
+    logger.info("Shutting down; closing active realtime WebSocket sessions")
+    await shutdown_all("server_shutdown")
 
 
 app = FastAPI(title="Voragon Realtime Backend", version="0.1.0", lifespan=lifespan)

@@ -279,7 +279,7 @@ Aligned with [Realtime WebSocket API — Heartbeat](../api/realtime-websocket.md
 
 **Liveness:** Any inbound WebSocket message (including `audio.chunk`) resets the idle timer. Clients **SHOULD** send `ping` every 15 s when connected without audio streaming.
 
-**On idle timeout:** P2-001 closes the WebSocket; [P2-002](../roadmap/dev-step-p2-002-session-ended.md) adds `session.ended` with `reason: "timeout"`.
+**On idle timeout:** `session.ended` with `reason: "timeout"`, then WebSocket close (P2-002).
 
 ## Ordering Guarantees
 
