@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P2-003 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **PR** | — |
 | **Branch** | `dev-step/p2-003-audio-seq-ordering` |
 
@@ -32,12 +32,12 @@ One verifiable behavior: **audio frames are processed in `seq_num` order; late f
 
 ## Acceptance Criteria
 
-- [ ] Frames delivered to VAD/ASR in `seq_num` order when client sends in order
-- [ ] Brief out-of-order delivery within 100 ms is reordered correctly (test with controlled seq)
-- [ ] Sequence gap emits `AUDIO_SEQUENCE_GAP` and session continues
-- [ ] Duplicate or regressed `seq_num` handled deterministically (document choice in PR)
-- [ ] Unit tests for reorder/gap logic; WebSocket integration test with injected frame order
-- [ ] Existing backend test suite still passes
+- [x] Frames delivered to VAD/ASR in `seq_num` order when client sends in order
+- [x] Brief out-of-order delivery within 100 ms is reordered correctly (test with controlled seq)
+- [x] Sequence gap emits `AUDIO_SEQUENCE_GAP` and session continues
+- [x] Duplicate or regressed `seq_num` handled deterministically (document choice in PR)
+- [x] Unit tests for reorder/gap logic; WebSocket integration test with injected frame order
+- [x] Existing backend test suite still passes
 
 ## Manual Test
 
@@ -60,16 +60,22 @@ Expected: none
 
 ### Summary
 
-- …
+- `AudioSequenceReorderer` in `app/pipeline/audio_sequence.py` with configurable `AUDIO_REORDER_BUFFER_MS` (default 100)
+- Per-session reorderer reset on `audio.start`; binary frames pass through reorder before ring buffer / VAD
+- After reorder wait expires, missing sequences emit recoverable `AUDIO_SEQUENCE_GAP`; processing continues with next available frame
+- **Duplicate / regressed `seq_num`:** frames with `seq_num < next_expected` are dropped silently (no error)
+- Async flush task per WebSocket connection when the reorder buffer is waiting
+- Tests: `tests/test_audio_sequence.py`, `tests/test_websocket_audio_sequence.py`
 
 ### Spec Changes
 
-- …
+- `docs/architecture/backend.md`, `backend/.env.example` — env var only
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v
+# 62 passed, 1 skipped
 ```
 
 ### Manual Test Result

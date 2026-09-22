@@ -8,6 +8,8 @@
 | **PR** | — |
 | **Branch** | `dev-step/p2-002-session-ended` |
 
+Implementation complete; status stays `in-progress` until the PR merges.
+
 ## Spec References
 
 - [Realtime WebSocket API](../api/realtime-websocket.md) — `session.ended`, reasons (`client_stop`, `timeout`, `error`, `server_shutdown`)

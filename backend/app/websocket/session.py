@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 
 from app.config import Settings
 from app.pipeline.audio_buffer import AudioBuffer, BufferedAudioFrame
+from app.pipeline.audio_sequence import AudioSequenceReorderer, SequenceProcessResult
 from app.pipeline.vad import VadStream, create_vad_engine, vad_config_from_settings
 
 
@@ -44,6 +45,7 @@ class Session:
     vad_error_sent: bool = False
     session_elapsed_ms: int = 0
     segment_asr: SegmentAsrState | None = None
+    audio_sequence: AudioSequenceReorderer | None = None
 
     @classmethod
     def create(cls) -> Session:
@@ -62,6 +64,23 @@ class Session:
             frame_duration_ms=config.frame_duration_ms,
         )
         self.vad_stream = create_vad_engine(settings).create_stream(vad_config)
+        self.audio_sequence = AudioSequenceReorderer(
+            buffer_ms=settings.audio_reorder_buffer_ms
+        )
+
+    def ingest_sequenced_frame(
+        self, frame: BufferedAudioFrame, now: float
+    ) -> SequenceProcessResult:
+        if self.audio_sequence is None:
+            raise RuntimeError("Audio streaming has not started")
+        return self.audio_sequence.ingest(frame, now)
+
+    def flush_sequenced_frames(self, now: float, *, force: bool = False) -> SequenceProcessResult:
+        if self.audio_sequence is None:
+            return SequenceProcessResult([], [])
+        if force:
+            return self.audio_sequence.flush_all(now)
+        return self.audio_sequence.flush(now)
 
     def append_audio_frame(self, frame: BufferedAudioFrame) -> int:
         if self.audio_buffer is None:
