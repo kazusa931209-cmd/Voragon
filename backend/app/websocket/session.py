@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 from app.config import Settings
 from app.pipeline.audio_buffer import AudioBuffer, BufferedAudioFrame
 from app.pipeline.audio_sequence import AudioSequenceReorderer, SequenceProcessResult
+from app.websocket.buffer_overflow import BufferOverflowNotifier
 from app.pipeline.vad import VadStream, create_vad_engine, vad_config_from_settings
 
 
@@ -46,6 +47,7 @@ class Session:
     session_elapsed_ms: int = 0
     segment_asr: SegmentAsrState | None = None
     audio_sequence: AudioSequenceReorderer | None = None
+    buffer_overflow_notifier: BufferOverflowNotifier | None = None
 
     @classmethod
     def create(cls) -> Session:
@@ -67,6 +69,9 @@ class Session:
         self.audio_sequence = AudioSequenceReorderer(
             buffer_ms=settings.audio_reorder_buffer_ms
         )
+        self.buffer_overflow_notifier = BufferOverflowNotifier(
+            max_per_second=settings.buffer_overflow_notify_max_per_second
+        )
 
     def ingest_sequenced_frame(
         self, frame: BufferedAudioFrame, now: float
@@ -86,6 +91,10 @@ class Session:
         if self.audio_buffer is None:
             raise RuntimeError("Audio streaming has not started")
         return self.audio_buffer.append(frame)
+
+    def release_processed_audio_frame(self) -> None:
+        if self.audio_buffer is not None:
+            self.audio_buffer.pop_oldest()
 
     def advance_elapsed_ms(self, frame_duration_ms: int) -> None:
         self.session_elapsed_ms += frame_duration_ms

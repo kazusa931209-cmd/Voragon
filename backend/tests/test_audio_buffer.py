@@ -43,3 +43,12 @@ def test_audio_buffer_drops_multiple_frames_in_single_append() -> None:
     assert dropped == 4
     assert len(buffer) == 2
     assert buffer.total_bytes() == 1000
+
+
+def test_audio_buffer_pop_oldest_updates_byte_count() -> None:
+    buffer = AudioBuffer(max_bytes=1280)
+    pcm = b"\x00" * 640
+    buffer.append(_frame(pcm, seq_num=1))
+    assert buffer.pop_oldest() is True
+    assert len(buffer) == 0
+    assert buffer.total_bytes() == 0

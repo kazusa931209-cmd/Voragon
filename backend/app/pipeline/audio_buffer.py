@@ -37,3 +37,10 @@ class AudioBuffer:
 
     def total_bytes(self) -> int:
         return self._total_bytes
+
+    def pop_oldest(self) -> bool:
+        if not self._frames:
+            return False
+        removed = self._frames.popleft()
+        self._total_bytes -= len(removed.pcm_data)
+        return True

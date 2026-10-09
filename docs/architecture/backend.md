@@ -82,6 +82,7 @@ backend/
 **P2-001 implemented:** `ping` / `pong` and per-connection idle timeout (`HEARTBEAT_IDLE_TIMEOUT_S`) — see [Realtime WebSocket API](../api/realtime-websocket.md#heartbeat).
 **P2-002 implemented:** `session.ended` on `audio.stop`, idle `timeout`, disconnect `client_stop`, and app shutdown `server_shutdown` via `connection_registry`.
 **P2-003 implemented:** `app/pipeline/audio_sequence.py` — per-session `seq_num` reorder buffer (`AUDIO_REORDER_BUFFER_MS`) and recoverable `AUDIO_SEQUENCE_GAP`.
+**P2-004 (in progress):** `buffer.overflow` + `BUFFER_OVERFLOW` notifications (`buffer_overflow.py`); processed frames released from the ring buffer after VAD.
 Remaining modules are planned for later dev-steps.
 
 ## ASR Abstraction

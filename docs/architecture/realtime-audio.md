@@ -78,9 +78,10 @@ flowchart LR
 
 ### Backend (Receive Side)
 
-- Incoming frames are appended to a per-session ring buffer.
-- The ring buffer holds up to 30 seconds of audio (engineering default; tunable).
-- If the buffer exceeds capacity, oldest frames are dropped and a `buffer.overflow` warning is emitted to the client.
+- Incoming frames are appended to a per-session ring buffer (backlog while catching up).
+- After each frame is processed through VAD, it is removed from the buffer so steady real-time streaming does not fill the cap.
+- The ring buffer holds up to 30 seconds of audio (engineering default; tunable) when ingress outpaces processing.
+- If the buffer exceeds capacity, oldest frames are dropped; the client receives `buffer.overflow` and recoverable `BUFFER_OVERFLOW` (rate-limited).
 
 ## Voice Activity Detection (VAD)
 
