@@ -15,8 +15,8 @@ from app.pipeline.audio_sequence import SequenceGap, SequenceProcessResult
 from app.pipeline.vad import SegmentClosed, SegmentOpened, VadError
 from app.websocket.audio_frame import AudioFrameError, parse_audio_frame
 from app.websocket.connection_registry import RegisteredConnection, register, unregister
+from app.websocket.buffer_overflow import emit_buffer_overflow_notifications
 from app.websocket.messages import (
-    buffer_overflow,
     error_message,
     pong,
     session_ended,
@@ -551,8 +551,13 @@ async def _deliver_audio_frame(
     settings: Settings,
 ) -> None:
     dropped = session.append_audio_frame(frame)
-    if dropped:
-        await websocket.send_json(buffer_overflow(session_id, dropped))
+    if dropped and session.buffer_overflow_notifier is not None:
+        await emit_buffer_overflow_notifications(
+            websocket,
+            session_id,
+            dropped,
+            session.buffer_overflow_notifier,
+        )
 
     if session.audio_config is None:
         return
@@ -562,6 +567,7 @@ async def _deliver_audio_frame(
     await _process_vad_frame(
         websocket, session, session_id, frame.pcm_data, settings, asr_engine
     )
+    session.release_processed_audio_frame()
 
 
 async def _process_vad_frame(

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     heartbeat_idle_timeout_s: int = 45
     audio_buffer_seconds: int = 30
     audio_reorder_buffer_ms: int = 100
+    buffer_overflow_notify_max_per_second: int = 10
     vad_backend: str = "silero"
     vad_speech_threshold: float = 0.5
     vad_min_speech_duration_ms: int = 250

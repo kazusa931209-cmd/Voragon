@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P2-004 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **PR** | — |
 | **Branch** | `dev-step/p2-004-buffer-overflow` |
 
@@ -32,11 +32,11 @@ One verifiable behavior: **when the per-session audio ring buffer drops frames, 
 
 ## Acceptance Criteria
 
-- [ ] Flooding frames faster than processing fills buffer → `buffer.overflow` received
-- [ ] `BUFFER_OVERFLOW` error received with `recoverable: true`
-- [ ] Transcription can continue after overflow in tests
-- [ ] Automated tests simulate buffer pressure without real-time sleep where possible
-- [ ] Existing backend test suite still passes
+- [x] Flooding frames faster than processing fills buffer → `buffer.overflow` received
+- [x] `BUFFER_OVERFLOW` error received with `recoverable: true`
+- [x] Transcription can continue after overflow in tests
+- [x] Automated tests simulate buffer pressure without real-time sleep where possible
+- [x] Existing backend test suite still passes
 
 ## Manual Test
 
@@ -59,16 +59,23 @@ Expected: none
 
 ### Summary
 
-- …
+- `emit_buffer_overflow_notifications()` in `app/websocket/buffer_overflow.py` — sends `buffer.overflow` then `error` `BUFFER_OVERFLOW` with `details.dropped_frames`
+- Per-session `BufferOverflowNotifier` rate limit (`BUFFER_OVERFLOW_NOTIFY_MAX_PER_SECOND`, default 10)
+- After VAD, `release_processed_audio_frame()` pops the processed frame from the ring buffer (steady mic streaming no longer fills 30s cap)
+- Tests: `tests/test_buffer_overflow_notify.py`; updated `test_websocket_audio.py`, `test_audio_buffer.py`
 
 ### Spec Changes
 
-- …
+- `docs/architecture/realtime-audio.md`, `docs/architecture/backend.md`, `backend/.env.example`
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v -k "overflow or buffer"
+# 13 passed
+
+cd backend && .venv/bin/pytest -v
+# 67 passed, 1 skipped (full suite; local .env ASR_MODEL may affect test_health)
 ```
 
 ### Manual Test Result

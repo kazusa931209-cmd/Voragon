@@ -188,7 +188,15 @@ def test_invalid_audio_frame_payload_length_returns_error() -> None:
 
 
 def test_buffer_overflow_emitted_when_capacity_exceeded(monkeypatch) -> None:
+    """See tests/test_buffer_overflow_notify.py for BUFFER_OVERFLOW pairing."""
     monkeypatch.setenv("AUDIO_BUFFER_SECONDS", "1")
+
+    from app.websocket.session import Session
+
+    def noop_release(_self: Session) -> None:
+        return None
+
+    monkeypatch.setattr(Session, "release_processed_audio_frame", noop_release)
 
     with TestClient(app) as client:
         with client.websocket_connect("/v1/realtime") as websocket:
@@ -200,9 +208,11 @@ def test_buffer_overflow_emitted_when_capacity_exceeded(monkeypatch) -> None:
                 websocket.send_bytes(build_audio_frame(pcm, seq_num=seq))
 
             overflow = websocket.receive_json()
+            error = websocket.receive_json()
 
     assert overflow["type"] == "buffer.overflow"
     assert overflow["payload"]["dropped_frames"] >= 1
+    assert error["payload"]["code"] == "BUFFER_OVERFLOW"
 
 
 def test_unknown_message_type_still_returns_error() -> None:
