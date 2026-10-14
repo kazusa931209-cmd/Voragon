@@ -44,8 +44,8 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 | P2-002 | `session.ended` lifecycle | done | [#10](https://github.com/kazusa931209-cmd/Voragon/pull/10) | [dev-step-p2-002-session-ended.md](dev-step-p2-002-session-ended.md) |
 | P2-003 | Audio frame `seq_num` ordering | done | [#11](https://github.com/kazusa931209-cmd/Voragon/pull/11) | [dev-step-p2-003-audio-seq-ordering.md](dev-step-p2-003-audio-seq-ordering.md) |
 | P2-004 | `buffer.overflow` and `BUFFER_OVERFLOW` | done | [#12](https://github.com/kazusa931209-cmd/Voragon/pull/12) | [dev-step-p2-004-buffer-overflow.md](dev-step-p2-004-buffer-overflow.md) |
-| P2-005 | Session registry and reconnect window | done | — | [dev-step-p2-005-session-registry-reconnect-window.md](dev-step-p2-005-session-registry-reconnect-window.md) |
-| P2-006 | `session.resume` reconnection | done | — | [dev-step-p2-006-session-resume.md](dev-step-p2-006-session-resume.md) |
+| P2-005 | Session registry and reconnect window | done | [`dev` @ `6d92099`](https://github.com/kazusa931209-cmd/Voragon/commit/6d92099) | [dev-step-p2-005-session-registry-reconnect-window.md](dev-step-p2-005-session-registry-reconnect-window.md) |
+| P2-006 | `session.resume` reconnection | done | [`dev` @ `bc0fcb1`](https://github.com/kazusa931209-cmd/Voragon/commit/bc0fcb1) | [dev-step-p2-006-session-resume.md](dev-step-p2-006-session-resume.md) |
 | P2-007 | API error handling alignment | planned | — | [dev-step-p2-007-api-error-handling.md](dev-step-p2-007-api-error-handling.md) |
 | P2-008 | Prometheus `/metrics` | planned | — | [dev-step-p2-008-prometheus-metrics.md](dev-step-p2-008-prometheus-metrics.md) |
 | P2-009 | Structured JSON logging | planned | — | [dev-step-p2-009-structured-json-logging.md](dev-step-p2-009-structured-json-logging.md) |

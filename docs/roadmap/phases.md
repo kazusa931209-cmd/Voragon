@@ -76,7 +76,7 @@ Test Client → WebSocket → Backend → VAD → ASR → Transcript
 
 ## Phase 2: Realtime Production-Like Backend
 
-**Status:** In progress — [P2-007](dev-step-p2-007-api-error-handling.md) is next ([dev-steps index](dev-steps-index.md)).
+**Status:** In progress — [P2-005](dev-step-p2-005-session-registry-reconnect-window.md) and [P2-006](dev-step-p2-006-session-resume.md) are on `dev`; [P2-007](dev-step-p2-007-api-error-handling.md) is next ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Harden the backend for production patterns.
 

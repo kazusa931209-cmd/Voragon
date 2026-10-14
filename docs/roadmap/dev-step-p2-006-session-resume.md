@@ -5,7 +5,8 @@
 | **ID** | P2-006 |
 | **Phase** | 2 |
 | **Status** | done |
-| **PR** | — |
+| **Commit** | [`bc0fcb1`](https://github.com/kazusa931209-cmd/Voragon/commit/bc0fcb1) on `dev` |
+| **PR** | — (landed on `dev`; no separate PR) |
 | **Branch** | `dev-step/p2-006-session-resume` |
 
 ## Spec References
@@ -87,5 +88,5 @@ cd backend && .venv/bin/pytest -v
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** — (merged directly to `dev`)
+- **Merged:** `dev` — [`bc0fcb1`](https://github.com/kazusa931209-cmd/Voragon/commit/bc0fcb1) (2026-10-14)

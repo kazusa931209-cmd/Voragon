@@ -6,7 +6,8 @@
 | **ID**     | P2-005                                              |
 | **Phase**  | 2                                                   |
 | **Status** | done                                                |
-| **PR**     | —                                                   |
+| **Commit** | [`6d92099`](https://github.com/kazusa931209-cmd/Voragon/commit/6d92099) on `dev` |
+| **PR**     | — (landed on `dev`; no separate PR)                 |
 | **Branch** | `dev-step/p2-005-session-registry-reconnect-window` |
 
 
@@ -111,6 +112,6 @@ cd backend && .venv/bin/pytest -v
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** — (merged directly to `dev`)
+- **Merged:** `dev` — [`6d92099`](https://github.com/kazusa931209-cmd/Voragon/commit/6d92099) (2026-10-14)
 
