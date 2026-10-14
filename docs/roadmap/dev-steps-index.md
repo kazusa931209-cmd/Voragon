@@ -1,6 +1,6 @@
 # Dev-Steps Index
 
-Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step until the current PR is merged.
+Registry of all dev-steps. **One dev-step = one commit** (a PR may include multiple dev-step commits). Do not start the next step until the current dev-step is **done**.
 
 **Workflow:** [Dev-Step Template](dev-step-template.md) · Cursor rule: `.cursor/rules/dev-workflow.mdc`
 
@@ -10,7 +10,7 @@ Registry of all dev-steps. **One dev-step = one PR.** Do not start the next step
 |--------|---------|
 | `planned` | Defined in markdown; not started |
 | `in-progress` | Implementation underway; PR open or pending |
-| `done` | PR merged; completion recorded |
+| `done` | Dev-step commit landed; completion recorded (optional PR link) |
 
 ## Active Step
 

@@ -2,7 +2,7 @@
 
 Voragon is a local-first, realtime AI assistant platform. The initial product is realtime voice-to-text; the long-term goal is an extensible AI inference platform supporting speech recognition, transcription, contextual assistance, LLM inference, and additional model capabilities.
 
-**Status:** Phase 0 complete. Implementation proceeds via dev-steps (one PR each). See [Dev-Steps Index](roadmap/dev-steps-index.md).
+**Status:** Phase 0 complete. Implementation proceeds via dev-steps (one commit each). See [Dev-Steps Index](roadmap/dev-steps-index.md).
 
 ## How to Read This Documentation
 

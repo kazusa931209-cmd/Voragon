@@ -13,8 +13,9 @@ Copy this file to `docs/roadmap/dev-step-{phase}-{id}-{short-title}.md` and fill
 | **ID** | P?.-??? |
 | **Phase** | ? |
 | **Status** | planned |
-| **PR** | — |
-| **Branch** | `dev-step/p?-???-short-title` |
+| **Commit** | — |
+| **PR** | — (optional) |
+| **Branch** | `dev-step/p?-???-short-title` (optional convention) |
 
 ## Spec References
 
@@ -56,7 +57,7 @@ If spec changes during implementation, list files updated in the **Completion** 
 
 ## Completion
 
-_Fill in after implementation, before PR._
+_Fill in after implementation, when marking the dev-step done._
 
 ### Summary
 
@@ -76,7 +77,12 @@ _Fill in after implementation, before PR._
 
 - [ ] Pass — date, notes
 
-### PR
+### Commit
+
+- **Hash:** —
+- **Message:** —
+
+### PR (optional)
 
 - **URL:** —
 - **Merged:** —
