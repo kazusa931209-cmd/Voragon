@@ -98,13 +98,31 @@ async def take_detached(
     *,
     now: float | None = None,
 ) -> DetachedSessionRecord | None:
+    record, error_code = await claim_detached(session_id, now=now)
+    if error_code is not None:
+        return None
+    return record
+
+
+async def claim_detached(
+    session_id: str,
+    *,
+    now: float | None = None,
+) -> tuple[DetachedSessionRecord | None, str | None]:
+    """Claim a detached session for resume. Returns (record, error_code)."""
     monotonic_now = now if now is not None else time.monotonic()
     async with _lock:
+        record = _detached.get(session_id)
+        if record is None:
+            _purge_expired_locked(monotonic_now)
+            return None, "SESSION_NOT_FOUND"
+        if record.is_expired(monotonic_now):
+            del _detached[session_id]
+            _purge_expired_locked(monotonic_now)
+            return None, "SESSION_EXPIRED"
+        del _detached[session_id]
         _purge_expired_locked(monotonic_now)
-        record = _detached.pop(session_id, None)
-        if record is None or record.is_expired(monotonic_now):
-            return None
-        return record
+        return record, None
 
 
 async def purge_expired(*, now: float | None = None) -> int:

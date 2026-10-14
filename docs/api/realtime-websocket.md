@@ -4,7 +4,7 @@
 
 The Realtime WebSocket API is the primary communication channel between the Voragon desktop application and the Realtime Backend. It handles session management, audio streaming, and transcript delivery.
 
-**Status:** Partially implemented — Phase 1 covers connect, audio, and transcripts; Phase 2 heartbeat ([P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md)) is implemented; session end, reconnect, and ordering remain planned.
+**Status:** Partially implemented — Phase 1 covers connect, audio, and transcripts; Phase 2 adds heartbeat ([P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md)), session end ([P2-002](../roadmap/dev-step-p2-002-session-ended.md)), audio ordering ([P2-003](../roadmap/dev-step-p2-003-audio-seq-ordering.md)), buffer overflow ([P2-004](../roadmap/dev-step-p2-004-buffer-overflow.md)), detached session retention ([P2-005](../roadmap/dev-step-p2-005-session-registry-reconnect-window.md)), and `session.resume` ([P2-006](../roadmap/dev-step-p2-006-session-resume.md)). Full error-code alignment remains [P2-007](../roadmap/dev-step-p2-007-api-error-handling.md).
 
 ## Endpoint
 
@@ -168,6 +168,13 @@ Attempt to resume a previous session after reconnection.
   "payload": {}
 }
 ```
+
+| Rule | Requirement |
+|------|-------------|
+| When to send | After a new WebSocket connect and the interim `session.started`, before `audio.start` on the interim session |
+| `session_id` | The **previous** (pre-disconnect) session UUID — not the interim id from the latest `session.started` |
+| Success | Server sends a second `session.started` with the **restored** `session_id`; subsequent `ping` / `audio.*` use the restored id |
+| Failure | `error` with `SESSION_NOT_FOUND` or `SESSION_EXPIRED` (`recoverable: false`); client may continue on the interim session with `audio.start` |
 
 ### `ping`
 

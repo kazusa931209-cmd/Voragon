@@ -9,6 +9,7 @@ from app.main import app
 from app.websocket.messages import utc_timestamp
 from app.websocket.session import AudioConfig, Session
 from app.websocket.session_registry import (
+    claim_detached,
     clear_all,
     detach_session,
     peek_detached,
@@ -74,6 +75,41 @@ async def test_purge_expired_removes_stale_sessions() -> None:
     removed = await purge_expired(now=t0 + 5)
     assert removed == 1
     assert await peek_detached(str(session.session_id), now=t0 + 5) is None
+
+
+@pytest.mark.asyncio
+async def test_claim_detached_not_found() -> None:
+    record, code = await claim_detached("00000000-0000-0000-0000-000000000000", now=0.0)
+    assert record is None
+    assert code == "SESSION_NOT_FOUND"
+
+
+@pytest.mark.asyncio
+async def test_claim_detached_expired() -> None:
+    session = Session.create()
+    settings = get_settings()
+    session.start_audio(AudioConfig(), buffer_seconds=30, settings=settings)
+    t0 = 100.0
+    await detach_session(session, reconnect_window_s=10, now=t0)
+
+    record, code = await claim_detached(str(session.session_id), now=t0 + 10)
+    assert record is None
+    assert code == "SESSION_EXPIRED"
+
+
+@pytest.mark.asyncio
+async def test_claim_detached_success() -> None:
+    session = Session.create()
+    settings = get_settings()
+    session.start_audio(AudioConfig(), buffer_seconds=30, settings=settings)
+    t0 = 0.0
+    await detach_session(session, reconnect_window_s=30, now=t0)
+
+    record, code = await claim_detached(str(session.session_id), now=t0 + 1)
+    assert code is None
+    assert record is not None
+    assert record.session_id == str(session.session_id)
+    assert await peek_detached(str(session.session_id), now=t0 + 1) is None
 
 
 @pytest.mark.asyncio

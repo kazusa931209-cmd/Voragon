@@ -76,7 +76,7 @@ Test Client → WebSocket → Backend → VAD → ASR → Transcript
 
 ## Phase 2: Realtime Production-Like Backend
 
-**Status:** In progress — [P2-005](dev-step-p2-005-session-registry-reconnect-window.md) is active; [P2-006](dev-step-p2-006-session-resume.md) is next after merge ([dev-steps index](dev-steps-index.md)).
+**Status:** In progress — [P2-007](dev-step-p2-007-api-error-handling.md) is next ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Harden the backend for production patterns.
 
@@ -305,7 +305,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-**[P2-005: Session registry and reconnect window](dev-step-p2-005-session-registry-reconnect-window.md)** (open PR / merge) → then **[P2-006: `session.resume`](dev-step-p2-006-session-resume.md)**
+**[P2-007: API error handling alignment](dev-step-p2-007-api-error-handling.md)** (next) → then P2-008 metrics, P2-009 logging
 
 See [dev-steps-index.md](dev-steps-index.md) for the full Phase 2 breakdown (P2-001–P2-009).
 

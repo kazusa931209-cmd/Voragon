@@ -4,7 +4,9 @@ import json
 import logging
 import time
 from collections.abc import Awaitable, Callable
+from dataclasses import dataclass
 from typing import Any
+from uuid import UUID
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
@@ -25,7 +27,11 @@ from app.websocket.messages import (
     transcript_partial,
 )
 from app.websocket.session import AudioConfig, Session
-from app.websocket.session_registry import detach_session
+from app.websocket.session_registry import (
+    claim_detached,
+    detach_session,
+    restore_session,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -34,16 +40,26 @@ router = APIRouter()
 SUPPORTED_SAMPLE_FORMATS = {"s16le"}
 
 
+@dataclass
+class RealtimeConnection:
+    session: Session
+    session_id: str
+    resumed: bool = False
+
+
 @router.websocket("/v1/realtime")
 async def realtime_websocket(websocket: WebSocket) -> None:
     settings = get_settings()
     await websocket.accept()
 
-    session = Session.create()
-    session_id = str(session.session_id)
+    conn = RealtimeConnection(
+        session=Session.create(),
+        session_id="",
+    )
+    conn.session_id = str(conn.session.session_id)
 
     await websocket.send_json(
-        session_started(session_id, settings.reconnect_window_s)
+        session_started(conn.session_id, settings.reconnect_window_s)
     )
 
     activity = asyncio.Event()
@@ -67,11 +83,11 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             with contextlib.suppress(asyncio.CancelledError):
                 await watchdog
         try:
-            await websocket.send_json(session_ended(session_id, reason))
+            await websocket.send_json(session_ended(conn.session_id, reason))
         except Exception:
             logger.debug(
                 "session.ended not delivered session_id=%s reason=%s",
-                session_id,
+                conn.session_id,
                 reason,
             )
         with contextlib.suppress(Exception):
@@ -85,7 +101,7 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             except asyncio.TimeoutError:
                 logger.debug(
                     "heartbeat idle timeout session_id=%s timeout_s=%s",
-                    session_id,
+                    conn.session_id,
                     timeout,
                 )
                 await end_session("timeout")
@@ -93,7 +109,7 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             activity.clear()
 
     watchdog = asyncio.create_task(idle_watchdog())
-    registered = RegisteredConnection(session_id, end_session)
+    registered = RegisteredConnection(conn.session_id, end_session)
     await register(registered)
 
     reorder_flush_task: asyncio.Task[None] | None = None
@@ -107,18 +123,18 @@ async def realtime_websocket(websocket: WebSocket) -> None:
         reorder_flush_task = None
 
     async def deliver_sequenced(result: SequenceProcessResult) -> None:
-        await _emit_sequence_gaps(websocket, session_id, result.gaps)
+        await _emit_sequence_gaps(websocket, conn.session_id, result.gaps)
         await _deliver_sequenced_frames(
-            websocket, session, session_id, settings, result.ready
+            websocket, conn.session, conn.session_id, settings, result.ready
         )
 
     async def flush_reorder_buffer(*, force: bool = False) -> None:
-        result = session.flush_sequenced_frames(time.monotonic(), force=force)
+        result = conn.session.flush_sequenced_frames(time.monotonic(), force=force)
         await deliver_sequenced(result)
         if (
             not force
-            and session.audio_sequence is not None
-            and session.audio_sequence.waiting_for_reorder
+            and conn.session.audio_sequence is not None
+            and conn.session.audio_sequence.waiting_for_reorder
         ):
             await schedule_reorder_flush()
         else:
@@ -126,10 +142,10 @@ async def realtime_websocket(websocket: WebSocket) -> None:
 
     async def schedule_reorder_flush() -> None:
         nonlocal reorder_flush_task
-        if session.audio_sequence is None:
+        if conn.session.audio_sequence is None:
             await cancel_reorder_flush()
             return
-        deadline = session.audio_sequence.flush_deadline()
+        deadline = conn.session.audio_sequence.flush_deadline()
         if deadline is None:
             await cancel_reorder_flush()
             return
@@ -153,8 +169,7 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             if "text" in message:
                 await _handle_text_message(
                     websocket,
-                    session,
-                    session_id,
+                    conn,
                     message["text"],
                     settings,
                     end_session,
@@ -164,8 +179,7 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             elif "bytes" in message:
                 await _handle_binary_message(
                     websocket,
-                    session,
-                    session_id,
+                    conn,
                     message["bytes"],
                     settings,
                     deliver_sequenced,
@@ -174,7 +188,7 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             if session_closed:
                 break
     except WebSocketDisconnect:
-        logger.debug("WebSocket disconnected session_id=%s", session_id)
+        logger.debug("WebSocket disconnected session_id=%s", conn.session_id)
     finally:
         await cancel_reorder_flush()
         await unregister(registered)
@@ -184,12 +198,12 @@ async def realtime_websocket(websocket: WebSocket) -> None:
                 await watchdog
         if (
             not intentional_session_end
-            and session.audio_started
+            and conn.session.audio_started
         ):
-            await detach_session(session, settings.reconnect_window_s)
+            await detach_session(conn.session, settings.reconnect_window_s)
             logger.debug(
                 "session detached for reconnect window session_id=%s window_s=%s",
-                session_id,
+                conn.session_id,
                 settings.reconnect_window_s,
             )
         if not session_closed:
@@ -198,8 +212,7 @@ async def realtime_websocket(websocket: WebSocket) -> None:
 
 async def _handle_text_message(
     websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     text: str,
     settings: Settings,
     end_session: Callable[[str], Awaitable[None]],
@@ -211,7 +224,7 @@ async def _handle_text_message(
     except json.JSONDecodeError:
         await websocket.send_json(
             error_message(
-                session_id,
+                conn.session_id,
                 "INVALID_MESSAGE",
                 "Malformed message",
                 True,
@@ -221,13 +234,13 @@ async def _handle_text_message(
 
     message_type = data.get("type")
     if message_type == "audio.start":
-        await _handle_audio_start(websocket, session, session_id, data, settings)
+        await _handle_audio_start(websocket, conn.session, conn.session_id, data, settings)
         return
     if message_type == "audio.stop":
         await _handle_audio_stop(
             websocket,
-            session,
-            session_id,
+            conn.session,
+            conn.session_id,
             data,
             settings,
             end_session,
@@ -236,17 +249,113 @@ async def _handle_text_message(
         )
         return
     if message_type == "ping":
-        await _handle_ping(websocket, session_id, data)
+        await _handle_ping(websocket, conn.session_id, data)
+        return
+    if message_type == "session.resume":
+        await _handle_session_resume(websocket, conn, data, settings)
         return
 
     await websocket.send_json(
         error_message(
-            session_id,
+            conn.session_id,
             "UNKNOWN_MESSAGE_TYPE",
             f"Unrecognized message type: {message_type or '<missing>'}",
             True,
         )
     )
+
+
+async def _handle_session_resume(
+    websocket: WebSocket,
+    conn: RealtimeConnection,
+    data: dict[str, Any],
+    settings: Settings,
+) -> None:
+    envelope_error = _validate_session_resume_envelope(data)
+    if envelope_error is not None:
+        await websocket.send_json(
+            error_message(conn.session_id, "INVALID_MESSAGE", envelope_error, True)
+        )
+        return
+
+    if conn.resumed:
+        await websocket.send_json(
+            error_message(
+                conn.session_id,
+                "INVALID_MESSAGE",
+                "Session already restored on this connection",
+                True,
+            )
+        )
+        return
+
+    if conn.session.audio_started:
+        await websocket.send_json(
+            error_message(
+                conn.session_id,
+                "INVALID_MESSAGE",
+                "Cannot resume after audio.start on interim session",
+                True,
+            )
+        )
+        return
+
+    previous_session_id = data.get("session_id")
+    assert isinstance(previous_session_id, str)
+    try:
+        UUID(previous_session_id)
+    except ValueError:
+        await websocket.send_json(
+            error_message(
+                conn.session_id,
+                "INVALID_MESSAGE",
+                "session_id must be a valid UUID",
+                True,
+            )
+        )
+        return
+
+    record, error_code = await claim_detached(previous_session_id)
+    if error_code is not None:
+        message = (
+            "Session not found"
+            if error_code == "SESSION_NOT_FOUND"
+            else "Session reconnect window expired"
+        )
+        await websocket.send_json(
+            error_message(conn.session_id, error_code, message, False)
+        )
+        return
+
+    conn.session = restore_session(
+        record, settings, settings.audio_buffer_seconds
+    )
+    conn.session_id = str(conn.session.session_id)
+    conn.resumed = True
+
+    await websocket.send_json(
+        session_started(conn.session_id, settings.reconnect_window_s)
+    )
+    logger.debug(
+        "Session resumed session_id=%s previous_interim_discarded=true",
+        conn.session_id,
+    )
+
+
+def _validate_session_resume_envelope(data: dict[str, Any]) -> str | None:
+    if not isinstance(data.get("id"), str) or not data.get("id"):
+        return "Missing or invalid message id"
+    if not isinstance(data.get("timestamp"), str) or not data.get("timestamp"):
+        return "Missing or invalid timestamp"
+    payload = data.get("payload")
+    if payload is None:
+        return "Missing payload"
+    if not isinstance(payload, dict):
+        return "payload must be an object"
+    previous_id = data.get("session_id")
+    if not isinstance(previous_id, str) or not previous_id:
+        return "Missing or invalid session_id"
+    return None
 
 
 async def _handle_ping(
@@ -495,13 +604,14 @@ def _validate_audio_config(config: AudioConfig) -> str | None:
 
 async def _handle_binary_message(
     websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     data: bytes,
     settings: Settings,
     deliver_sequenced: Callable[[SequenceProcessResult], Awaitable[None]],
     schedule_reorder_flush: Callable[[], Awaitable[None]],
 ) -> None:
+    session = conn.session
+    session_id = conn.session_id
     if not session.audio_started or session.audio_config is None:
         await websocket.send_json(
             error_message(

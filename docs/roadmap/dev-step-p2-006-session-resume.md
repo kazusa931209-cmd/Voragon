@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P2-006 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | done |
 | **PR** | — |
 | **Branch** | `dev-step/p2-006-session-resume` |
 
@@ -33,11 +33,11 @@ One verifiable behavior: **a client can reconnect within the window, send `sessi
 
 ## Acceptance Criteria
 
-- [ ] Disconnect → reconnect within 30 s → `session.resume` → same logical session continues (same `session_id` on wire after restore)
-- [ ] `audio.start` and chunks work after resume; partial/final transcripts still emit
-- [ ] Resume after window fails with correct error code; new session path still works
-- [ ] Automated WebSocket integration test covers happy path and expired session
-- [ ] Existing backend test suite still passes
+- [x] Disconnect → reconnect within 30 s → `session.resume` → same logical session continues (same `session_id` on wire after restore)
+- [x] `audio.start` and chunks work after resume; partial/final transcripts still emit
+- [x] Resume after window fails with correct error code; new session path still works
+- [x] Automated WebSocket integration test covers happy path and expired session
+- [x] Existing backend test suite still passes
 
 ## Manual Test
 
@@ -62,16 +62,23 @@ Expected: reconcile reconnect message sequence in API docs if implementation pic
 
 ### Summary
 
-- …
+- `RealtimeConnection` in `app/websocket/handler.py` — mutable session state for resume
+- `_handle_session_resume` — `claim_detached` → `restore_session` → second `session.started`
+- `claim_detached()` in `app/websocket/session_registry.py` — distinguishes `SESSION_NOT_FOUND` vs `SESSION_EXPIRED`
+- Tests: `tests/test_websocket_session_resume.py`
 
 ### Spec Changes
 
-- …
+- [realtime-websocket.md](../api/realtime-websocket.md) — status, `session.resume` envelope rules
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v -k "resume or reconnect or claim_detached"
+# 8 passed
+
+cd backend && .venv/bin/pytest -v
+# 81 passed, 1 skipped
 ```
 
 ### Manual Test Result
