@@ -13,4 +13,4 @@ def test_health_returns_200_and_status() -> None:
     assert body["service"] == "voragon-realtime-backend"
     assert body["asr"]["ready"] is True
     assert body["asr"]["backend"] == "mock"
-    assert body["asr"]["model"] == "large-v3-turbo"
+    assert body["asr"]["model"] == "base"
