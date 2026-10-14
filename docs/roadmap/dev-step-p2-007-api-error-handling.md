@@ -4,7 +4,8 @@
 |-------|-------|
 | **ID** | P2-007 |
 | **Phase** | 2 |
-| **Status** | in-progress |
+| **Status** | done |
+| **Commit** | [`a976b18`](https://github.com/kazusa931209-cmd/Voragon/commit/a976b18) on `feat/steps-P2-007-008-009` |
 | **PR** | — |
 | **Branch** | `dev-step/p2-007-api-error-handling` |
 
