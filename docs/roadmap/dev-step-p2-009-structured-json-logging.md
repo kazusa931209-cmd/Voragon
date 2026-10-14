@@ -4,7 +4,8 @@
 |-------|-------|
 | **ID** | P2-009 |
 | **Phase** | 2 |
-| **Status** | in-progress |
+| **Status** | done |
+| **Commit** | [`29c905f`](https://github.com/kazusa931209-cmd/Voragon/commit/29c905f) on `feat/steps-P2-007-008-009` |
 | **PR** | — |
 | **Branch** | `dev-step/p2-009-structured-json-logging` |
 
