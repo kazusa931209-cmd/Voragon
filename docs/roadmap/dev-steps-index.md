@@ -16,7 +16,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 | ID | Title | Status | Doc |
 |----|-------|--------|-----|
-| **P2-009** | Structured JSON logging | planned | [dev-step-p2-009-structured-json-logging.md](dev-step-p2-009-structured-json-logging.md) |
+| **P2-009** | Structured JSON logging | in-progress | [dev-step-p2-009-structured-json-logging.md](dev-step-p2-009-structured-json-logging.md) |
 
 ---
 
@@ -48,7 +48,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 | P2-006 | `session.resume` reconnection | done | [`dev` @ `bc0fcb1`](https://github.com/kazusa931209-cmd/Voragon/commit/bc0fcb1) | [dev-step-p2-006-session-resume.md](dev-step-p2-006-session-resume.md) |
 | P2-007 | API error handling alignment | done | [`feat/steps-P2-007-008-009` @ `a976b18`](https://github.com/kazusa931209-cmd/Voragon/commit/a976b18) | [dev-step-p2-007-api-error-handling.md](dev-step-p2-007-api-error-handling.md) |
 | P2-008 | Prometheus `/metrics` | done | [`feat/steps-P2-007-008-009` @ `94d0880`](https://github.com/kazusa931209-cmd/Voragon/commit/94d0880) | [dev-step-p2-008-prometheus-metrics.md](dev-step-p2-008-prometheus-metrics.md) |
-| P2-009 | Structured JSON logging | planned | — | [dev-step-p2-009-structured-json-logging.md](dev-step-p2-009-structured-json-logging.md) |
+| P2-009 | Structured JSON logging | in-progress | — | [dev-step-p2-009-structured-json-logging.md](dev-step-p2-009-structured-json-logging.md) |
 
 **Phase 2 exit:** Reconnect within window; `/metrics` live; errors match API spec; tests pass. See [phases.md](phases.md).
 

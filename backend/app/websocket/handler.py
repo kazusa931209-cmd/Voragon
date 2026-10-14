@@ -12,6 +12,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.asr.base import ASREngine, ASRInferenceError, ASRModelUnavailableError
 from app.config import Settings, get_settings
+from app.observability.logging_config import log_fields
 from app.observability.metrics import (
     observe_asr_inference_duration,
     record_audio_frame,
@@ -68,6 +69,12 @@ async def realtime_websocket(websocket: WebSocket) -> None:
     await websocket.send_json(
         session_started(conn.session_id, settings.reconnect_window_s)
     )
+    log_fields(
+        logger,
+        logging.INFO,
+        "websocket.connected",
+        session_id=conn.session_id,
+    )
 
     activity = asyncio.Event()
     activity.set()
@@ -91,6 +98,13 @@ async def realtime_websocket(websocket: WebSocket) -> None:
                 await watchdog
         try:
             await websocket.send_json(session_ended(conn.session_id, reason))
+            log_fields(
+                logger,
+                logging.INFO,
+                "session.ended",
+                session_id=conn.session_id,
+                reason=reason,
+            )
         except Exception:
             logger.debug(
                 "session.ended not delivered session_id=%s reason=%s",
@@ -212,7 +226,12 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             if session_closed:
                 break
     except WebSocketDisconnect:
-        logger.debug("WebSocket disconnected session_id=%s", conn.session_id)
+        log_fields(
+            logger,
+            logging.INFO,
+            "websocket.disconnected",
+            session_id=conn.session_id,
+        )
     finally:
         await cancel_reorder_flush()
         await unregister(registered)
@@ -343,9 +362,11 @@ async def _handle_session_resume(
     await websocket.send_json(
         session_started(conn.session_id, settings.reconnect_window_s)
     )
-    logger.debug(
-        "Session resumed session_id=%s previous_interim_discarded=true",
-        conn.session_id,
+    log_fields(
+        logger,
+        logging.INFO,
+        "session.resumed",
+        session_id=conn.session_id,
     )
 
 

@@ -107,6 +107,7 @@ Copy [`backend/.env.example`](../../backend/.env.example) to `backend/.env` for 
 | `RECONNECT_WINDOW_S` | `30` | Advertised in `session.started` (resume in P2-006) |
 | `HEARTBEAT_IDLE_TIMEOUT_S` | `45` | Close idle WebSocket if no inbound messages (P2-001) |
 | `LOG_LEVEL` | `debug` | Log level for development |
+| `LOG_FORMAT` | `console` | `console` for readable logs; `json` for one JSON object per line (P2-009) |
 
 ## Model Download
 
@@ -120,6 +121,16 @@ On first run, the ASR backend downloads model weights:
 Model download is a one-time operation per machine.
 
 Use `ASR_BACKEND=mock` for fast local runs and automated tests without downloading Whisper weights.
+
+### Logging
+
+Default local development uses human-readable console logs. For structured JSON (production-style):
+
+```bash
+LOG_FORMAT=json python -m app.main
+```
+
+Each line includes at minimum `timestamp`, `level`, `service` (`realtime-service`), and `message`. WebSocket lifecycle and client error logs add `session_id`; error logs add `code`. Transcript text is not logged.
 
 ### Health Check
 

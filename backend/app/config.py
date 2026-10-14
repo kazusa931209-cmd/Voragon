@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,6 +11,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     log_level: str = "info"
+    log_format: Literal["console", "json"] = "console"
     reconnect_window_s: int = 30
     heartbeat_idle_timeout_s: int = 45
     audio_buffer_seconds: int = 30

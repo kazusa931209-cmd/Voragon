@@ -7,6 +7,7 @@ from typing import Any
 
 from fastapi import WebSocket
 
+from app.observability.logging_config import log_fields
 from app.websocket.messages import error_message
 from app.websocket.rate_limit import PerSecondRateLimiter
 
@@ -92,6 +93,14 @@ class WebSocketErrorEmitter:
         self._rate_limiter.record()
         await self.websocket.send_json(
             error_message(self._session_id, code, message, rec, details)
+        )
+        log_fields(
+            logger,
+            logging.WARNING,
+            "Client error emitted",
+            session_id=self._session_id,
+            code=code,
+            recoverable=rec,
         )
 
         if terminate:

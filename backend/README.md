@@ -38,6 +38,7 @@ See [`.env.example`](.env.example) for all settings. Common overrides:
 | `HOST` | `0.0.0.0` | Bind address |
 | `PORT` | `8000` | Bind port |
 | `LOG_LEVEL` | `info` | Logging level |
+| `LOG_FORMAT` | `console` | `console` or `json` (structured JSON to stdout) |
 | `ASR_BACKEND` | `faster_whisper` | ASR adapter (`faster_whisper`, `mock`) |
 | `ASR_MODEL` | `large-v3-turbo` | Whisper model id (e.g. `tiny`, `base`, `large-v3-turbo`) |
 
@@ -54,6 +55,14 @@ curl http://localhost:8000/metrics
 ```
 
 Prometheus text format; see [Observability](../docs/operations/observability.md).
+
+## Logging
+
+```bash
+LOG_FORMAT=json python -m app.main
+```
+
+See [Local Development](../docs/operations/local-development.md#logging).
 
 ## WebSocket
 
