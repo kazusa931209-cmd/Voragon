@@ -4,7 +4,8 @@
 |-------|-------|
 | **ID** | P2-009 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | done |
+| **Commit** | [`29c905f`](https://github.com/kazusa931209-cmd/Voragon/commit/29c905f) on `feat/steps-P2-007-008-009` |
 | **PR** | — |
 | **Branch** | `dev-step/p2-009-structured-json-logging` |
 
@@ -32,12 +33,12 @@ One verifiable behavior: **the backend emits structured JSON logs to stdout suit
 
 ## Acceptance Criteria
 
-- [ ] `LOG_FORMAT=json` produces one JSON object per log line on stdout
-- [ ] WebSocket connect/disconnect and error paths include structured fields
-- [ ] No transcript text logged at default log levels
-- [ ] `LOG_FORMAT=console` remains readable for local development
-- [ ] Tests for log formatter or snapshot of JSON structure (lightweight)
-- [ ] Existing backend test suite still passes
+- [x] `LOG_FORMAT=json` produces one JSON object per log line on stdout
+- [x] WebSocket connect/disconnect and error paths include structured fields
+- [x] No transcript text logged at default log levels
+- [x] `LOG_FORMAT=console` remains readable for local development
+- [x] Tests for log formatter or snapshot of JSON structure (lightweight)
+- [x] Existing backend test suite still passes
 
 ## Manual Test
 
@@ -61,16 +62,19 @@ Expected: `docs/operations/local-development.md` — logging env vars
 
 ### Summary
 
-- …
+- Added [`backend/app/observability/logging_config.py`](../../backend/app/observability/logging_config.py) with JSON and console formatters, `configure_logging()`, and `log_fields()` helper.
+- Settings: `LOG_FORMAT` (`console`|`json`, default `console`) in [`backend/app/config.py`](../../backend/app/config.py).
+- Lifecycle INFO logs and client error WARNING logs with `session_id` / `code` in [`handler.py`](../../backend/app/websocket/handler.py) and [`errors.py`](../../backend/app/websocket/errors.py).
 
 ### Spec Changes
 
-- …
+- [local-development.md](../operations/local-development.md) — `LOG_FORMAT` and logging section
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v -k "logging or log_format"   # 3 passed
+cd backend && .venv/bin/pytest -v                                # 93 passed, 1 skipped
 ```
 
 ### Manual Test Result

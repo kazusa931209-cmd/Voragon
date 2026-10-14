@@ -29,6 +29,11 @@ async def unregister(connection: RegisteredConnection) -> None:
             _connections.remove(connection)
 
 
+async def connection_count() -> int:
+    async with _lock:
+        return len(_connections)
+
+
 async def shutdown_all(reason: str = "server_shutdown") -> None:
     async with _lock:
         snapshot = list(_connections)

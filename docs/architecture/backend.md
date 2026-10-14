@@ -85,7 +85,10 @@ backend/
 **P2-004 implemented:** `buffer.overflow` + `BUFFER_OVERFLOW` notifications (`buffer_overflow.py`); processed frames released from the ring buffer after VAD.
 **P2-005 implemented:** in-memory `session_registry.py` — detached sessions retained for `RECONNECT_WINDOW_S` after abrupt disconnect.
 **P2-006 implemented:** `session.resume` claims detached state via `claim_detached()` / `restore_session()` and re-emits `session.started` with the restored session id.
-Remaining modules are planned for later dev-steps.
+**P2-007 implemented:** centralized WebSocket error emitter, rate limiting, fatal `session.ended` — see [Error Handling](../api/error-handling.md).
+**P2-008 implemented:** `app/observability/metrics.py` and `GET /metrics` — Prometheus gauges/counters for sessions, WebSocket connections, audio, transcripts, and ASR latency.
+**P2-009 implemented:** `app/observability/logging_config.py` — `LOG_FORMAT=console|json`, structured lifecycle and error logs on the WebSocket path.
+OpenTelemetry tracing remains planned for later phases.
 
 ## ASR Abstraction
 

@@ -4,7 +4,8 @@
 |-------|-------|
 | **ID** | P2-008 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | done |
+| **Commit** | [`94d0880`](https://github.com/kazusa931209-cmd/Voragon/commit/94d0880) on `feat/steps-P2-007-008-009` |
 | **PR** | — |
 | **Branch** | `dev-step/p2-008-prometheus-metrics` |
 
@@ -38,11 +39,11 @@ One verifiable behavior: **the realtime backend exposes Prometheus metrics at `G
 
 ## Acceptance Criteria
 
-- [ ] `curl http://localhost:8000/metrics` returns Prometheus text format
-- [ ] Connecting a WebSocket increments connection gauge; disconnect decrements
-- [ ] Audio frames and transcripts increment counters in integration test
-- [ ] `/health` behavior unchanged
-- [ ] Automated tests for metrics endpoint presence and at least one counter movement
+- [x] `curl http://localhost:8000/metrics` returns Prometheus text format
+- [x] Connecting a WebSocket increments connection gauge; disconnect decrements
+- [x] Audio frames and transcripts increment counters in integration test
+- [x] `/health` behavior unchanged
+- [x] Automated tests for metrics endpoint presence and at least one counter movement
 
 ## Manual Test
 
@@ -66,16 +67,20 @@ Expected: `docs/operations/local-development.md` — metrics URL
 
 ### Summary
 
-- …
+- Added `prometheus-client` and [`backend/app/observability/metrics.py`](../../backend/app/observability/metrics.py) with Phase 2 gauges/counters/histogram.
+- `GET /metrics` on the FastAPI app refreshes `voragon_ws_connections` and `voragon_sessions_active` at scrape time; pipeline counters updated in the WebSocket handler.
+- Tests in [`backend/tests/test_metrics.py`](../../backend/tests/test_metrics.py).
 
 ### Spec Changes
 
-- …
+- [local-development.md](../operations/local-development.md) — metrics scrape URL
+- [observability.md](../operations/observability.md) — Phase 2 metrics status
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v -k "metrics"   # 3 passed
+cd backend && .venv/bin/pytest -v                # 90 passed, 1 skipped
 ```
 
 ### Manual Test Result

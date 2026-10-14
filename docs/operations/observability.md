@@ -4,7 +4,7 @@
 
 Voragon's observability strategy covers metrics, distributed tracing, structured logging, and dashboards. Observability is designed in from Phase 2 (basic metrics) and expanded through production deployment.
 
-**Status:** Planned, not implemented.
+**Status:** Phase 2 backend Prometheus metrics ([P2-008](../roadmap/dev-step-p2-008-prometheus-metrics.md)) and structured JSON logging ([P2-009](../roadmap/dev-step-p2-009-structured-json-logging.md)) are implemented; Grafana dashboards, OpenTelemetry tracing (`trace_id`), and GPU metrics remain future phases.
 
 ## Architecture
 

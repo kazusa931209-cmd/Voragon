@@ -4,7 +4,7 @@
 
 The Realtime WebSocket API is the primary communication channel between the Voragon desktop application and the Realtime Backend. It handles session management, audio streaming, and transcript delivery.
 
-**Status:** Partially implemented — Phase 1 covers connect, audio, and transcripts; Phase 2 adds heartbeat ([P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md)), session end ([P2-002](../roadmap/dev-step-p2-002-session-ended.md)), audio ordering ([P2-003](../roadmap/dev-step-p2-003-audio-seq-ordering.md)), buffer overflow ([P2-004](../roadmap/dev-step-p2-004-buffer-overflow.md)), detached session retention ([P2-005](../roadmap/dev-step-p2-005-session-registry-reconnect-window.md)), and `session.resume` ([P2-006](../roadmap/dev-step-p2-006-session-resume.md)). Full error-code alignment remains [P2-007](../roadmap/dev-step-p2-007-api-error-handling.md).
+**Status:** Partially implemented — Phase 1 covers connect, audio, and transcripts; Phase 2 adds heartbeat ([P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md)), session end ([P2-002](../roadmap/dev-step-p2-002-session-ended.md)), audio ordering ([P2-003](../roadmap/dev-step-p2-003-audio-seq-ordering.md)), buffer overflow ([P2-004](../roadmap/dev-step-p2-004-buffer-overflow.md)), detached session retention ([P2-005](../roadmap/dev-step-p2-005-session-registry-reconnect-window.md)), `session.resume` ([P2-006](../roadmap/dev-step-p2-006-session-resume.md)), and server error alignment ([P2-007](../roadmap/dev-step-p2-007-api-error-handling.md)). Auth and production connection rejection remain future phase.
 
 ## Endpoint
 
