@@ -1,0 +1,157 @@
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #e8e8e8;
+  background: #1a1a1f;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #666;
+}
+
+.connection-status[data-state="ready"] .status-dot {
+  background: #3dd68c;
+}
+
+.connection-status[data-state="connecting"] .status-dot,
+.connection-status[data-state="reconnecting"] .status-dot {
+  background: #f5a623;
+}
+
+.connection-status[data-state="error"] .status-dot {
+  background: #ff5c5c;
+}
+
+.session-id {
+  opacity: 0.6;
+  font-family: ui-monospace, monospace;
+}
+
+.notice {
+  background: #2a2430;
+  border-left: 3px solid #f5a623;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+button {
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2a2a32;
+  color: inherit;
+  cursor: pointer;
+}
+
+button.primary {
+  background: #3d5afe;
+  border-color: #3d5afe;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.transcript-panel {
+  background: #121218;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 200px;
+  margin-bottom: 1rem;
+}
+
+.transcript-panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.final-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.5rem;
+}
+
+.final-lines li {
+  margin-bottom: 0.35rem;
+}
+
+.partial-line {
+  margin: 0;
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.transcript-placeholder {
+  margin: 0;
+  opacity: 0.5;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settings label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.settings input,
+.settings select {
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #121218;
+  color: inherit;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.75rem;
+  opacity: 0.65;
+}
+
+.frame-debug {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}

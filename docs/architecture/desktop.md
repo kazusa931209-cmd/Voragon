@@ -142,7 +142,7 @@ desktop/
 └── Cargo.toml
 ```
 
-This structure is planned, not implemented.
+This structure is implemented under `desktop/` (Phase 3).
 
 ## Connection to Backend
 
