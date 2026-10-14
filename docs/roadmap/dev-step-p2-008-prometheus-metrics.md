@@ -4,7 +4,8 @@
 |-------|-------|
 | **ID** | P2-008 |
 | **Phase** | 2 |
-| **Status** | in-progress |
+| **Status** | done |
+| **Commit** | [`94d0880`](https://github.com/kazusa931209-cmd/Voragon/commit/94d0880) on `feat/steps-P2-007-008-009` |
 | **PR** | — |
 | **Branch** | `dev-step/p2-008-prometheus-metrics` |
 
