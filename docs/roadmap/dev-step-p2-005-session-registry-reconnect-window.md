@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P2-005 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **PR** | — |
 | **Branch** | `dev-step/p2-005-session-registry-reconnect-window` |
 
@@ -34,11 +34,11 @@ One verifiable behavior: **after disconnect, the server retains resumable sessio
 
 ## Acceptance Criteria
 
-- [ ] Detached session remains addressable by `session_id` for ≤ `reconnect_window_s`
-- [ ] After window elapses, session record is removed
-- [ ] Active connection count and registry do not leak sessions in tests
-- [ ] Unit tests for registry TTL; integration test with mocked clock or short window
-- [ ] Existing backend test suite still passes
+- [x] Detached session remains addressable by `session_id` for ≤ `reconnect_window_s`
+- [x] After window elapses, session record is removed
+- [x] Active connection count and registry do not leak sessions in tests
+- [x] Unit tests for registry TTL; integration test with mocked clock or short window
+- [x] Existing backend test suite still passes
 
 ## Manual Test
 
@@ -62,16 +62,23 @@ Expected: note in `docs/architecture/backend.md` for in-memory session retention
 
 ### Summary
 
-- …
+- `app/websocket/session_registry.py` — `DetachedSessionRecord`, `detach_session`, `peek_detached`, `take_detached`, `purge_expired`, `restore_session`
+- WebSocket `finally`: detach when disconnect was not intentional (`audio.stop`, idle `timeout`, `server_shutdown` skip retention)
+- App shutdown clears detached registry via `clear_all()`
+- Tests: `tests/test_session_registry.py`
 
 ### Spec Changes
 
-- …
+- `docs/architecture/backend.md`
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v -k "registry or detached"
+# 6 passed
+
+cd backend && .venv/bin/pytest -v
+# 73 passed, 1 skipped (full suite; local .env ASR_MODEL may affect test_health)
 ```
 
 ### Manual Test Result

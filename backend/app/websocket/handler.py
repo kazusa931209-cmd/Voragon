@@ -25,6 +25,7 @@ from app.websocket.messages import (
     transcript_partial,
 )
 from app.websocket.session import AudioConfig, Session
+from app.websocket.session_registry import detach_session
 
 logger = logging.getLogger(__name__)
 
@@ -48,11 +49,18 @@ async def realtime_websocket(websocket: WebSocket) -> None:
     activity = asyncio.Event()
     activity.set()
     session_closed = False
+    intentional_session_end = False
+
+    def mark_intentional_session_end() -> None:
+        nonlocal intentional_session_end
+        intentional_session_end = True
 
     async def end_session(reason: str) -> None:
-        nonlocal session_closed
+        nonlocal session_closed, intentional_session_end
         if session_closed:
             return
+        if reason in ("timeout", "server_shutdown", "error"):
+            intentional_session_end = True
         session_closed = True
         if not watchdog.done():
             watchdog.cancel()
@@ -151,6 +159,7 @@ async def realtime_websocket(websocket: WebSocket) -> None:
                     settings,
                     end_session,
                     flush_reorder_buffer,
+                    mark_intentional_session_end,
                 )
             elif "bytes" in message:
                 await _handle_binary_message(
@@ -173,6 +182,16 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             watchdog.cancel()
             with contextlib.suppress(asyncio.CancelledError):
                 await watchdog
+        if (
+            not intentional_session_end
+            and session.audio_started
+        ):
+            await detach_session(session, settings.reconnect_window_s)
+            logger.debug(
+                "session detached for reconnect window session_id=%s window_s=%s",
+                session_id,
+                settings.reconnect_window_s,
+            )
         if not session_closed:
             await end_session("client_stop")
 
@@ -185,6 +204,7 @@ async def _handle_text_message(
     settings: Settings,
     end_session: Callable[[str], Awaitable[None]],
     flush_reorder_buffer: Callable[..., Awaitable[None]],
+    mark_intentional_session_end: Callable[[], None],
 ) -> None:
     try:
         data = json.loads(text)
@@ -212,6 +232,7 @@ async def _handle_text_message(
             settings,
             end_session,
             flush_reorder_buffer,
+            mark_intentional_session_end,
         )
         return
     if message_type == "ping":
@@ -332,6 +353,7 @@ async def _handle_audio_stop(
     settings: Settings,
     end_session: Callable[[str], Awaitable[None]],
     flush_reorder_buffer: Callable[..., Awaitable[None]],
+    mark_intentional_session_end: Callable[[], None],
 ) -> None:
     if data.get("session_id") != session_id:
         await websocket.send_json(
@@ -359,6 +381,7 @@ async def _handle_audio_stop(
     await flush_reorder_buffer(force=True)
     await _flush_open_segments(websocket, session, session_id, settings, asr_engine)
     logger.debug("Audio stopped session_id=%s", session_id)
+    mark_intentional_session_end()
     await end_session("client_stop")
 
 

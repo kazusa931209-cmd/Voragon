@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P2-004 |
 | **Phase** | 2 |
-| **Status** | in-progress |
-| **PR** | — |
+| **Status** | done |
+| **PR** | [#12](https://github.com/kazusa931209-cmd/Voragon/pull/12) |
 | **Branch** | `dev-step/p2-004-buffer-overflow` |
 
 ## Spec References
@@ -84,5 +84,5 @@ cd backend && .venv/bin/pytest -v
 
 ### PR
 
-- **URL:** —
-- **Merged:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/12
+- **Merged:** 2026-10-10
