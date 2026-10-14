@@ -76,7 +76,7 @@ Test Client → WebSocket → Backend → VAD → ASR → Transcript
 
 ## Phase 2: Realtime Production-Like Backend
 
-**Status:** In progress — [P2-009](dev-step-p2-009-structured-json-logging.md) implementation ready for commit; Phase 2 dev-steps complete after P2-009 lands ([dev-steps index](dev-steps-index.md)).
+**Status:** Complete — [P2-001](dev-step-p2-001-ping-pong-heartbeat.md) through [P2-009](dev-step-p2-009-structured-json-logging.md) ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Harden the backend for production patterns.
 
@@ -101,6 +101,8 @@ Test Client → WebSocket → Backend → VAD → ASR → Transcript
 ---
 
 ## Phase 3: Tauri Desktop Application
+
+**Status:** Implementation complete in `desktop/` — [P3-001](dev-step-p3-001-tauri-scaffold.md) through [P3-009](dev-step-p3-009-tray-shortcuts.md); manual exit verification and per-step commits pending ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Build the cross-platform desktop client.
 
@@ -305,9 +307,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-**Phase 2 exit review** — then Phase 3 desktop dev-steps ([phases.md](phases.md#phase-3-tauri-desktop-application))
-
-See [dev-steps-index.md](dev-steps-index.md) for the full Phase 2 breakdown (P2-001–P2-009).
+**Phase 3 desktop dev-steps** — [P3-001](dev-step-p3-001-tauri-scaffold.md) through P3-009 ([dev-steps index](dev-steps-index.md)).
 
 ## Related Documents
 

@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-Phase 2 dev-steps **complete** (P2-001–P2-009). Next: define Phase 3 dev-steps — see [phases.md](phases.md).
+Phase 3 implementation **landed in workspace** (P3-001–P3-009); split into per-step commits when landing on `dev`. Next: Phase 4 dev-step definitions — see [phases.md](phases.md).
 
 ---
 
@@ -50,10 +50,28 @@ Phase 2 dev-steps **complete** (P2-001–P2-009). Next: define Phase 3 dev-steps
 
 **Phase 2 exit:** Reconnect within window; `/metrics` live; errors match API spec; tests pass. See [phases.md](phases.md).
 
-**Suggested order:** P2-001 → P2-002 → P2-003 → P2-004 → P2-005 → P2-006 → P2-007 → P2-008 → P2-009 (P2-007 may be partially folded into earlier steps; finish alignment in P2-007).
+---
+
+## Phase 3: Tauri Desktop Application
+
+| ID | Title | Status | PR | Doc |
+|----|-------|--------|-----|-----|
+| P3-001 | Tauri 2 + React + TypeScript scaffold | done | — | [dev-step-p3-001-tauri-scaffold.md](dev-step-p3-001-tauri-scaffold.md) |
+| P3-002 | WebSocket client (connect + control messages) | done | — | [dev-step-p3-002-websocket-client.md](dev-step-p3-002-websocket-client.md) |
+| P3-003 | Transcript UI and client state | done | — | [dev-step-p3-003-transcript-ui.md](dev-step-p3-003-transcript-ui.md) |
+| P3-004 | Rust audio capture + IPC | done | — | [dev-step-p3-004-rust-audio-capture.md](dev-step-p3-004-rust-audio-capture.md) |
+| P3-005 | End-to-end mic → backend → transcript UI | done | — | [dev-step-p3-005-e2e-streaming.md](dev-step-p3-005-e2e-streaming.md) |
+| P3-006 | Settings and connection chrome | done | — | [dev-step-p3-006-settings.md](dev-step-p3-006-settings.md) |
+| P3-007 | Client heartbeat and session lifecycle | done | — | [dev-step-p3-007-heartbeat.md](dev-step-p3-007-heartbeat.md) |
+| P3-008 | `session.resume` reconnection | done | — | [dev-step-p3-008-session-resume.md](dev-step-p3-008-session-resume.md) |
+| P3-009 | System tray + global shortcuts | done | — | [dev-step-p3-009-tray-shortcuts.md](dev-step-p3-009-tray-shortcuts.md) |
+
+**Phase 3 exit:** Desktop captures audio and displays realtime transcripts; reconnection per API; tray and shortcuts. Manual macOS/Windows verification pending per-step commits. See [phases.md](phases.md).
+
+**Suggested order:** P3-001 → P3-002 → P3-003 → P3-004 → P3-005 → P3-006 → P3-007 → P3-008 → P3-009.
 
 ---
 
-## Phase 3+
+## Phase 4+
 
-Dev-steps for Phase 3 (desktop) and beyond will be added when Phase 2 is complete. See [phases.md](phases.md).
+Dev-steps for Phase 4 (Docker Compose) and beyond — see [phases.md](phases.md).

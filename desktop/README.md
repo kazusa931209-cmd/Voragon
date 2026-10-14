@@ -1,0 +1,31 @@
+# Voragon Desktop
+
+Tauri 2 + React + TypeScript client for the Voragon realtime backend.
+
+## Prerequisites
+
+- [Tauri prerequisites](https://tauri.app/start/prerequisites/) (Rust, platform tooling)
+- Node.js and pnpm
+
+## Development
+
+```bash
+# Terminal 1 — backend
+cd ../backend && source .venv/bin/activate && python -m app.main
+
+# Terminal 2 — desktop
+cd desktop
+pnpm install
+pnpm tauri dev
+```
+
+Connect in the app, then **Start transcription**. Global shortcut: **⌘⇧T** (macOS) / **Ctrl+Shift+T** (Windows).
+
+Default backend URL: `ws://localhost:8000/v1/realtime`
+
+## Tests
+
+```bash
+pnpm test
+cd src-tauri && cargo test
+```
