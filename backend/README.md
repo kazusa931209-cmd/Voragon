@@ -47,6 +47,14 @@ See [`.env.example`](.env.example) for all settings. Common overrides:
 curl http://localhost:8000/health
 ```
 
+## Metrics
+
+```bash
+curl http://localhost:8000/metrics
+```
+
+Prometheus text format; see [Observability](../docs/operations/observability.md).
+
 ## WebSocket
 
 Connect to `ws://localhost:8000/v1/realtime`. The server sends `session.started` immediately after the connection is accepted.

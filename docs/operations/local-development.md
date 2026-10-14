@@ -74,6 +74,16 @@ python -m app.main
 # Backend available at http://localhost:8000
 ```
 
+### Metrics (Prometheus)
+
+While the backend is running, scrape Prometheus text exposition:
+
+```bash
+curl -s http://localhost:8000/metrics | head
+```
+
+See [Observability](observability.md) for metric names and Phase 2 scope.
+
 ### Desktop
 
 ```bash

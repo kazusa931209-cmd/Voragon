@@ -12,6 +12,12 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.asr.base import ASREngine, ASRInferenceError, ASRModelUnavailableError
 from app.config import Settings, get_settings
+from app.observability.metrics import (
+    observe_asr_inference_duration,
+    record_audio_frame,
+    record_transcript_final,
+    record_transcript_partial,
+)
 from app.pipeline.audio_buffer import BufferedAudioFrame
 from app.pipeline.audio_sequence import SequenceGap, SequenceProcessResult
 from app.pipeline.vad import SegmentClosed, SegmentOpened, VadError
@@ -633,6 +639,7 @@ async def _deliver_audio_frame(
     session_id = conn.session_id
     errors = _connection_errors(conn)
     dropped = session.append_audio_frame(frame)
+    record_audio_frame(dropped=dropped)
     if dropped and session.buffer_overflow_notifier is not None:
         await emit_buffer_overflow_notifications(
             websocket,
@@ -753,6 +760,7 @@ async def _emit_transcript_partial(
     segment_id = session.segment_asr.segment_id
     language = session.audio_config.language
 
+    asr_started = time.perf_counter()
     try:
         result = await asr_engine.transcribe_partial(pcm_data, segment_id, language)
     except ASRModelUnavailableError as exc:
@@ -779,6 +787,11 @@ async def _emit_transcript_partial(
         )
         session.clear_segment_asr()
         return
+    finally:
+        observe_asr_inference_duration(
+            time.perf_counter() - asr_started,
+            kind="partial",
+        )
 
     session.mark_partial_emitted()
     if not result.text:
@@ -795,6 +808,7 @@ async def _emit_transcript_partial(
             result.confidence,
         )
     )
+    record_transcript_partial()
 
 
 async def _emit_transcript_final(
@@ -815,6 +829,7 @@ async def _emit_transcript_final(
     end_ms = session.session_elapsed_ms
     language = session.audio_config.language
 
+    asr_started = time.perf_counter()
     try:
         result = await asr_engine.transcribe_final(pcm_data, segment_id, language)
     except ASRModelUnavailableError as exc:
@@ -841,6 +856,11 @@ async def _emit_transcript_final(
         )
         session.clear_segment_asr()
         return
+    finally:
+        observe_asr_inference_duration(
+            time.perf_counter() - asr_started,
+            kind="final",
+        )
 
     if not result.text:
         session.clear_segment_asr()
@@ -861,3 +881,4 @@ async def _emit_transcript_final(
             result.confidence,
         )
     )
+    record_transcript_final()

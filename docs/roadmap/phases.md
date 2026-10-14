@@ -76,7 +76,7 @@ Test Client → WebSocket → Backend → VAD → ASR → Transcript
 
 ## Phase 2: Realtime Production-Like Backend
 
-**Status:** In progress — [P2-007](dev-step-p2-007-api-error-handling.md) implementation ready for commit; [P2-008](dev-step-p2-008-prometheus-metrics.md) is next ([dev-steps index](dev-steps-index.md)).
+**Status:** In progress — [P2-008](dev-step-p2-008-prometheus-metrics.md) implemented pending commit; [P2-009](dev-step-p2-009-structured-json-logging.md) is next ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Harden the backend for production patterns.
 
@@ -305,7 +305,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-**[P2-008: Prometheus metrics](dev-step-p2-008-prometheus-metrics.md)** (next) → then P2-009 logging
+**[P2-009: Structured JSON logging](dev-step-p2-009-structured-json-logging.md)** (next)
 
 See [dev-steps-index.md](dev-steps-index.md) for the full Phase 2 breakdown (P2-001–P2-009).
 
