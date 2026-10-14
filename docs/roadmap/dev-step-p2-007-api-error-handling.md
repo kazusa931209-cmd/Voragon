@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P2-007 |
 | **Phase** | 2 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **PR** | — |
 | **Branch** | `dev-step/p2-007-api-error-handling` |
 
@@ -34,11 +34,11 @@ One verifiable behavior: **server-emitted errors match the API spec (codes, `rec
 
 ## Acceptance Criteria
 
-- [ ] All documented server paths in this step use consistent `error` payload shape
-- [ ] `INVALID_MESSAGE` and `UNKNOWN_MESSAGE_TYPE` covered by tests
-- [ ] Unrecoverable error path emits `session.ended` after `error`
-- [ ] Error rate limiting tested or unit-tested in isolation
-- [ ] Existing backend test suite still passes (update expectations where codes change intentionally)
+- [x] All documented server paths in this step use consistent `error` payload shape
+- [x] `INVALID_MESSAGE` and `UNKNOWN_MESSAGE_TYPE` covered by tests
+- [x] Unrecoverable error path emits `session.ended` after `error`
+- [x] Error rate limiting tested or unit-tested in isolation
+- [x] Existing backend test suite still passes (update expectations where codes change intentionally)
 
 ## Manual Test
 
@@ -63,16 +63,19 @@ Expected: none unless code inventory reveals spec gaps (document in Completion)
 
 ### Summary
 
-- …
+- Added `WebSocketErrorEmitter` ([`backend/app/websocket/errors.py`](../../backend/app/websocket/errors.py)) with spec `recoverable` defaults, resume errors that do not terminate the connection, fatal → `session.ended` `reason: "error"`, and 10/s rate limiting via `error_max_per_second`.
+- Shared `PerSecondRateLimiter` in [`backend/app/websocket/rate_limit.py`](../../backend/app/websocket/rate_limit.py); buffer overflow notifier reuses it; `BUFFER_OVERFLOW` errors go through the emitter.
+- Handler routes all server errors through the emitter; inbound JSON validates object root and `type`; unexpected handler exceptions → `INTERNAL_ERROR`; `ASRModelUnavailableError` → `ASR_MODEL_UNAVAILABLE` (fatal).
 
 ### Spec Changes
 
-- …
+- None — behavior matches existing [error-handling.md](../api/error-handling.md).
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && .venv/bin/pytest -v -k "error"   # 21 passed
+cd backend && .venv/bin/pytest -v                # 87 passed, 1 skipped
 ```
 
 ### Manual Test Result

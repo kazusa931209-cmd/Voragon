@@ -4,7 +4,7 @@
 
 This document defines error codes, error message format, client recovery behavior, and reconnection protocol for the Voragon Realtime WebSocket API.
 
-**Status:** Partially implemented — error envelope and selected codes in Phase 1; full alignment in [P2-007](../roadmap/dev-step-p2-007-api-error-handling.md). Heartbeat idle close in [P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md) / `session.ended` in [P2-002](../roadmap/dev-step-p2-002-session-ended.md).
+**Status:** Implemented for Phase 2 backend — centralized emitter, rate limit, and fatal `session.ended` in [P2-007](../roadmap/dev-step-p2-007-api-error-handling.md). `AUTH_*` and connection rejection remain future phase. Heartbeat idle close in [P2-001](../roadmap/dev-step-p2-001-ping-pong-heartbeat.md) / `session.ended` in [P2-002](../roadmap/dev-step-p2-002-session-ended.md).
 
 ## Error Message Format
 

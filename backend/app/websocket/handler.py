@@ -10,7 +10,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from app.asr.base import ASREngine, ASRInferenceError
+from app.asr.base import ASREngine, ASRInferenceError, ASRModelUnavailableError
 from app.config import Settings, get_settings
 from app.pipeline.audio_buffer import BufferedAudioFrame
 from app.pipeline.audio_sequence import SequenceGap, SequenceProcessResult
@@ -18,8 +18,8 @@ from app.pipeline.vad import SegmentClosed, SegmentOpened, VadError
 from app.websocket.audio_frame import AudioFrameError, parse_audio_frame
 from app.websocket.connection_registry import RegisteredConnection, register, unregister
 from app.websocket.buffer_overflow import emit_buffer_overflow_notifications
+from app.websocket.errors import WebSocketErrorEmitter
 from app.websocket.messages import (
-    error_message,
     pong,
     session_ended,
     session_started,
@@ -45,6 +45,7 @@ class RealtimeConnection:
     session: Session
     session_id: str
     resumed: bool = False
+    errors: WebSocketErrorEmitter | None = None
 
 
 @router.websocket("/v1/realtime")
@@ -109,6 +110,13 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             activity.clear()
 
     watchdog = asyncio.create_task(idle_watchdog())
+    conn.errors = WebSocketErrorEmitter(
+        websocket,
+        conn.session_id,
+        end_session,
+        max_errors_per_second=settings.error_max_per_second,
+    )
+    errors = conn.errors
     registered = RegisteredConnection(conn.session_id, end_session)
     await register(registered)
 
@@ -123,9 +131,9 @@ async def realtime_websocket(websocket: WebSocket) -> None:
         reorder_flush_task = None
 
     async def deliver_sequenced(result: SequenceProcessResult) -> None:
-        await _emit_sequence_gaps(websocket, conn.session_id, result.gaps)
+        await _emit_sequence_gaps(errors, result.gaps)
         await _deliver_sequenced_frames(
-            websocket, conn.session, conn.session_id, settings, result.ready
+            websocket, conn, settings, result.ready
         )
 
     async def flush_reorder_buffer(*, force: bool = False) -> None:
@@ -166,24 +174,34 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             if message.get("type") == "websocket.disconnect":
                 break
 
-            if "text" in message:
-                await _handle_text_message(
-                    websocket,
-                    conn,
-                    message["text"],
-                    settings,
-                    end_session,
-                    flush_reorder_buffer,
-                    mark_intentional_session_end,
+            try:
+                if "text" in message:
+                    await _handle_text_message(
+                        conn,
+                        message["text"],
+                        settings,
+                        end_session,
+                        flush_reorder_buffer,
+                        mark_intentional_session_end,
+                    )
+                elif "bytes" in message:
+                    await _handle_binary_message(
+                        websocket,
+                        conn,
+                        message["bytes"],
+                        settings,
+                        deliver_sequenced,
+                        schedule_reorder_flush,
+                    )
+            except Exception:
+                logger.exception(
+                    "Unexpected error handling message session_id=%s",
+                    conn.session_id,
                 )
-            elif "bytes" in message:
-                await _handle_binary_message(
-                    websocket,
-                    conn,
-                    message["bytes"],
-                    settings,
-                    deliver_sequenced,
-                    schedule_reorder_flush,
+                await errors.emit(
+                    "INTERNAL_ERROR",
+                    "Unexpected server error",
+                    recoverable=False,
                 )
             if session_closed:
                 break
@@ -210,8 +228,12 @@ async def realtime_websocket(websocket: WebSocket) -> None:
             await end_session("client_stop")
 
 
+def _connection_errors(conn: RealtimeConnection) -> WebSocketErrorEmitter:
+    assert conn.errors is not None
+    return conn.errors
+
+
 async def _handle_text_message(
-    websocket: WebSocket,
     conn: RealtimeConnection,
     text: str,
     settings: Settings,
@@ -219,28 +241,28 @@ async def _handle_text_message(
     flush_reorder_buffer: Callable[..., Awaitable[None]],
     mark_intentional_session_end: Callable[[], None],
 ) -> None:
+    errors = _connection_errors(conn)
     try:
         data = json.loads(text)
     except json.JSONDecodeError:
-        await websocket.send_json(
-            error_message(
-                conn.session_id,
-                "INVALID_MESSAGE",
-                "Malformed message",
-                True,
-            )
-        )
+        await errors.emit("INVALID_MESSAGE", "Malformed message")
+        return
+
+    if not isinstance(data, dict):
+        await errors.emit("INVALID_MESSAGE", "Message must be a JSON object")
         return
 
     message_type = data.get("type")
+    if not isinstance(message_type, str) or not message_type:
+        await errors.emit("INVALID_MESSAGE", "Missing or invalid message type")
+        return
+
     if message_type == "audio.start":
-        await _handle_audio_start(websocket, conn.session, conn.session_id, data, settings)
+        await _handle_audio_start(conn, data, settings)
         return
     if message_type == "audio.stop":
         await _handle_audio_stop(
-            websocket,
-            conn.session,
-            conn.session_id,
+            conn,
             data,
             settings,
             end_session,
@@ -249,54 +271,41 @@ async def _handle_text_message(
         )
         return
     if message_type == "ping":
-        await _handle_ping(websocket, conn.session_id, data)
+        await _handle_ping(conn, data)
         return
     if message_type == "session.resume":
-        await _handle_session_resume(websocket, conn, data, settings)
+        await _handle_session_resume(conn, data, settings)
         return
 
-    await websocket.send_json(
-        error_message(
-            conn.session_id,
-            "UNKNOWN_MESSAGE_TYPE",
-            f"Unrecognized message type: {message_type or '<missing>'}",
-            True,
-        )
+    await errors.emit(
+        "UNKNOWN_MESSAGE_TYPE",
+        f"Unrecognized message type: {message_type}",
     )
 
 
 async def _handle_session_resume(
-    websocket: WebSocket,
     conn: RealtimeConnection,
     data: dict[str, Any],
     settings: Settings,
 ) -> None:
+    errors = _connection_errors(conn)
+    websocket = errors.websocket
     envelope_error = _validate_session_resume_envelope(data)
     if envelope_error is not None:
-        await websocket.send_json(
-            error_message(conn.session_id, "INVALID_MESSAGE", envelope_error, True)
-        )
+        await errors.emit("INVALID_MESSAGE", envelope_error)
         return
 
     if conn.resumed:
-        await websocket.send_json(
-            error_message(
-                conn.session_id,
-                "INVALID_MESSAGE",
-                "Session already restored on this connection",
-                True,
-            )
+        await errors.emit(
+            "INVALID_MESSAGE",
+            "Session already restored on this connection",
         )
         return
 
     if conn.session.audio_started:
-        await websocket.send_json(
-            error_message(
-                conn.session_id,
-                "INVALID_MESSAGE",
-                "Cannot resume after audio.start on interim session",
-                True,
-            )
+        await errors.emit(
+            "INVALID_MESSAGE",
+            "Cannot resume after audio.start on interim session",
         )
         return
 
@@ -305,14 +314,7 @@ async def _handle_session_resume(
     try:
         UUID(previous_session_id)
     except ValueError:
-        await websocket.send_json(
-            error_message(
-                conn.session_id,
-                "INVALID_MESSAGE",
-                "session_id must be a valid UUID",
-                True,
-            )
-        )
+        await errors.emit("INVALID_MESSAGE", "session_id must be a valid UUID")
         return
 
     record, error_code = await claim_detached(previous_session_id)
@@ -322,9 +324,7 @@ async def _handle_session_resume(
             if error_code == "SESSION_NOT_FOUND"
             else "Session reconnect window expired"
         )
-        await websocket.send_json(
-            error_message(conn.session_id, error_code, message, False)
-        )
+        await errors.emit(error_code, message)
         return
 
     conn.session = restore_session(
@@ -332,6 +332,7 @@ async def _handle_session_resume(
     )
     conn.session_id = str(conn.session.session_id)
     conn.resumed = True
+    errors.update_session_id(conn.session_id)
 
     await websocket.send_json(
         session_started(conn.session_id, settings.reconnect_window_s)
@@ -359,30 +360,22 @@ def _validate_session_resume_envelope(data: dict[str, Any]) -> str | None:
 
 
 async def _handle_ping(
-    websocket: WebSocket,
-    session_id: str,
+    conn: RealtimeConnection,
     data: dict[str, Any],
 ) -> None:
+    errors = _connection_errors(conn)
+    session_id = conn.session_id
     envelope_error = _validate_client_envelope(session_id, data)
     if envelope_error is not None:
-        await websocket.send_json(
-            error_message(session_id, "INVALID_MESSAGE", envelope_error, True)
-        )
+        await errors.emit("INVALID_MESSAGE", envelope_error)
         return
 
     payload = data.get("payload")
     if payload is not None and not isinstance(payload, dict):
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "INVALID_MESSAGE",
-                "ping payload must be an object",
-                True,
-            )
-        )
+        await errors.emit("INVALID_MESSAGE", "ping payload must be an object")
         return
 
-    await websocket.send_json(pong(session_id))
+    await errors.websocket.send_json(pong(session_id))
 
 
 def _validate_client_envelope(session_id: str, data: dict[str, Any]) -> str | None:
@@ -392,57 +385,33 @@ def _validate_client_envelope(session_id: str, data: dict[str, Any]) -> str | No
 
 
 async def _handle_audio_start(
-    websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     data: dict[str, Any],
     settings: Settings,
 ) -> None:
+    errors = _connection_errors(conn)
+    session = conn.session
+    session_id = conn.session_id
     if data.get("session_id") != session_id:
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "INVALID_MESSAGE",
-                "session_id does not match active session",
-                True,
-            )
+        await errors.emit(
+            "INVALID_MESSAGE",
+            "session_id does not match active session",
         )
         return
 
     payload = data.get("payload")
     if payload is not None and not isinstance(payload, dict):
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "INVALID_MESSAGE",
-                "audio.start payload must be an object",
-                True,
-            )
-        )
+        await errors.emit("INVALID_MESSAGE", "audio.start payload must be an object")
         return
 
     config, parse_error = _parse_audio_start_payload(payload or {})
     if parse_error is not None:
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "INVALID_MESSAGE",
-                parse_error,
-                True,
-            )
-        )
+        await errors.emit("INVALID_MESSAGE", parse_error)
         return
 
     validation_error = _validate_audio_config(config)
     if validation_error is not None:
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "INVALID_AUDIO_FORMAT",
-                validation_error,
-                True,
-            )
-        )
+        await errors.emit("INVALID_AUDIO_FORMAT", validation_error)
         return
 
     session.start_audio(config, settings.audio_buffer_seconds, settings)
@@ -455,52 +424,46 @@ async def _handle_audio_start(
 
 
 async def _handle_audio_stop(
-    websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     data: dict[str, Any],
     settings: Settings,
     end_session: Callable[[str], Awaitable[None]],
     flush_reorder_buffer: Callable[..., Awaitable[None]],
     mark_intentional_session_end: Callable[[], None],
 ) -> None:
+    errors = _connection_errors(conn)
+    websocket = errors.websocket
+    session = conn.session
+    session_id = conn.session_id
     if data.get("session_id") != session_id:
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "INVALID_MESSAGE",
-                "session_id does not match active session",
-                True,
-            )
+        await errors.emit(
+            "INVALID_MESSAGE",
+            "session_id does not match active session",
         )
         return
 
     if not session.audio_started:
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "AUDIO_NOT_STARTED",
-                "Send audio.start before audio.stop",
-                True,
-            )
+        await errors.emit(
+            "AUDIO_NOT_STARTED",
+            "Send audio.start before audio.stop",
         )
         return
 
     asr_engine: ASREngine = websocket.app.state.asr_engine
     await flush_reorder_buffer(force=True)
-    await _flush_open_segments(websocket, session, session_id, settings, asr_engine)
+    await _flush_open_segments(conn, settings, asr_engine)
     logger.debug("Audio stopped session_id=%s", session_id)
     mark_intentional_session_end()
     await end_session("client_stop")
 
 
 async def _flush_open_segments(
-    websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     settings: Settings,
     asr_engine: ASREngine,
 ) -> None:
+    session = conn.session
+    session_id = conn.session_id
     if session.vad_stream is None:
         return
 
@@ -523,9 +486,7 @@ async def _flush_open_segments(
                 event.duration_ms,
             )
             await _emit_transcript_final(
-                websocket,
-                session,
-                session_id,
+                conn,
                 str(event.segment_id),
                 event.pcm_data,
                 settings,
@@ -610,30 +571,20 @@ async def _handle_binary_message(
     deliver_sequenced: Callable[[SequenceProcessResult], Awaitable[None]],
     schedule_reorder_flush: Callable[[], Awaitable[None]],
 ) -> None:
+    errors = _connection_errors(conn)
     session = conn.session
     session_id = conn.session_id
     if not session.audio_started or session.audio_config is None:
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "AUDIO_NOT_STARTED",
-                "Send audio.start before streaming audio frames",
-                True,
-            )
+        await errors.emit(
+            "AUDIO_NOT_STARTED",
+            "Send audio.start before streaming audio frames",
         )
         return
 
     try:
         frame = parse_audio_frame(data, session.audio_config)
     except AudioFrameError as exc:
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "INVALID_AUDIO_FORMAT",
-                exc.message,
-                True,
-            )
-        )
+        await errors.emit("INVALID_AUDIO_FORMAT", exc.message)
         return
 
     buffered = BufferedAudioFrame(
@@ -648,8 +599,7 @@ async def _handle_binary_message(
 
 
 async def _emit_sequence_gaps(
-    websocket: WebSocket,
-    session_id: str,
+    errors: WebSocketErrorEmitter,
     gaps: list[SequenceGap],
 ) -> None:
     for gap in gaps:
@@ -660,29 +610,28 @@ async def _emit_sequence_gaps(
                 "Missing audio frame sequence numbers "
                 f"{gap.first_missing}-{gap.last_missing}"
             )
-        await websocket.send_json(
-            error_message(session_id, "AUDIO_SEQUENCE_GAP", detail, True)
-        )
+        await errors.emit("AUDIO_SEQUENCE_GAP", detail)
 
 
 async def _deliver_sequenced_frames(
     websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     settings: Settings,
     frames: list[BufferedAudioFrame],
 ) -> None:
     for frame in frames:
-        await _deliver_audio_frame(websocket, session, session_id, frame, settings)
+        await _deliver_audio_frame(websocket, conn, frame, settings)
 
 
 async def _deliver_audio_frame(
     websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     frame: BufferedAudioFrame,
     settings: Settings,
 ) -> None:
+    session = conn.session
+    session_id = conn.session_id
+    errors = _connection_errors(conn)
     dropped = session.append_audio_frame(frame)
     if dropped and session.buffer_overflow_notifier is not None:
         await emit_buffer_overflow_notifications(
@@ -690,6 +639,7 @@ async def _deliver_audio_frame(
             session_id,
             dropped,
             session.buffer_overflow_notifier,
+            errors,
         )
 
     if session.audio_config is None:
@@ -698,19 +648,20 @@ async def _deliver_audio_frame(
     session.advance_elapsed_ms(session.audio_config.frame_duration_ms)
     asr_engine: ASREngine = websocket.app.state.asr_engine
     await _process_vad_frame(
-        websocket, session, session_id, frame.pcm_data, settings, asr_engine
+        conn, frame.pcm_data, settings, asr_engine
     )
     session.release_processed_audio_frame()
 
 
 async def _process_vad_frame(
-    websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     pcm_data: bytes,
     settings: Settings,
     asr_engine: ASREngine,
 ) -> None:
+    session = conn.session
+    session_id = conn.session_id
+    errors = _connection_errors(conn)
     if session.vad_stream is None or session.audio_config is None:
         return
 
@@ -734,13 +685,9 @@ async def _process_vad_frame(
         session.vad_degraded = True
         session.vad_stream.enter_degraded_mode()
         if not session.vad_error_sent:
-            await websocket.send_json(
-                error_message(
-                    session_id,
-                    "VAD_FAILED",
-                    "VAD processing failed; continuing in degraded mode",
-                    True,
-                )
+            await errors.emit(
+                "VAD_FAILED",
+                "VAD processing failed; continuing in degraded mode",
             )
             session.vad_error_sent = True
         events = await loop.run_in_executor(
@@ -765,9 +712,7 @@ async def _process_vad_frame(
             )
             segment_closed_this_frame = True
             await _emit_transcript_final(
-                websocket,
-                session,
-                session_id,
+                conn,
                 str(event.segment_id),
                 event.pcm_data,
                 settings,
@@ -778,7 +723,7 @@ async def _process_vad_frame(
         return
 
     if session.should_emit_partial(settings.asr_partial_interval_ms):
-        await _emit_transcript_partial(websocket, session, session_id, settings, asr_engine)
+        await _emit_transcript_partial(conn, settings, asr_engine)
 
 
 def _get_active_segment_pcm(session: Session) -> bytes | None:
@@ -791,12 +736,13 @@ def _get_active_segment_pcm(session: Session) -> bytes | None:
 
 
 async def _emit_transcript_partial(
-    websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     settings: Settings,
     asr_engine: ASREngine,
 ) -> None:
+    session = conn.session
+    session_id = conn.session_id
+    errors = _connection_errors(conn)
     if session.segment_asr is None or session.audio_config is None:
         return
 
@@ -809,6 +755,17 @@ async def _emit_transcript_partial(
 
     try:
         result = await asr_engine.transcribe_partial(pcm_data, segment_id, language)
+    except ASRModelUnavailableError as exc:
+        logger.warning(
+            "ASR model unavailable session_id=%s error=%s",
+            session_id,
+            exc,
+        )
+        await errors.emit(
+            "ASR_MODEL_UNAVAILABLE",
+            "ASR model is not loaded or unhealthy",
+        )
+        return
     except ASRInferenceError as exc:
         logger.warning(
             "ASR partial failed session_id=%s segment_id=%s error=%s",
@@ -816,13 +773,9 @@ async def _emit_transcript_partial(
             segment_id,
             exc,
         )
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "ASR_INFERENCE_FAILED",
-                f"ASR inference failed for segment {segment_id}",
-                True,
-            )
+        await errors.emit(
+            "ASR_INFERENCE_FAILED",
+            f"ASR inference failed for segment {segment_id}",
         )
         session.clear_segment_asr()
         return
@@ -832,7 +785,7 @@ async def _emit_transcript_partial(
         return
 
     sequence = session.next_sequence()
-    await websocket.send_json(
+    await errors.websocket.send_json(
         transcript_partial(
             session_id,
             segment_id,
@@ -845,14 +798,15 @@ async def _emit_transcript_partial(
 
 
 async def _emit_transcript_final(
-    websocket: WebSocket,
-    session: Session,
-    session_id: str,
+    conn: RealtimeConnection,
     segment_id: str,
     pcm_data: bytes,
     settings: Settings,
     asr_engine: ASREngine,
 ) -> None:
+    session = conn.session
+    session_id = conn.session_id
+    errors = _connection_errors(conn)
     if session.audio_config is None:
         return
 
@@ -863,6 +817,17 @@ async def _emit_transcript_final(
 
     try:
         result = await asr_engine.transcribe_final(pcm_data, segment_id, language)
+    except ASRModelUnavailableError as exc:
+        logger.warning(
+            "ASR model unavailable session_id=%s error=%s",
+            session_id,
+            exc,
+        )
+        await errors.emit(
+            "ASR_MODEL_UNAVAILABLE",
+            "ASR model is not loaded or unhealthy",
+        )
+        return
     except ASRInferenceError as exc:
         logger.warning(
             "ASR final failed session_id=%s segment_id=%s error=%s",
@@ -870,13 +835,9 @@ async def _emit_transcript_final(
             segment_id,
             exc,
         )
-        await websocket.send_json(
-            error_message(
-                session_id,
-                "ASR_INFERENCE_FAILED",
-                f"ASR inference failed for segment {segment_id}",
-                True,
-            )
+        await errors.emit(
+            "ASR_INFERENCE_FAILED",
+            f"ASR inference failed for segment {segment_id}",
         )
         session.clear_segment_asr()
         return
@@ -888,7 +849,7 @@ async def _emit_transcript_final(
     sequence = segment_asr.sequence + 1 if segment_asr is not None else 1
     session.clear_segment_asr()
 
-    await websocket.send_json(
+    await errors.websocket.send_json(
         transcript_final(
             session_id,
             segment_id,
