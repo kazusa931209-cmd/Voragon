@@ -5,8 +5,8 @@
 | **ID** | P3-001 |
 | **Phase** | 3 |
 | **Status** | done |
-| **Commit** | — |
-| **PR** | — |
+| **Commit** | [`35486f0`](https://github.com/kazusa931209-cmd/Voragon/commit/35486f0) |
+| **PR** | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) |
 | **Branch** | `dev-step/p3-001-tauri-scaffold` |
 
 ## Spec References
@@ -55,4 +55,31 @@ Expected: none (local-development paths already planned)
 
 ## Completion
 
-_Fill in after implementation._
+### Summary
+
+- Added `desktop/` Tauri 2 app (Vite, React, TypeScript), `src-tauri/`, Vitest smoke test (`App.test.tsx`), minimal shell UI.
+
+### Spec Changes
+
+- None
+
+### Automated Tests Run
+
+```bash
+cd desktop && pnpm test
+# 6 passed (2026-10-15)
+```
+
+### Manual Test Result
+
+- [ ] Pending — [Phase 3 exit checklist](dev-step-phase3-exit.md) § P3-001
+
+### Commit
+
+- **Hash:** `35486f0`
+- **Message:** `[P3-001–P3-009] Tauri desktop client and Phase 3 roadmap`
+
+### PR
+
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/14
+- **Merged:** 2026-10-15 (merge commit `305f943`)

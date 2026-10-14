@@ -5,8 +5,8 @@
 | **ID** | P3-002 |
 | **Phase** | 3 |
 | **Status** | done |
-| **Commit** | — |
-| **PR** | — |
+| **Commit** | [`35486f0`](https://github.com/kazusa931209-cmd/Voragon/commit/35486f0) |
+| **PR** | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) |
 | **Branch** | `dev-step/p3-002-websocket-client` |
 
 ## Spec References
@@ -54,4 +54,30 @@ Expected: none
 
 ## Completion
 
-_Fill in after implementation._
+### Summary
+
+- `RealtimeClient` in `desktop/src/api/realtimeClient.ts`: connect state machine, envelope parsing, `session.started` / `error` / `session.ended` / `pong`; Vitest in `realtimeClient.test.ts`.
+
+### Spec Changes
+
+- None
+
+### Automated Tests Run
+
+```bash
+cd desktop && pnpm test
+# 6 passed (2026-10-15)
+```
+
+### Manual Test Result
+
+- [ ] Pending — [Phase 3 exit checklist](dev-step-phase3-exit.md) § P3-002
+
+### Commit
+
+- **Hash:** `35486f0`
+
+### PR
+
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/14
+- **Merged:** 2026-10-15

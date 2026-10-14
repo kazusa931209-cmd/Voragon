@@ -23,6 +23,10 @@ Connect in the app, then **Start transcription**. Global shortcut: **⌘⇧T** (
 
 Default backend URL: `ws://localhost:8000/v1/realtime`
 
+## Phase 3 exit verification
+
+Manual checklist (macOS required; Windows smoke optional): [dev-step-phase3-exit.md](../docs/roadmap/dev-step-phase3-exit.md).
+
 ## Tests
 
 ```bash
