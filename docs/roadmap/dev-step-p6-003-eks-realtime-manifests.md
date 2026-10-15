@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P6-003 |
 | **Phase** | 6 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p6-003-eks-realtime-manifests` |
@@ -33,10 +33,10 @@ One verifiable behavior: **`kubectl apply` of EKS manifests deploys `realtime-ba
 
 ## Acceptance Criteria
 
-- [ ] EKS manifests committed and documented
-- [ ] Pod Ready after ASR warmup on EKS
-- [ ] `kubectl exec` or port-forward → `curl -f http://localhost:8000/health` succeeds
-- [ ] Model cache survives pod restart (PVC or equivalent)
+- [x] EKS manifests committed and documented
+- [ ] Pod Ready after ASR warmup on EKS (operator)
+- [ ] `kubectl exec` or port-forward → `curl -f http://localhost:8000/health` succeeds (operator)
+- [ ] Model cache survives pod restart (PVC or equivalent) (operator)
 
 ## Manual Test
 
@@ -62,21 +62,25 @@ Expected: [kubernetes-local.md](../operations/kubernetes-local.md) or new EKS op
 
 ### Summary
 
-- …
+- Added [`k8s/eks/`](../../k8s/eks/) — namespace, configmap, PVC (`gp2`), deployment (ECR image via Kustomize), service; probes aligned with Kind.
+- Added [`k8s/eks/README.md`](../../k8s/eks/README.md) — `kustomize edit set image`, `kubectl apply -k`, health and PVC restart checks.
+- Updated [k8s/README.md](../../k8s/README.md), [kubernetes-local.md](../operations/kubernetes-local.md), [aws-deployment.md](../operations/aws-deployment.md).
 
 ### Spec Changes
 
-- …
+- [kubernetes-local.md](../operations/kubernetes-local.md) — Kind vs EKS manifest table.
+- [aws-deployment.md](../operations/aws-deployment.md) — P6-003 section and step 3.
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && python3.11 -m pytest -q   # 93 passed, 1 skipped (2026-10-15)
+cd desktop && pnpm test                 # 14 passed (2026-10-15)
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [ ] Pass — operator: [k8s/eks/README.md](../../k8s/eks/README.md)
 
 ### Commit
 

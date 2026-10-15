@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md) implemented ([dev-step](../roadmap/dev-step-p6-001-ecr-image-push.md)); EKS and ingress remain planned (P6-002+).
+**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md) done; [P6-002 EKS](../../infra/eks/README.md) implemented ([dev-steps](../roadmap/dev-steps-index.md)); deploy/ingress/auth remain planned (P6-003+).
 
 ## Architecture
 
@@ -61,13 +61,34 @@ Create the `voragon/realtime-backend` repository and push images before deployin
 
 Image URI and tags (git SHA, optional `latest`) are consumed by EKS manifests in P6-003.
 
+## EKS (P6-002)
+
+Staging CPU cluster for Phase 6 (default name `voragon-staging`, region `ap-northeast-1`).
+
+| Step | Doc |
+|------|-----|
+| Terraform apply | [infra/eks/README.md](../../infra/eks/README.md) |
+| kubeconfig | `aws eks update-kubeconfig` (see outputs) |
+| Verify | `kubectl get nodes` — Ready; optional ECR pull smoke pod |
+
+Workers can pull from the P6-001 ECR repo via `AmazonEC2ContainerRegistryReadOnly` on the managed node role.
+
+## Realtime on EKS (P6-003)
+
+Apply Kubernetes manifests after the cluster and ECR image exist.
+
+| Step | Doc |
+|------|-----|
+| Set ECR image (Kustomize) | [k8s/eks/README.md](../../k8s/eks/README.md) |
+| Apply + health | `kubectl apply -k k8s/eks`, port-forward `/health` |
+
 ## Deployment Steps (Planned)
 
 ### Phase 6: EKS + Realtime Service
 
 1. Create ECR repository and push `realtime-backend` image — **[P6-001 done](../../infra/ecr/README.md)**
-2. Create EKS cluster with CPU node group (m6i.large)
-3. Deploy realtime-service from ECR (CPU inference initially)
+2. Create EKS cluster with CPU node group — **[P6-002 Terraform](../../infra/eks/README.md)** (`m6i.large` default)
+3. Deploy realtime-service from ECR — **[P6-003 k8s/eks](../../k8s/eks/README.md)** (CPU inference initially)
 4. Configure ALB Ingress Controller
 5. Set up API Gateway with WebSocket support
 6. Configure health probes and HPA
@@ -135,6 +156,7 @@ Image URI and tags (git SHA, optional `latest`) are consumed by EKS manifests in
 ## Related Documents
 
 - [infra/ecr/README.md](../../infra/ecr/README.md) — ECR Terraform and push workflow
+- [infra/eks/README.md](../../infra/eks/README.md) — EKS staging cluster
 - [AWS GPU Strategy](../architecture/aws.md)
 - [Kubernetes Architecture](../architecture/kubernetes.md)
 - [Observability](observability.md)

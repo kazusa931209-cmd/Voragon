@@ -6,7 +6,7 @@
 | **ID**     | P6-002                            |
 | **Phase**  | 6                                 |
 | **Status** | done                              |
-| **Commit** | —                                 |
+| **Commit** | [`43ca4c9`](https://github.com/kazusa931209-cmd/Voragon/commit/43ca4c9) |
 | **PR**     | —                                 |
 | **Branch** | `dev-step/p6-002-eks-cluster-cpu` |
 
@@ -105,7 +105,7 @@ cd backend && python3.11 -m pytest -q
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** [`43ca4c9`](https://github.com/kazusa931209-cmd/Voragon/commit/43ca4c9)
 
 
 

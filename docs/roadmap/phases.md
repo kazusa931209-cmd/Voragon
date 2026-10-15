@@ -313,7 +313,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-1. Implement [P6-001](dev-step-p6-001-ecr-image-push.md) (ECR + image push) — set status `in-progress` when starting; one dev-step = one commit.
+1. Implement [P6-003](dev-step-p6-003-eks-realtime-manifests.md) (EKS manifests + deploy) — one dev-step = one commit; P6-002 done (manual).
 
 ## Related Documents
 

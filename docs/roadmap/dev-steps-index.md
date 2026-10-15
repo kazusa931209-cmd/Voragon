@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P6-001** — [ECR repository and image push](dev-step-p6-001-ecr-image-push.md) (`in-progress`). Phase 5 exit signed off 2026-10-15: [dev-step-phase5-exit.md](dev-step-phase5-exit.md).
+**P6-003** — [EKS realtime manifests and deploy](dev-step-p6-003-eks-realtime-manifests.md) (`in-progress`). P6-002 done (manual); P6-001 @ [`4f27196`](https://github.com/kazusa931209-cmd/Voragon/commit/4f27196).
 
 ---
 
@@ -108,9 +108,9 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
-| P6-001 | ECR repository and image push | in-progress | — | [dev-step-p6-001-ecr-image-push.md](dev-step-p6-001-ecr-image-push.md) |
-| P6-002 | EKS cluster and CPU node group | planned | — | [dev-step-p6-002-eks-cluster-cpu.md](dev-step-p6-002-eks-cluster-cpu.md) |
-| P6-003 | EKS realtime manifests and deploy | planned | — | [dev-step-p6-003-eks-realtime-manifests.md](dev-step-p6-003-eks-realtime-manifests.md) |
+| P6-001 | ECR repository and image push | done | [`4f27196`](https://github.com/kazusa931209-cmd/Voragon/commit/4f27196) | [dev-step-p6-001-ecr-image-push.md](dev-step-p6-001-ecr-image-push.md) |
+| P6-002 | EKS cluster and CPU node group | done | — | [dev-step-p6-002-eks-cluster-cpu.md](dev-step-p6-002-eks-cluster-cpu.md) |
+| P6-003 | EKS realtime manifests and deploy | in-progress | — | [dev-step-p6-003-eks-realtime-manifests.md](dev-step-p6-003-eks-realtime-manifests.md) |
 | P6-004 | ALB Ingress for WebSocket | planned | — | [dev-step-p6-004-alb-ingress-websocket.md](dev-step-p6-004-alb-ingress-websocket.md) |
 | P6-005 | API Gateway WebSocket and authentication | planned | — | [dev-step-p6-005-api-gateway-auth.md](dev-step-p6-005-api-gateway-auth.md) |
 | P6-006 | CloudWatch logging | planned | — | [dev-step-p6-006-cloudwatch-logging.md](dev-step-p6-006-cloudwatch-logging.md) |

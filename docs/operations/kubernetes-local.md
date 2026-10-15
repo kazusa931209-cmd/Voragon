@@ -17,6 +17,16 @@ Kind is used to validate:
 
 Kind is **not** used for performance testing or GPU inference validation.
 
+## Kind vs EKS manifests
+
+| | Kind | EKS (P6-003+) |
+|--|------|----------------|
+| Path | [k8s/local/](../../k8s/local/) | [k8s/eks/](../../k8s/eks/) |
+| Docs | [k8s/README.md](../../k8s/README.md) | [k8s/eks/README.md](../../k8s/eks/README.md) |
+| Image | Local Docker + `kind load` | ECR ([infra/ecr](../../infra/ecr/README.md)) |
+
+Same probes, ConfigMap env, and model-cache PVC pattern; EKS uses `gp2` storage class and Kustomize for the image URI.
+
 ## Architecture (Phase 5 MVP)
 
 Single pod — same topology as Docker Compose (ASR in-process). A separate `asr-service` appears in production/EKS when the sidecar split exists (Phase 7+).
@@ -74,7 +84,7 @@ k8s/
     └── realtime-service.yaml
 ```
 
-Production manifests under `k8s/production/` are Phase 6+.
+EKS staging manifests: [k8s/eks/](../../k8s/eks/) (P6-003+).
 
 ## Differences from Production EKS
 

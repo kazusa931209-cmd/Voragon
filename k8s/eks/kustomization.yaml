@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: voragon
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - pvc.yaml
+  - realtime-deployment.yaml
+  - realtime-service.yaml
+
+# Before apply on EKS, set the ECR image (see README):
+#   kustomize edit set image "voragon/realtime-backend=${ECR_URI}:${TAG}"
+images:
+  - name: voragon/realtime-backend
+    newName: voragon/realtime-backend
+    newTag: ecr
