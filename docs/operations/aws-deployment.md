@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-006 CloudWatch](../../k8s/eks/logging/README.md) done (P6-006 commit pending); DNS/exit (P6-007+) planned.
+**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-006 CloudWatch](../../k8s/eks/logging/README.md) done; DNS/exit (P6-007+) planned.
 
 ## Architecture
 

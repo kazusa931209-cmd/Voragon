@@ -5,7 +5,7 @@
 | **ID** | P6-006 |
 | **Phase** | 6 |
 | **Status** | done |
-| **Commit** | — |
+| **Commit** | [`e5ffb20`](https://github.com/kazusa931209-cmd/Voragon/commit/e5ffb20) |
 | **PR** | — |
 | **Branch** | `dev-step/p6-006-cloudwatch-logging` |
 
@@ -79,7 +79,7 @@ cd backend && pip install -e ".[dev]" && pytest -q
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** [`e5ffb20`](https://github.com/kazusa931209-cmd/Voragon/commit/e5ffb20)
 
 ### PR
 
