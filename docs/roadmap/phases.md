@@ -178,6 +178,8 @@ Desktop (Tauri) → WebSocket → Backend → VAD → ASR → Transcript → Des
 
 ## Phase 6: AWS EKS
 
+**Status:** Planned — [P6-001](dev-step-p6-001-ecr-image-push.md)–[P6-008](dev-step-p6-008-aws-dev-docs-exit.md) defined ([dev-steps index](dev-steps-index.md)). [Phase 6 exit checklist](dev-step-phase6-exit.md).
+
 **Goal:** Deploy to production Kubernetes on AWS.
 
 **Deliverables:**
@@ -311,7 +313,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-1. Define Phase 6 dev-steps (AWS EKS) — see exit criteria below; track in [dev-steps-index.md](dev-steps-index.md).
+1. Implement [P6-001](dev-step-p6-001-ecr-image-push.md) (ECR + image push) — set status `in-progress` when starting; one dev-step = one commit.
 
 ## Related Documents
 

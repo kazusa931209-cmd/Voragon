@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**Phase 6 planning** — define EKS dev-steps ([phases.md](phases.md)). Phase 5 exit signed off 2026-10-15: [dev-step-phase5-exit.md](dev-step-phase5-exit.md).
+**P6-001** — [ECR repository and image push](dev-step-p6-001-ecr-image-push.md) (`planned`). Phase 5 exit signed off 2026-10-15: [dev-step-phase5-exit.md](dev-step-phase5-exit.md).
 
 ---
 
@@ -104,6 +104,25 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ---
 
-## Phase 6+
+## Phase 6: AWS EKS
 
-Dev-steps for Phase 6 (EKS) and beyond — see [phases.md](phases.md).
+| ID | Title | Status | PR | Doc |
+|----|-------|--------|-----|-----|
+| P6-001 | ECR repository and image push | planned | — | [dev-step-p6-001-ecr-image-push.md](dev-step-p6-001-ecr-image-push.md) |
+| P6-002 | EKS cluster and CPU node group | planned | — | [dev-step-p6-002-eks-cluster-cpu.md](dev-step-p6-002-eks-cluster-cpu.md) |
+| P6-003 | EKS realtime manifests and deploy | planned | — | [dev-step-p6-003-eks-realtime-manifests.md](dev-step-p6-003-eks-realtime-manifests.md) |
+| P6-004 | ALB Ingress for WebSocket | planned | — | [dev-step-p6-004-alb-ingress-websocket.md](dev-step-p6-004-alb-ingress-websocket.md) |
+| P6-005 | API Gateway WebSocket and authentication | planned | — | [dev-step-p6-005-api-gateway-auth.md](dev-step-p6-005-api-gateway-auth.md) |
+| P6-006 | CloudWatch logging | planned | — | [dev-step-p6-006-cloudwatch-logging.md](dev-step-p6-006-cloudwatch-logging.md) |
+| P6-007 | DNS and TLS (Route 53 + ACM) | planned | — | [dev-step-p6-007-dns-tls.md](dev-step-p6-007-dns-tls.md) |
+| P6-008 | AWS dev docs and Phase 6 exit prep | planned | — | [dev-step-p6-008-aws-dev-docs-exit.md](dev-step-p6-008-aws-dev-docs-exit.md) |
+
+**Suggested order:** P6-001 → P6-002 → P6-003 → P6-004 → P6-005 → P6-006 → P6-007 → P6-008 (P6-006 may parallelize after P6-003; P6-007 may overlap P6-004/P6-005 — finish before exit sign-off).
+
+**Phase 6 exit:** [dev-step-phase6-exit.md](dev-step-phase6-exit.md) (pending). See [phases.md](phases.md).
+
+---
+
+## Phase 7+
+
+Dev-steps for Phase 7 (GPU inference) and beyond — see [phases.md](phases.md).
