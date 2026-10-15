@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P4-003** — [model weight volume caching](dev-step-p4-003-model-cache-volumes.md) (`in-progress`). P4-002 done @ [`821f7cc`](https://github.com/kazusa931209-cmd/Voragon/commit/821f7cc).
+**P4-004** — [Docker dev docs and Phase 4 exit](dev-step-p4-004-docker-dev-docs.md) (`planned`). P4-003 done @ [`981b2cc`](https://github.com/kazusa931209-cmd/Voragon/commit/981b2cc).
 
 ---
 
@@ -79,7 +79,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 |----|-------|--------|-----|-----|
 | P4-001 | Realtime backend Dockerfile | done | [`6d3c0c2`](https://github.com/kazusa931209-cmd/Voragon/commit/6d3c0c2) | [dev-step-p4-001-backend-dockerfile.md](dev-step-p4-001-backend-dockerfile.md) |
 | P4-002 | Docker Compose (realtime backend) | done | [`821f7cc`](https://github.com/kazusa931209-cmd/Voragon/commit/821f7cc) | [dev-step-p4-002-docker-compose.md](dev-step-p4-002-docker-compose.md) |
-| P4-003 | Model weight volume caching | planned | — | [dev-step-p4-003-model-cache-volumes.md](dev-step-p4-003-model-cache-volumes.md) |
+| P4-003 | Model weight volume caching | done | [`981b2cc`](https://github.com/kazusa931209-cmd/Voragon/commit/981b2cc) | [dev-step-p4-003-model-cache-volumes.md](dev-step-p4-003-model-cache-volumes.md) |
 | P4-004 | Docker dev docs and Phase 4 exit | planned | — | [dev-step-p4-004-docker-dev-docs.md](dev-step-p4-004-docker-dev-docs.md) |
 
 **Suggested order:** P4-001 → P4-002 → P4-003 → P4-004.

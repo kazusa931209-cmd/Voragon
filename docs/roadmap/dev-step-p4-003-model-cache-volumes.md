@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P4-003 |
 | **Phase** | 4 |
-| **Status** | in-progress |
-| **Commit** | — |
+| **Status** | done |
+| **Commit** | [`981b2cc`](https://github.com/kazusa931209-cmd/Voragon/commit/981b2cc) |
 | **PR** | — |
 | **Branch** | `dev-step/p4-003-model-cache-volumes` |
 
@@ -82,7 +82,7 @@ cd backend && source .venv/bin/activate && pytest -q
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `981b2cc`
 
 ### PR
 
