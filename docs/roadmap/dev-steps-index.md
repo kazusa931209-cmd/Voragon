@@ -14,9 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**Phase 3 exit** — manual verification: [dev-step-phase3-exit.md](dev-step-phase3-exit.md). Do not start **P4-001** until Phase 3 exit is signed off.
-
-After exit: **P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md).
+**P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md) (`planned`). Phase 3 exit signed off 2026-10-15: [dev-step-phase3-exit.md](dev-step-phase3-exit.md).
 
 ---
 
@@ -67,7 +65,7 @@ After exit: **P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend
 | P3-007 | Client heartbeat and session lifecycle | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-007-heartbeat.md](dev-step-p3-007-heartbeat.md) |
 | P3-008 | `session.resume` reconnection | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-008-session-resume.md](dev-step-p3-008-session-resume.md) |
 | P3-009 | System tray + global shortcuts | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-009-tray-shortcuts.md](dev-step-p3-009-tray-shortcuts.md) |
-| P3-010 | Transcription stats + reconnect stability | in-progress | — | [dev-step-p3-010-desktop-ui-reconnect.md](dev-step-p3-010-desktop-ui-reconnect.md) |
+| P3-010 | Transcription stats + reconnect stability | done | [#15](https://github.com/kazusa931209-cmd/Voragon/pull/15) | [dev-step-p3-010-desktop-ui-reconnect.md](dev-step-p3-010-desktop-ui-reconnect.md) |
 
 **Phase 3 exit:** [dev-step-phase3-exit.md](dev-step-phase3-exit.md) — manual macOS (required) and Windows (smoke) checklist. See [phases.md](phases.md).
 

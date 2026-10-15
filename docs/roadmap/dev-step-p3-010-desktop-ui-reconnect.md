@@ -4,10 +4,10 @@
 |-------|-------|
 | **ID** | P3-010 |
 | **Phase** | 3 |
-| **Status** | in-progress |
-| **Commit** | — |
-| **PR** | — |
-| **Branch** | `feat/new-phase4` (optional) |
+| **Status** | done |
+| **Commit** | [`2e5f87a`](https://github.com/kazusa931209-cmd/Voragon/commit/2e5f87a) (+ follow-up [`1fbcf0f`](https://github.com/kazusa931209-cmd/Voragon/commit/1fbcf0f) in [#15](https://github.com/kazusa931209-cmd/Voragon/pull/15)) |
+| **PR** | [#15](https://github.com/kazusa931209-cmd/Voragon/pull/15) |
+| **Branch** | merged via `feat/new-phase4` → `dev` |
 
 ## Spec References
 
@@ -72,17 +72,17 @@ Expected: none
 
 ```bash
 cd desktop && pnpm test
-# 12 passed (2026-10-15)
+# 14 passed (2026-10-15 re-run)
 ```
 
 ### Manual Test Result
 
-- [ ] Pending — macOS backend kill/restart while transcribing and idle
+- [x] Pass — macOS HUD + reconnect (transcribing + idle), 2026-10-15 ([Phase 3 exit § P3-010](dev-step-phase3-exit.md))
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `2e5f87a` — `[P3-010] Transcription stats, reconnect stability, and shortcut fix`
 
 ### PR
 
-- **URL:** —
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/15

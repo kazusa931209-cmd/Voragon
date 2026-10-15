@@ -72,7 +72,7 @@ cd desktop && pnpm test
 
 ### Manual Test Result
 
-- [ ] Pending — [Phase 3 exit checklist](dev-step-phase3-exit.md) § P3-001
+- [x] Pass — macOS, 2026-10-15 ([Phase 3 exit § P3-001](dev-step-phase3-exit.md))
 
 ### Commit
 
