@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P4-002 |
 | **Phase** | 4 |
-| **Status** | in-progress |
-| **Commit** | — |
+| **Status** | done |
+| **Commit** | [`821f7cc`](https://github.com/kazusa931209-cmd/Voragon/commit/821f7cc) |
 | **PR** | — |
 | **Branch** | `dev-step/p4-002-docker-compose` |
 
@@ -84,7 +84,7 @@ cd backend && source .venv/bin/activate && pytest -q
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `821f7cc`
 
 ### PR
 
