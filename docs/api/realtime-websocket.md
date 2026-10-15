@@ -11,8 +11,8 @@ The Realtime WebSocket API is the primary communication channel between the Vora
 | Environment | URL |
 |-------------|-----|
 | Local development | `ws://localhost:8000/v1/realtime` |
-| Staging (EKS ALB) | `wss://<alb-host>/v1/realtime` — see [k8s/eks/alb](../../k8s/eks/alb/README.md) |
-| Production (custom domain) | `wss://api.voragon.example/v1/realtime` — [P6-007](../roadmap/dev-step-p6-007-dns-tls.md) |
+| Staging (ALB DNS only) | `wss://<alb-host>/v1/realtime` — [k8s/eks/alb](../../k8s/eks/alb/README.md) |
+| Staging / production (custom host) | `wss://api.voragon.example/v1/realtime` — [P6-007](../roadmap/dev-step-p6-007-dns-tls.md), [infra/dns](../../infra/dns/README.md) |
 
 The `/v1/` prefix enables future protocol versions (`/v2/realtime`) without breaking existing clients.
 

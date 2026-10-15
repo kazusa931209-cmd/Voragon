@@ -6,7 +6,7 @@ Expose `realtime-service` on an **internet-facing ALB** with **sticky sessions**
 
 - [P6-002](../../../infra/eks/README.md) cluster — run `terraform apply` in `infra/eks` (installs **AWS Load Balancer Controller** via Helm)
 - [P6-003](../README.md) — `realtime-backend` Running in `voragon`
-- **ACM certificate** in the same region as the cluster (DNS validation or imported). Custom hostname can wait for [P6-007](../../../docs/roadmap/dev-step-p6-007-dns-tls.md); use a cert whose SAN covers the ALB hostname or your staging domain.
+- **ACM certificate** in the same region as the cluster — provision via [P6-007 infra/dns](../../../infra/dns/README.md) (or import a cert whose SAN covers your API hostname).
 
 Optional before ALB: scale to **2 replicas** for rolling updates with stickiness:
 
@@ -14,15 +14,18 @@ Optional before ALB: scale to **2 replicas** for rolling updates with stickiness
 kubectl scale deployment/realtime-backend -n voragon --replicas=2
 ```
 
-## 1. Configure certificate on Ingress
+## 1. Configure certificate and hostname on Ingress
 
-Edit [ingress.yaml](ingress.yaml) or patch annotations:
+After [infra/dns](../../../infra/dns/README.md) (P6-007) or with your own ACM ARN:
 
 ```bash
-export ACM_ARN="arn:aws:acm:ap-northeast-1:ACCOUNT:certificate/UUID"
-# macOS BSD sed — adjust in place:
+export ACM_ARN="$(terraform -chdir=infra/dns output -raw acm_certificate_arn)"
+export API_FQDN="$(terraform -chdir=infra/dns output -raw api_fqdn)"
 sed -i '' "s|REPLACE_ACM_CERTIFICATE_ARN|${ACM_ARN}|g" k8s/eks/alb/ingress.yaml
+sed -i '' "s|REPLACE_API_FQDN|${API_FQDN}|g" k8s/eks/alb/ingress.yaml
 ```
+
+Details: [k8s/eks/dns/README.md](../dns/README.md).
 
 For **HTTP-only** smoke tests (not production), you may temporarily replace `listen-ports` with `'[{"HTTP":80}]'` and remove `certificate-arn` / `ssl-redirect` — revert before sign-off (acceptance uses HTTPS).
 
@@ -39,7 +42,8 @@ Note the **ADDRESS** (ALB DNS name). Warmup: target group healthy after backend 
 
 ```bash
 export ALB_HOST="$(kubectl get ingress -n voragon realtime-backend -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
-curl -f "https://${ALB_HOST}/health"
+# Prefer custom hostname when Route 53 alias exists (P6-007):
+curl -f "https://${API_FQDN:-$ALB_HOST}/health"
 ```
 
 ## 4. WebSocket

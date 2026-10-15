@@ -23,7 +23,8 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - http:
+    - host: REPLACE_API_FQDN
+      http:
         paths:
           - path: /
             pathType: Prefix

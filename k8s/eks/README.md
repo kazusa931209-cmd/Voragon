@@ -61,6 +61,10 @@ Optional staging auth: [infra/apigateway/README.md](../../infra/apigateway/READM
 
 Fluent Bit → CloudWatch for `realtime-backend` JSON logs: [logging/README.md](logging/README.md) (Terraform in [infra/eks](../../infra/eks/README.md)).
 
+## DNS and TLS (P6-007)
+
+ACM + Route 53 for `api.voragon.example` (or your `api_fqdn`): [dns/README.md](dns/README.md), Terraform [infra/dns](../../infra/dns/README.md).
+
 ## Replicas before ALB (P6-004)
 
 Default **1** replica for first E2E. Before ALB Ingress, scale to **2** for rolling updates with `maxUnavailable: 0`:

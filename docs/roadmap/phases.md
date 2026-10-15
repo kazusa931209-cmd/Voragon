@@ -313,7 +313,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-1. Implement [P6-007](dev-step-p6-007-dns-tls.md) (DNS and TLS) — one dev-step = one commit; P6-006 manual pass (commit pending).
+1. Implement [P6-007](dev-step-p6-007-dns-tls.md) (DNS and TLS) — one dev-step = one commit; P6-006 @ `e5ffb20`.
 
 ## Related Documents
 

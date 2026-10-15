@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-006 CloudWatch](../../k8s/eks/logging/README.md) done; DNS/exit (P6-007+) planned.
+**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-006 CloudWatch](../../k8s/eks/logging/README.md) done; [P6-007 DNS/TLS](../../infra/dns/README.md) in progress; exit prep (P6-008) planned.
 
 ## Architecture
 
@@ -113,6 +113,18 @@ Pod stdout from `realtime-backend` (JSON via `LOG_FORMAT=json`) → **Fluent Bit
 | Terraform (log group + Fluent Bit Helm) | [infra/eks/README.md](../../infra/eks/README.md) |
 | Verify + Logs Insights | [k8s/eks/logging/README.md](../../k8s/eks/logging/README.md) |
 
+## DNS and TLS (P6-007)
+
+Stable hostname and ACM on the ALB Ingress (WSS path). JWT auth remains on API Gateway execute-api unless you add a custom domain later.
+
+| Step | Doc |
+|------|-----|
+| ACM + Route 53 alias | [infra/dns/README.md](../../infra/dns/README.md) |
+| Ingress host + cert ARN | [k8s/eks/dns/README.md](../../k8s/eks/dns/README.md) |
+| Verify | `dig`, `curl -f https://<api-host>/health`, desktop `wss://<api-host>/v1/realtime` |
+
+Default documented hostname: **`api.voragon.example`** (override `api_fqdn` in Terraform).
+
 ## Deployment Steps (Planned)
 
 ### Phase 6: EKS + Realtime Service
@@ -124,7 +136,8 @@ Pod stdout from `realtime-backend` (JSON via `LOG_FORMAT=json`) → **Fluent Bit
 5. Set up API Gateway JWT auth — **[P6-005 infra/apigateway](../../infra/apigateway/README.md)**
 6. Configure health probes and HPA
 7. Set up CloudWatch logging — **[P6-006 k8s/eks/logging](../../k8s/eks/logging/README.md)**
-8. Validate WebSocket connectivity from desktop
+8. DNS and TLS — **[P6-007 infra/dns](../../infra/dns/README.md)**
+9. Validate WebSocket connectivity from desktop
 
 ### Phase 7: GPU Inference
 
@@ -165,9 +178,10 @@ Pod stdout from `realtime-backend` (JSON via `LOG_FORMAT=json`) → **Fluent Bit
 
 | Component | Configuration |
 |-----------|--------------|
-| API endpoint | `api.voragon.example` (Route 53) |
-| TLS certificate | ACM certificate on ALB |
+| API endpoint | `api.voragon.example` (Route 53 alias → ALB) — [infra/dns](../../infra/dns/README.md) |
+| TLS certificate | ACM (DNS validation) on ALB listener — Ingress `certificate-arn` |
 | WebSocket URL | `wss://api.voragon.example/v1/realtime` |
+| Auth token URL | API Gateway HTTP API (P6-005), not the API hostname unless extended |
 
 ## Rollback Strategy
 
@@ -176,6 +190,7 @@ Pod stdout from `realtime-backend` (JSON via `LOG_FORMAT=json`) → **Fluent Bit
 | Bad deployment | `kubectl rollout undo deployment/<name>` |
 | Model loading failure | Readiness probe prevents traffic to unhealthy pods |
 | GPU node failure | HPA provisions new GPU node; client reconnects |
+| TLS / DNS issue | Repoint or remove Route 53 alias; revert Ingress cert/host; use ALB DNS until fixed ([infra/dns](../../infra/dns/README.md)) |
 
 ## Cost Monitoring
 
