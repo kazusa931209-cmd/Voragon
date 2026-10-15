@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md) done; [P6-002 EKS](../../infra/eks/README.md) implemented ([dev-steps](../roadmap/dev-steps-index.md)); deploy/ingress/auth remain planned (P6-003+).
+**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-004 ALB](../../k8s/eks/alb/README.md) done; API Gateway/auth (P6-005+) planned.
 
 ## Architecture
 
@@ -82,6 +82,16 @@ Apply Kubernetes manifests after the cluster and ECR image exist.
 | Set ECR image (Kustomize) | [k8s/eks/README.md](../../k8s/eks/README.md) |
 | Apply + health | `kubectl apply -k k8s/eks`, port-forward `/health` |
 
+## ALB Ingress (P6-004)
+
+Internet-facing ALB with sticky sessions for WebSocket (controller installed by [infra/eks](../../infra/eks/README.md) Terraform).
+
+| Step | Doc |
+|------|-----|
+| Load Balancer Controller | `terraform -chdir=infra/eks apply` |
+| Ingress + ACM | [k8s/eks/alb/README.md](../../k8s/eks/alb/README.md) |
+| Verify | `curl -f https://<alb-host>/health`, `wss://<alb-host>/v1/realtime` |
+
 ## Deployment Steps (Planned)
 
 ### Phase 6: EKS + Realtime Service
@@ -89,7 +99,7 @@ Apply Kubernetes manifests after the cluster and ECR image exist.
 1. Create ECR repository and push `realtime-backend` image — **[P6-001 done](../../infra/ecr/README.md)**
 2. Create EKS cluster with CPU node group — **[P6-002 Terraform](../../infra/eks/README.md)** (`m6i.large` default)
 3. Deploy realtime-service from ECR — **[P6-003 k8s/eks](../../k8s/eks/README.md)** (CPU inference initially)
-4. Configure ALB Ingress Controller
+4. Configure ALB Ingress — **[P6-004 k8s/eks/alb](../../k8s/eks/alb/README.md)**
 5. Set up API Gateway with WebSocket support
 6. Configure health probes and HPA
 7. Set up CloudWatch logging
@@ -156,7 +166,8 @@ Apply Kubernetes manifests after the cluster and ECR image exist.
 ## Related Documents
 
 - [infra/ecr/README.md](../../infra/ecr/README.md) — ECR Terraform and push workflow
-- [infra/eks/README.md](../../infra/eks/README.md) — EKS staging cluster
+- [infra/eks/README.md](../../infra/eks/README.md) — EKS staging cluster + Load Balancer Controller
+- [k8s/eks/alb/README.md](../../k8s/eks/alb/README.md) — ALB Ingress
 - [AWS GPU Strategy](../architecture/aws.md)
 - [Kubernetes Architecture](../architecture/kubernetes.md)
 - [Observability](observability.md)

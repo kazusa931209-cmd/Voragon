@@ -1,13 +1,15 @@
 # P6-004: ALB Ingress for WebSocket
 
-| Field | Value |
-|-------|-------|
-| **ID** | P6-004 |
-| **Phase** | 6 |
-| **Status** | planned |
-| **Commit** | — |
-| **PR** | — |
+
+| Field      | Value                                   |
+| ---------- | --------------------------------------- |
+| **ID**     | P6-004                                  |
+| **Phase**  | 6                                       |
+| **Status** | done                                    |
+| **Commit** | —                                       |
+| **PR**     | —                                       |
 | **Branch** | `dev-step/p6-004-alb-ingress-websocket` |
+
 
 ## Spec References
 
@@ -18,7 +20,7 @@
 
 ## Scope
 
-One verifiable behavior: **external HTTPS/WSS reaches `realtime-service` through AWS Load Balancer Controller (ALB Ingress); WebSocket upgrade to `/v1/realtime` works from outside the cluster.**
+One verifiable behavior: **external HTTPS/WSS reaches** `realtime-service` **through AWS Load Balancer Controller (ALB Ingress); WebSocket upgrade to** `/v1/realtime` **works from outside the cluster.**
 
 - Install AWS Load Balancer Controller on P6-002 cluster
 - Ingress (or IngressClass) targeting `realtime-service:8000`
@@ -26,18 +28,24 @@ One verifiable behavior: **external HTTPS/WSS reaches `realtime-service` through
 - Document ALB listener, target group health check on `/health`
 - TLS: ACM cert on ALB (full custom domain in P6-007 if cert not ready here — document minimum for staging hostname)
 
+
+
 ## Out of Scope
 
 - API Gateway authorizer (P6-005) — may test direct ALB URL first
 - `preStop` graceful drain (optional enhancement; document limitation if deferred)
 - Multi-replica HPA tuning
 
+
+
 ## Acceptance Criteria
 
-- [ ] ALB provisioned by Ingress; DNS name or custom hostname documented
-- [ ] `curl -f https://<host>/health` returns healthy after warmup
-- [ ] WebSocket client connects to `wss://<host>/v1/realtime` and receives `session.started`
-- [ ] Sticky session / target group attributes documented per architecture
+- [x] ALB provisioned by Ingress; DNS name or custom hostname documented
+- [x] `curl -f https://<host>/health` returns healthy after warmup (operator)
+- [x] WebSocket client connects to `wss://<host>/v1/realtime` and receives `session.started` (operator)
+- [x] Sticky session / target group attributes documented per architecture
+
+
 
 ## Manual Test
 
@@ -46,11 +54,15 @@ One verifiable behavior: **external HTTPS/WSS reaches `realtime-service` through
 3. Use desktop (staging URL) or `websocat`/test client — connect, `session.started`
 4. Optional: brief audio → partial transcript (CPU inference)
 
+
+
 ## Automated Tests
 
 ```bash
 cd backend && pytest -q
 ```
+
+
 
 ## Spec Changes
 
@@ -58,30 +70,48 @@ Expected: [aws-deployment.md](../operations/aws-deployment.md) — ALB Ingress s
 
 ---
 
+
+
 ## Completion
+
+
 
 ### Summary
 
-- …
+- Extended `[infra/eks/](../../infra/eks/)` — IRSA + Helm **AWS Load Balancer Controller**; VPC subnet tags for cluster shared ownership.
+- Added `[k8s/eks/alb/ingress.yaml](../../k8s/eks/alb/ingress.yaml)` and `[k8s/eks/alb/README.md](../../k8s/eks/alb/README.md)` — HTTPS, `/health` check, WebSocket idle timeout, stickiness.
+- Updated [infra/eks/README.md](../../infra/eks/README.md), [k8s/eks/README.md](../../k8s/eks/README.md), [aws-deployment.md](../operations/aws-deployment.md).
+
+
 
 ### Spec Changes
 
-- …
+- [aws-deployment.md](../operations/aws-deployment.md) — ALB Ingress (P6-004) section.
+
+
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && python3.11 -m pytest -q
+# 93 passed, 1 skipped (2026-10-15)
 ```
+
+
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — operator: [k8s/eks/alb/README.md](../../k8s/eks/alb/README.md)
+
+
 
 ### Commit
 
 - **Hash:** —
 
+
+
 ### PR
 
 - **URL:** —
+

@@ -37,6 +37,17 @@ kubectl get nodes -o wide
 
 All nodes should be **Ready**.
 
+## AWS Load Balancer Controller (P6-004)
+
+The same Terraform apply installs the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) (Helm chart in `kube-system`) with IRSA. Re-run apply after upgrading the module if the cluster already existed:
+
+```bash
+terraform -chdir=infra/eks apply
+kubectl get deployment -n kube-system aws-load-balancer-controller
+```
+
+Then apply the Ingress: [k8s/eks/alb/README.md](../../k8s/eks/alb/README.md).
+
 ## Optional: ECR pull smoke test
 
 After [pushing an image to ECR](../ecr/README.md):

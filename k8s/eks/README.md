@@ -49,6 +49,10 @@ kubectl wait -n voragon --for=condition=ready pod -l app=realtime-backend --time
 
 Second startup should be faster when weights are cached on the PVC.
 
+## ALB Ingress (P6-004)
+
+Public HTTPS/WSS via ALB: [alb/README.md](alb/README.md) (after Load Balancer Controller is installed from [infra/eks](../../infra/eks/README.md)).
+
 ## Replicas before ALB (P6-004)
 
 Default **1** replica for first E2E. Before ALB Ingress, scale to **2** for rolling updates with `maxUnavailable: 0`:
