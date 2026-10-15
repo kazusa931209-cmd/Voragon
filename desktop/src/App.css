@@ -154,4 +154,7 @@ button:disabled {
 .frame-debug {
   font-size: 0.75rem;
   opacity: 0.6;
+  font-family: ui-monospace, monospace;
+  flex: 1 1 100%;
+  min-width: 12rem;
 }

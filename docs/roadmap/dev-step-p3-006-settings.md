@@ -5,8 +5,8 @@
 | **ID** | P3-006 |
 | **Phase** | 3 |
 | **Status** | done |
-| **Commit** | — |
-| **PR** | — |
+| **Commit** | [`35486f0`](https://github.com/kazusa931209-cmd/Voragon/commit/35486f0) |
+| **PR** | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) |
 | **Branch** | `dev-step/p3-006-settings` |
 
 ## Spec References
@@ -52,4 +52,30 @@ Expected: none
 
 ## Completion
 
-_Fill in after implementation._
+### Summary
+
+- `tauri-plugin-store` persists backend URL; `ConnectionStatus` component; Rust `list_audio_input_devices` and device index passed to capture.
+
+### Spec Changes
+
+- None
+
+### Automated Tests Run
+
+```bash
+cd desktop && pnpm test
+# 6 passed (2026-10-15)
+```
+
+### Manual Test Result
+
+- [ ] Pending — [Phase 3 exit checklist](dev-step-phase3-exit.md) § P3-006
+
+### Commit
+
+- **Hash:** `35486f0`
+
+### PR
+
+- **URL:** https://github.com/kazusa931209-cmd/Voragon/pull/14
+- **Merged:** 2026-10-15

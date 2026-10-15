@@ -14,7 +14,9 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-Phase 3 implementation **landed in workspace** (P3-001–P3-009); split into per-step commits when landing on `dev`. Next: Phase 4 dev-step definitions — see [phases.md](phases.md).
+**Phase 3 exit** — manual verification: [dev-step-phase3-exit.md](dev-step-phase3-exit.md). Do not start **P4-001** until Phase 3 exit is signed off.
+
+After exit: **P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md).
 
 ---
 
@@ -56,22 +58,38 @@ Phase 3 implementation **landed in workspace** (P3-001–P3-009); split into per
 
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
-| P3-001 | Tauri 2 + React + TypeScript scaffold | done | — | [dev-step-p3-001-tauri-scaffold.md](dev-step-p3-001-tauri-scaffold.md) |
-| P3-002 | WebSocket client (connect + control messages) | done | — | [dev-step-p3-002-websocket-client.md](dev-step-p3-002-websocket-client.md) |
-| P3-003 | Transcript UI and client state | done | — | [dev-step-p3-003-transcript-ui.md](dev-step-p3-003-transcript-ui.md) |
-| P3-004 | Rust audio capture + IPC | done | — | [dev-step-p3-004-rust-audio-capture.md](dev-step-p3-004-rust-audio-capture.md) |
-| P3-005 | End-to-end mic → backend → transcript UI | done | — | [dev-step-p3-005-e2e-streaming.md](dev-step-p3-005-e2e-streaming.md) |
-| P3-006 | Settings and connection chrome | done | — | [dev-step-p3-006-settings.md](dev-step-p3-006-settings.md) |
-| P3-007 | Client heartbeat and session lifecycle | done | — | [dev-step-p3-007-heartbeat.md](dev-step-p3-007-heartbeat.md) |
-| P3-008 | `session.resume` reconnection | done | — | [dev-step-p3-008-session-resume.md](dev-step-p3-008-session-resume.md) |
-| P3-009 | System tray + global shortcuts | done | — | [dev-step-p3-009-tray-shortcuts.md](dev-step-p3-009-tray-shortcuts.md) |
+| P3-001 | Tauri 2 + React + TypeScript scaffold | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-001-tauri-scaffold.md](dev-step-p3-001-tauri-scaffold.md) |
+| P3-002 | WebSocket client (connect + control messages) | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-002-websocket-client.md](dev-step-p3-002-websocket-client.md) |
+| P3-003 | Transcript UI and client state | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-003-transcript-ui.md](dev-step-p3-003-transcript-ui.md) |
+| P3-004 | Rust audio capture + IPC | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-004-rust-audio-capture.md](dev-step-p3-004-rust-audio-capture.md) |
+| P3-005 | End-to-end mic → backend → transcript UI | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-005-e2e-streaming.md](dev-step-p3-005-e2e-streaming.md) |
+| P3-006 | Settings and connection chrome | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-006-settings.md](dev-step-p3-006-settings.md) |
+| P3-007 | Client heartbeat and session lifecycle | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-007-heartbeat.md](dev-step-p3-007-heartbeat.md) |
+| P3-008 | `session.resume` reconnection | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-008-session-resume.md](dev-step-p3-008-session-resume.md) |
+| P3-009 | System tray + global shortcuts | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-009-tray-shortcuts.md](dev-step-p3-009-tray-shortcuts.md) |
+| P3-010 | Transcription stats + reconnect stability | in-progress | — | [dev-step-p3-010-desktop-ui-reconnect.md](dev-step-p3-010-desktop-ui-reconnect.md) |
 
-**Phase 3 exit:** Desktop captures audio and displays realtime transcripts; reconnection per API; tray and shortcuts. Manual macOS/Windows verification pending per-step commits. See [phases.md](phases.md).
+**Phase 3 exit:** [dev-step-phase3-exit.md](dev-step-phase3-exit.md) — manual macOS (required) and Windows (smoke) checklist. See [phases.md](phases.md).
 
 **Suggested order:** P3-001 → P3-002 → P3-003 → P3-004 → P3-005 → P3-006 → P3-007 → P3-008 → P3-009.
 
 ---
 
-## Phase 4+
+## Phase 4: Local Docker Compose
 
-Dev-steps for Phase 4 (Docker Compose) and beyond — see [phases.md](phases.md).
+| ID | Title | Status | PR | Doc |
+|----|-------|--------|-----|-----|
+| P4-001 | Realtime backend Dockerfile | planned | — | [dev-step-p4-001-backend-dockerfile.md](dev-step-p4-001-backend-dockerfile.md) |
+| P4-002 | Docker Compose (realtime backend) | planned | — | [dev-step-p4-002-docker-compose.md](dev-step-p4-002-docker-compose.md) |
+| P4-003 | Model weight volume caching | planned | — | [dev-step-p4-003-model-cache-volumes.md](dev-step-p4-003-model-cache-volumes.md) |
+| P4-004 | Docker dev docs and Phase 4 exit | planned | — | [dev-step-p4-004-docker-dev-docs.md](dev-step-p4-004-docker-dev-docs.md) |
+
+**Suggested order:** P4-001 → P4-002 → P4-003 → P4-004.
+
+**Phase 4 exit:** `docker compose up` starts backend; desktop E2E; model cache persists. Optional ASR sidecar deferred. See [phases.md](phases.md).
+
+---
+
+## Phase 5+
+
+Dev-steps for Phase 5 (Kind) and beyond — see [phases.md](phases.md).

@@ -22,6 +22,7 @@ export interface RealtimeClientCallbacks {
 
 const PING_INTERVAL_MS = 15_000;
 const SESSION_RESUME_CODES = new Set(["SESSION_NOT_FOUND", "SESSION_EXPIRED"]);
+const RECONNECT_BACKOFF_MS = [1000, 2000, 4000, 8000];
 
 export class RealtimeClient {
   private ws: WebSocket | null = null;
@@ -36,6 +37,11 @@ export class RealtimeClient {
   private pingTimer: ReturnType<typeof setInterval> | null = null;
   private seqNum = 0;
   private resumeAttempted = false;
+  private reconnectInFlight: Promise<void> | null = null;
+  private replacingSocket = false;
+  private restoreStreamingAfterReconnect = false;
+  /** Server closes the WebSocket after session.ended (e.g. audio.stop); do not auto-resume. */
+  private suppressReconnectOnClose = false;
 
   constructor(url: string, language: string, callbacks: RealtimeClientCallbacks) {
     this.url = url;
@@ -51,6 +57,20 @@ export class RealtimeClient {
     return this.streaming;
   }
 
+  /** True while reconnecting or waiting for session.started after an unexpected drop. */
+  isRecovering(): boolean {
+    if (this.intentionalClose) {
+      return false;
+    }
+    if (this.reconnectInFlight !== null) {
+      return true;
+    }
+    if (this.suppressReconnectOnClose) {
+      return false;
+    }
+    return this.lastSessionId !== null && this.sessionId === null;
+  }
+
   async connect(): Promise<void> {
     this.intentionalClose = false;
     this.resumeAttempted = false;
@@ -59,14 +79,14 @@ export class RealtimeClient {
 
   disconnect(): void {
     this.intentionalClose = true;
+    this.reconnectInFlight = null;
+    this.restoreStreamingAfterReconnect = false;
     this.stopPing();
     this.streaming = false;
-    if (this.ws) {
-      this.ws.close();
-      this.ws = null;
-    }
+    this.detachAndCloseWs();
     this.sessionId = null;
     this.lastSessionId = null;
+    this.notifySessionId(null);
     this.callbacks.onStateChange("disconnected");
   }
 
@@ -87,55 +107,108 @@ export class RealtimeClient {
       return;
     }
     this.streaming = false;
+    this.restoreStreamingAfterReconnect = false;
+    this.suppressReconnectOnClose = true;
     this.ws.send(buildControlMessage("audio.stop", this.sessionId, {}));
-    this.startPing();
   }
 
   sendPcmFrame(pcm: Uint8Array): void {
-    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN || !this.streaming) {
       return;
     }
     this.ws.send(buildAudioFrame(pcm, this.seqNum));
     this.seqNum += 1;
   }
 
+  private detachAndCloseWs(): void {
+    const ws = this.ws;
+    this.ws = null;
+    if (!ws) {
+      return;
+    }
+    this.replacingSocket = true;
+    ws.onclose = null;
+    ws.onerror = null;
+    ws.onmessage = null;
+    try {
+      ws.close();
+    } catch {
+      /* ignore */
+    }
+    this.replacingSocket = false;
+  }
+
   private async openSocket(isReconnect: boolean): Promise<void> {
     this.resumeAttempted = false;
+    this.detachAndCloseWs();
     this.callbacks.onStateChange(isReconnect ? "reconnecting" : "connecting");
-    await new Promise<void>((resolve, reject) => {
-      const ws = new WebSocket(this.url);
-      ws.binaryType = "arraybuffer";
-      this.ws = ws;
 
-      ws.onopen = () => {
-        resolve();
-      };
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const ws = new WebSocket(this.url);
+        ws.binaryType = "arraybuffer";
+        this.ws = ws;
 
-      ws.onerror = () => {
-        reject(new Error("WebSocket connection failed"));
-      };
+        ws.onopen = () => {
+          resolve();
+        };
 
-      ws.onclose = () => {
-        this.stopPing();
-        this.streaming = false;
-        if (!this.intentionalClose && this.lastSessionId) {
-          void this.tryReconnect();
-        } else if (!this.intentionalClose) {
-          this.callbacks.onStateChange("disconnected");
-        }
-      };
+        ws.onerror = () => {
+          reject(new Error("WebSocket connection failed"));
+        };
 
-      ws.onmessage = (event) => {
-        if (typeof event.data === "string") {
-          this.handleJsonMessage(event.data);
-        }
-      };
-    }).catch((err) => {
-      this.callbacks.onStateChange("error");
+        ws.onclose = () => {
+          this.stopPing();
+          if (this.replacingSocket || this.intentionalClose) {
+            return;
+          }
+          if (this.suppressReconnectOnClose) {
+            this.suppressReconnectOnClose = false;
+            this.streaming = false;
+            this.sessionId = null;
+            this.lastSessionId = null;
+            this.notifySessionId(null);
+            this.callbacks.onStateChange("disconnected");
+            return;
+          }
+          const wasStreaming = this.streaming;
+          this.streaming = false;
+          if (wasStreaming) {
+            this.restoreStreamingAfterReconnect = true;
+          }
+          this.sessionId = null;
+          this.notifySessionId(null);
+          if (this.lastSessionId) {
+            void this.scheduleReconnect();
+          } else {
+            this.callbacks.onStateChange("disconnected");
+          }
+        };
+
+        ws.onmessage = (event) => {
+          if (typeof event.data === "string") {
+            this.handleJsonMessage(event.data);
+          }
+        };
+      });
+    } catch (err) {
+      if (!isReconnect) {
+        this.callbacks.onStateChange("error");
+      }
       throw err;
-    });
+    }
+  }
 
-    this.startPing();
+  private scheduleReconnect(): void {
+    if (this.intentionalClose || !this.lastSessionId) {
+      return;
+    }
+    if (this.reconnectInFlight) {
+      return;
+    }
+    this.reconnectInFlight = this.tryReconnect().finally(() => {
+      this.reconnectInFlight = null;
+    });
   }
 
   private handleJsonMessage(raw: string): void {
@@ -165,27 +238,24 @@ export class RealtimeClient {
           this.ws.send(buildControlMessage("session.resume", this.lastSessionId, {}));
           return;
         }
-        this.sessionId = newId;
-        this.lastSessionId = newId;
-        this.callbacks.onSessionId(newId);
-        this.callbacks.onStateChange("ready");
+        void this.onSessionReady(newId);
         break;
       }
       case "error": {
         const code = errorCode(message);
         if (SESSION_RESUME_CODES.has(code)) {
           this.callbacks.onNotice(`Session resume failed (${code}); starting fresh.`);
-          this.sessionId = message.session_id;
-          this.lastSessionId = message.session_id;
-          this.callbacks.onSessionId(message.session_id);
-          this.callbacks.onStateChange("ready");
+          void this.onSessionReady(message.session_id);
         }
         break;
       }
       case "session.ended": {
         this.streaming = false;
+        this.restoreStreamingAfterReconnect = false;
+        this.suppressReconnectOnClose = true;
         this.sessionId = null;
-        this.startPing();
+        this.lastSessionId = null;
+        this.notifySessionId(null);
         break;
       }
       case "pong":
@@ -195,21 +265,45 @@ export class RealtimeClient {
     }
   }
 
+  private async onSessionReady(sessionId: string): Promise<void> {
+    this.sessionId = sessionId;
+    this.lastSessionId = sessionId;
+    this.notifySessionId(sessionId);
+    this.callbacks.onStateChange("ready");
+
+    if (this.restoreStreamingAfterReconnect) {
+      this.restoreStreamingAfterReconnect = false;
+      try {
+        await this.startAudio();
+      } catch {
+        this.callbacks.onNotice("Reconnected but could not restart audio streaming.");
+      }
+    }
+    if (!this.streaming) {
+      this.startPing();
+    }
+  }
+
   private async tryReconnect(): Promise<void> {
     const previous = this.lastSessionId;
-    if (!previous) {
+    if (!previous || this.intentionalClose) {
       this.callbacks.onStateChange("disconnected");
       return;
     }
     this.callbacks.onNotice("Reconnecting…");
     this.resumeAttempted = false;
     const deadline = Date.now() + this.reconnectWindowS * 1000;
+    let backoffIndex = 0;
+
     while (Date.now() < deadline && !this.intentionalClose) {
+      this.callbacks.onStateChange("reconnecting");
       try {
         await this.openSocket(true);
         return;
       } catch {
-        await sleep(1000);
+        const waitMs = RECONNECT_BACKOFF_MS[Math.min(backoffIndex, RECONNECT_BACKOFF_MS.length - 1)];
+        backoffIndex += 1;
+        await sleep(waitMs);
       }
     }
     this.callbacks.onStateChange("error");
@@ -218,7 +312,7 @@ export class RealtimeClient {
 
   private startPing(): void {
     this.stopPing();
-    if (!this.ws || this.streaming) {
+    if (!this.ws || this.streaming || !this.sessionId) {
       return;
     }
     this.pingTimer = setInterval(() => {
@@ -237,6 +331,10 @@ export class RealtimeClient {
       clearInterval(this.pingTimer);
       this.pingTimer = null;
     }
+  }
+
+  private notifySessionId(sessionId: string | null): void {
+    this.callbacks.onSessionId(sessionId ?? "");
   }
 }
 
