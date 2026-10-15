@@ -39,4 +39,4 @@ cd docker
 docker compose up --build
 ```
 
-Compose builds from the repo root, publishes `localhost:8000`, sets `ASR_MODEL=tiny`, and runs a `curl` healthcheck (may take **1–2 minutes** on first start while models download and ASR warms up).
+Compose builds from the repo root, publishes `localhost:8000`, sets `ASR_MODEL=tiny`, mounts the **`voragon-model-cache`** volume (`HF_HOME` / `TORCH_HOME`), and runs a `curl` healthcheck. First start may take several minutes while models download; later `docker compose down` / `up` reuses the volume without a full re-fetch.

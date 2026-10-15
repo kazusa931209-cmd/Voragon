@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P4-003 |
 | **Phase** | 4 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p4-003-model-cache-volumes` |
@@ -32,9 +32,9 @@ One verifiable behavior: **model artifacts downloaded on first container run are
 
 ## Acceptance Criteria
 
-- [ ] First `docker compose up` downloads ASR/VAD weights as today on bare metal
-- [ ] After restart, startup skips full re-download (verify via logs or network)
-- [ ] Volume documented in compose file comments and ops docs
+- [x] First `docker compose up` downloads ASR/VAD weights as today on bare metal
+- [x] After restart, startup skips full re-download (verify via logs or network)
+- [x] Volume documented in compose file comments and ops docs
 
 ## Manual Test
 
@@ -56,4 +56,34 @@ Update [docker.md](../operations/docker.md) volume table and env vars; extend `b
 
 ## Completion
 
-_Fill in after implementation._
+### Summary
+
+- Named volume `voragon-model-cache` in [`docker/docker-compose.yml`](../../docker/docker-compose.yml) mounted at `/var/lib/voragon/model-cache`.
+- `HF_HOME` and `TORCH_HOME` under that path for faster-whisper (Hub) and Torch/Silero caches.
+- [`docker/compose.env.example`](../../docker/compose.env.example) documents optional bind-mount override.
+- Updated [docker.md](../operations/docker.md) volume table and env cache mapping.
+
+### Spec Changes
+
+- [docker.md](../operations/docker.md) — volume mounts and cache env vars.
+
+### Automated Tests Run
+
+```bash
+cd backend && source .venv/bin/activate && pytest -q
+# 93 passed, 1 skipped (2026-10-15)
+```
+
+### Manual Test Result
+
+- [x] Fresh volume: first healthy `/health` ~325 s; compose logs show Hugging Face fetches (2026-10-15).
+- [x] `docker compose down` / `up`: second healthy `/health` ~**2 s**; no full model re-download in logs.
+- [x] `docker volume inspect docker_voragon-model-cache` — populated mount under `/var/lib/docker/volumes/...`.
+
+### Commit
+
+- **Hash:** —
+
+### PR
+
+- **URL:** —

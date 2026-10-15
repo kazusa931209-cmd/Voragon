@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P4-003** — [model weight volume caching](dev-step-p4-003-model-cache-volumes.md) (`planned`). P4-002 done @ [`821f7cc`](https://github.com/kazusa931209-cmd/Voragon/commit/821f7cc).
+**P4-003** — [model weight volume caching](dev-step-p4-003-model-cache-volumes.md) (`in-progress`). P4-002 done @ [`821f7cc`](https://github.com/kazusa931209-cmd/Voragon/commit/821f7cc).
 
 ---
 

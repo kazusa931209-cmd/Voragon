@@ -4,7 +4,7 @@
 
 Docker Compose provides a multi-container local development and testing environment for Voragon. It is introduced in Phase 4, after the single-process local prototype is validated.
 
-**Status:** In progress — [P4-001](../roadmap/dev-step-p4-001-backend-dockerfile.md) Dockerfile and [P4-002](../roadmap/dev-step-p4-002-docker-compose.md) `docker compose up` are implemented. Model cache volumes (P4-003) and Phase 4 exit docs (P4-004) follow.
+**Status:** In progress — [P4-001](../roadmap/dev-step-p4-001-backend-dockerfile.md)–[P4-003](../roadmap/dev-step-p4-003-model-cache-volumes.md) (Dockerfile, compose, model cache volume). Phase 4 exit docs (P4-004) follow.
 
 ## Architecture
 
@@ -88,8 +88,17 @@ docker compose -f docker-compose.yml -f docker-compose.gpu.yml up
 
 | Mount | Purpose |
 |-------|---------|
-| Model weights cache | Avoid re-downloading models on container restart |
-| Configuration | Override default settings |
+| `voragon-model-cache` (named volume) | Persists model downloads at `/var/lib/voragon/model-cache` in the container |
+| Configuration | Override via compose `environment` or [compose.env.example](../../docker/compose.env.example) |
+
+Compose sets:
+
+| Env var | Cache |
+|---------|--------|
+| `HF_HOME` | Hugging Face Hub — **faster-whisper** ASR weights (`Systran/faster-whisper-*`) |
+| `TORCH_HOME` | PyTorch hub / **Silero VAD** artifacts when fetched at runtime |
+
+`docker compose down` keeps the named volume; `docker compose down -v` removes it. To reuse a host cache, bind-mount e.g. `~/.cache/huggingface` → `/var/lib/voragon/model-cache/huggingface` (see [compose.env.example](../../docker/compose.env.example)).
 
 ## Networking
 
