@@ -4,7 +4,7 @@
 
 Docker Compose provides a multi-container local development and testing environment for Voragon. It is introduced in Phase 4, after the single-process local prototype is validated.
 
-**Status:** Planned, not implemented.
+**Status:** In progress — [P4-001](../roadmap/dev-step-p4-001-backend-dockerfile.md) adds `docker/realtime-backend/Dockerfile`. Compose and volumes follow in P4-002–P4-004.
 
 ## Architecture
 
@@ -47,7 +47,19 @@ docker/
     └── Dockerfile
 ```
 
-## Usage (Planned)
+## Realtime backend image (P4-001)
+
+Build and run from the **repository root** (see [docker/realtime-backend/README.md](../../docker/realtime-backend/README.md)):
+
+```bash
+docker build -f docker/realtime-backend/Dockerfile -t voragon/realtime-backend:local .
+docker run --rm -p 8000:8000 -e ASR_MODEL=tiny voragon/realtime-backend:local
+curl -f http://localhost:8000/health
+```
+
+Model weights download on **first container start**, not during `docker build`.
+
+## Usage (Planned — P4-002)
 
 ```bash
 # Start backend (CPU inference, in-process)

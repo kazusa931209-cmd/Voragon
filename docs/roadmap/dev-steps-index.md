@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md) (`planned`). Phase 3 exit signed off 2026-10-15: [dev-step-phase3-exit.md](dev-step-phase3-exit.md).
+**P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md) (`in-progress`). Phase 3 exit signed off 2026-10-15: [dev-step-phase3-exit.md](dev-step-phase3-exit.md).
 
 ---
 

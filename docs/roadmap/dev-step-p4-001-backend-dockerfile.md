@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P4-001 |
 | **Phase** | 4 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p4-001-backend-dockerfile` |
@@ -34,9 +34,9 @@ One verifiable behavior: **`docker/realtime-backend/Dockerfile` builds an image 
 
 ## Acceptance Criteria
 
-- [ ] `docker build -f docker/realtime-backend/Dockerfile …` succeeds locally
-- [ ] Container starts; `curl -f http://localhost:8000/health` returns success
-- [ ] Image size and build steps documented (first-run model download may occur at runtime, not build)
+- [x] `docker build -f docker/realtime-backend/Dockerfile …` succeeds locally
+- [x] Container starts; `curl -f http://localhost:8000/health` returns success
+- [x] Image size and build steps documented (first-run model download may occur at runtime, not build)
 
 ## Manual Test
 
@@ -61,4 +61,32 @@ Expected: update [docker.md](../operations/docker.md) **Status** and build instr
 
 ## Completion
 
-_Fill in after implementation._
+### Summary
+
+- Added [`docker/realtime-backend/Dockerfile`](../../docker/realtime-backend/Dockerfile) (Python 3.11 slim, `ffmpeg`, CPU `torch`/`torchaudio`, `pip install` of `backend/`).
+- Repo-root [`.dockerignore`](../../.dockerignore) and [`docker/realtime-backend/README.md`](../../docker/realtime-backend/README.md) (build context, run, health).
+- Updated [docker.md](../operations/docker.md) with P4-001 build/run commands.
+
+### Spec Changes
+
+- [docker.md](../operations/docker.md) — status and realtime-backend image section.
+
+### Automated Tests Run
+
+```bash
+cd backend && source .venv/bin/activate && pytest -q
+# 93 passed, 1 skipped (2026-10-15)
+```
+
+### Manual Test Result
+
+- [x] Build `voragon/realtime-backend:local` from repo root — **~1.71 GB** image (2026-10-15).
+- [x] `docker run -p 8001:8000 -e ASR_MODEL=tiny` → `curl -f http://localhost:8001/health` **healthy** after ASR warmup (~18 s).
+
+### Commit
+
+- **Hash:** —
+
+### PR
+
+- **URL:** —
