@@ -1,0 +1,20 @@
+# Run from this directory: docker compose up --build
+# Build context is the repository root (see realtime-backend/Dockerfile).
+
+services:
+  realtime-backend:
+    build:
+      context: ..
+      dockerfile: docker/realtime-backend/Dockerfile
+    image: voragon/realtime-backend:local
+    ports:
+      - "8000:8000"
+    environment:
+      ASR_MODEL: tiny
+      LOG_FORMAT: json
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 120s

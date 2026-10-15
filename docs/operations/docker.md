@@ -4,7 +4,7 @@
 
 Docker Compose provides a multi-container local development and testing environment for Voragon. It is introduced in Phase 4, after the single-process local prototype is validated.
 
-**Status:** In progress — [P4-001](../roadmap/dev-step-p4-001-backend-dockerfile.md) adds `docker/realtime-backend/Dockerfile`. Compose and volumes follow in P4-002–P4-004.
+**Status:** In progress — [P4-001](../roadmap/dev-step-p4-001-backend-dockerfile.md) Dockerfile and [P4-002](../roadmap/dev-step-p4-002-docker-compose.md) `docker compose up` are implemented. Model cache volumes (P4-003) and Phase 4 exit docs (P4-004) follow.
 
 ## Architecture
 
@@ -59,16 +59,28 @@ curl -f http://localhost:8000/health
 
 Model weights download on **first container start**, not during `docker build`.
 
-## Usage (Planned — P4-002)
+## Usage
+
+From the `docker/` directory (repository root is the image build context):
 
 ```bash
-# Start backend (CPU inference, in-process)
-docker compose up realtime-backend
+cd docker
+docker compose up --build
+```
 
-# Start with ASR sidecar
+Stop any host backend or other container already using port **8000** first. First startup may take **1–2 minutes** until the compose healthcheck passes (model download + ASR warmup).
+
+```bash
+curl -f http://localhost:8000/health
+```
+
+### Planned later
+
+```bash
+# Start with ASR sidecar (not implemented)
 docker compose up
 
-# Start with GPU support
+# Start with GPU support (not implemented)
 docker compose -f docker-compose.yml -f docker-compose.gpu.yml up
 ```
 

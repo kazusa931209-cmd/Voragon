@@ -155,8 +155,9 @@ When ASR warmup has not completed, `status` is `degraded` and `asr.ready` is `fa
 Minimal CLI for end-to-end local testing without the Tauri desktop app:
 
 ```bash
-# Terminal 1 — backend
+# Terminal 1 — backend (choose one)
 cd backend && source .venv/bin/activate && python -m app.main
+# Or Docker: cd docker && docker compose up --build  (see Docker Compose Setup)
 
 # Terminal 2 — test client
 cd tools/realtime-cli && source .venv/bin/activate && pip install -e ".[dev]"

@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P4-002** — [Docker Compose (realtime backend)](dev-step-p4-002-docker-compose.md) (`planned`). P4-001 done @ [`6d3c0c2`](https://github.com/kazusa931209-cmd/Voragon/commit/6d3c0c2).
+**P4-002** — [Docker Compose (realtime backend)](dev-step-p4-002-docker-compose.md) (`in-progress`). P4-001 done @ [`6d3c0c2`](https://github.com/kazusa931209-cmd/Voragon/commit/6d3c0c2).
 
 ---
 

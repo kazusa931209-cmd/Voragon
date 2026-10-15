@@ -29,3 +29,14 @@ curl -f http://localhost:8000/health
 ```
 
 Override server and ASR settings with the same env vars as [backend/.env.example](../../backend/.env.example).
+
+## Docker Compose (recommended)
+
+From the `docker/` directory (stop any host process already bound to port **8000**):
+
+```bash
+cd docker
+docker compose up --build
+```
+
+Compose builds from the repo root, publishes `localhost:8000`, sets `ASR_MODEL=tiny`, and runs a `curl` healthcheck (may take **1–2 minutes** on first start while models download and ASR warms up).
