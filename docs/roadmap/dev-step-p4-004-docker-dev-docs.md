@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P4-004 |
 | **Phase** | 4 |
-| **Status** | in-progress |
-| **Commit** | — |
+| **Status** | done |
+| **Commit** | [`6cdd5ef`](https://github.com/kazusa931209-cmd/Voragon/commit/6cdd5ef) |
 | **PR** | — |
 | **Branch** | `dev-step/p4-004-docker-dev-docs` |
 
@@ -82,7 +82,7 @@ cd desktop && pnpm test                                 # 14 passed (2026-10-15)
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `6cdd5ef`
 
 ### PR
 
