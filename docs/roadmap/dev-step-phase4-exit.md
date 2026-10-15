@@ -3,14 +3,14 @@
 | Field | Value |
 |-------|-------|
 | **Phase** | 4 |
-| **Status** | in-progress (manual verification) |
+| **Status** | done — signed off **2026-10-15** (macOS) |
 | **Dev-steps** | [P4-001](dev-step-p4-001-backend-dockerfile.md)–[P4-004](dev-step-p4-004-docker-dev-docs.md) |
 
 ## Exit Criteria ([phases.md](phases.md))
 
-- [ ] `docker compose up` starts a working backend
-- [ ] Desktop connects to containerized backend
-- [ ] Model weights persist across container restarts
+- [x] `docker compose up` starts a working backend
+- [x] Desktop connects to containerized backend
+- [x] Model weights persist across container restarts
 
 ## Prerequisites
 
@@ -23,15 +23,15 @@ cd desktop && pnpm tauri dev
 
 ## Manual Checklist
 
-- [ ] Follow [docker/README.md](../../docker/README.md) from clone — no local backend venv required
-- [ ] `curl -f http://localhost:8000/health` → healthy after warmup
-- [ ] Desktop **Connect** → **Start transcription** → partials/finals
-- [ ] `docker compose down` && `docker compose up` — faster startup; E2E still works (cached models)
+- [x] Follow [docker/README.md](../../docker/README.md) from clone — no local backend venv required
+- [x] `curl -f http://localhost:8000/health` → healthy after warmup
+- [x] Desktop **Connect** → **Start transcription** → partials/finals
+- [x] `docker compose down` && `docker compose up` — faster startup; E2E still works (cached models)
 
 ## Sign-Off
 
-When all boxes are checked:
+Completed **2026-10-15**:
 
-1. Set **Status** in this file to `done` with date.
-2. Update [phases.md](phases.md) Phase 4 **Status** to complete.
-3. Update [dev-steps-index.md](dev-steps-index.md) if needed.
+1. [x] **Status** `done` (header).
+2. [x] [phases.md](phases.md) Phase 4 **Status** complete with exit sign-off.
+3. [x] [dev-steps-index.md](dev-steps-index.md) — Phase 4 exit complete; next Phase 5 planning.

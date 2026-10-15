@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**Phase 4 exit** — [dev-step-phase4-exit.md](dev-step-phase4-exit.md) (manual desktop + compose E2E). P4-004 @ [`6cdd5ef`](https://github.com/kazusa931209-cmd/Voragon/commit/6cdd5ef).
+**Phase 5+** — see [phases.md](phases.md). Phase 4 exit signed off 2026-10-15: [dev-step-phase4-exit.md](dev-step-phase4-exit.md).
 
 ---
 
@@ -84,7 +84,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 **Suggested order:** P4-001 → P4-002 → P4-003 → P4-004.
 
-**Phase 4 exit:** [dev-step-phase4-exit.md](dev-step-phase4-exit.md) — compose backend, desktop E2E, model cache persists. Dev-steps [P4-001](dev-step-p4-001-backend-dockerfile.md)–[P4-004](dev-step-p4-004-docker-dev-docs.md) done. See [phases.md](phases.md).
+**Phase 4 exit:** signed off 2026-10-15 — [dev-step-phase4-exit.md](dev-step-phase4-exit.md). Dev-steps [P4-001](dev-step-p4-001-backend-dockerfile.md)–[P4-004](dev-step-p4-004-docker-dev-docs.md) done.
 
 ---
 

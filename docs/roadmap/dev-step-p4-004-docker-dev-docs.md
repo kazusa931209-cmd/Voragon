@@ -78,7 +78,7 @@ cd desktop && pnpm test                                 # 14 passed (2026-10-15)
 ### Manual Test Result
 
 - [x] Doc path: clone → `docker compose up` → `curl /health` → desktop URL documented (2026-10-15).
-- [ ] Desktop speak E2E vs compose — pending operator sign-off on [Phase 4 exit](dev-step-phase4-exit.md).
+- [x] Desktop speak E2E vs compose — pass 2026-10-15 ([Phase 4 exit](dev-step-phase4-exit.md)).
 
 ### Commit
 
