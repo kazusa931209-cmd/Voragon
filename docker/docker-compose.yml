@@ -1,9 +1,12 @@
+# Stack name: voragon (containers/networks/volumes prefixed voragon_, not the folder name).
 # Run from this directory: docker compose up --build
 # Build context is the repository root (see realtime-backend/Dockerfile).
 #
 # Model cache: named volume voragon-model-cache persists Hugging Face Hub
 # (faster-whisper ASR weights) and Torch hub caches (Silero VAD) across
 # docker compose down / up. Use `docker compose down -v` to wipe the cache.
+
+name: voragon
 
 services:
   realtime-backend:

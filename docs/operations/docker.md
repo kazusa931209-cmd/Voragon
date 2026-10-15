@@ -61,7 +61,7 @@ Model weights download on **first container start**, not during `docker build`.
 
 ## Usage
 
-From the `docker/` directory (repository root is the image build context):
+From the `docker/` directory (repository root is the image build context). Compose project name is **`voragon`** (see `name:` in [`docker-compose.yml`](../../docker/docker-compose.yml)), so resources are prefixed `voragon_` (not `docker_`).
 
 ```bash
 cd docker
@@ -88,7 +88,7 @@ docker compose -f docker-compose.yml -f docker-compose.gpu.yml up
 
 | Mount | Purpose |
 |-------|---------|
-| `voragon-model-cache` (named volume) | Persists model downloads at `/var/lib/voragon/model-cache` in the container |
+| `voragon-model-cache` (named volume) | Persists model downloads at `/var/lib/voragon/model-cache` in the container (Docker volume name `voragon_voragon-model-cache`) |
 | Configuration | Override via compose `environment` or [compose.env.example](../../docker/compose.env.example) |
 
 Compose sets:

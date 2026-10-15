@@ -78,7 +78,7 @@ cd backend && source .venv/bin/activate && pytest -q
 
 - [x] Fresh volume: first healthy `/health` ~325 s; compose logs show Hugging Face fetches (2026-10-15).
 - [x] `docker compose down` / `up`: second healthy `/health` ~**2 s**; no full model re-download in logs.
-- [x] `docker volume inspect docker_voragon-model-cache` — populated mount under `/var/lib/docker/volumes/...`.
+- [x] `docker volume inspect voragon_voragon-model-cache` — populated mount under `/var/lib/docker/volumes/...` (compose project `voragon`).
 
 ### Commit
 

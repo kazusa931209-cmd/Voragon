@@ -36,7 +36,7 @@ From the `docker/` directory (stop any host process already bound to port **8000
 
 ```bash
 cd docker
-docker compose up --build
+docker compose up --build   # project name: voragon
 ```
 
 Compose builds from the repo root, publishes `localhost:8000`, sets `ASR_MODEL=tiny`, mounts the **`voragon-model-cache`** volume (`HF_HOME` / `TORCH_HOME`), and runs a `curl` healthcheck. First start may take several minutes while models download; later `docker compose down` / `up` reuses the volume without a full re-fetch.
