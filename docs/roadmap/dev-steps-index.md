@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P4-004** — [Docker dev docs and Phase 4 exit](dev-step-p4-004-docker-dev-docs.md) (`planned`). P4-003 done @ [`981b2cc`](https://github.com/kazusa931209-cmd/Voragon/commit/981b2cc).
+**Phase 4 exit** — [dev-step-phase4-exit.md](dev-step-phase4-exit.md) (manual desktop + compose E2E). P4-004 implementation done after commit.
 
 ---
 
@@ -84,7 +84,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 **Suggested order:** P4-001 → P4-002 → P4-003 → P4-004.
 
-**Phase 4 exit:** `docker compose up` starts backend; desktop E2E; model cache persists. Optional ASR sidecar deferred. See [phases.md](phases.md).
+**Phase 4 exit:** [dev-step-phase4-exit.md](dev-step-phase4-exit.md) — compose backend, desktop E2E, model cache persists. Dev-steps [P4-001](dev-step-p4-001-backend-dockerfile.md)–[P4-004](dev-step-p4-004-docker-dev-docs.md) done. See [phases.md](phases.md).
 
 ---
 

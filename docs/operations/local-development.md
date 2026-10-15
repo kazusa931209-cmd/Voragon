@@ -2,15 +2,16 @@
 
 ## Overview
 
-This document describes the planned local development setup for Voragon. All components run on the developer's machine with no cloud dependencies.
+Local development for Voragon: **desktop on the host**, **backend** either in Docker (recommended for reproducibility) or a Python venv. No cloud dependencies.
 
-**Status:** Planned, not implemented.
+**Status:** Implemented — Phase 3 desktop ([Phase 3 exit](../roadmap/dev-step-phase3-exit.md)); Phase 4 Docker backend ([docker/README.md](../../docker/README.md), [Phase 4 exit](../roadmap/dev-step-phase4-exit.md)).
 
 ## Prerequisites
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Python | 3.11+ | Backend runtime |
+| Docker + Compose | Latest | Phase 4 backend (optional if using venv backend) |
+| Python | 3.11+ | Bare-metal backend and pytest |
 | Node.js | 20+ | Frontend tooling |
 | Rust | 1.77+ | Tauri native layer |
 | pnpm or npm | Latest | JavaScript package management |
@@ -44,7 +45,7 @@ flowchart LR
     Backend --> ASR
 ```
 
-## Planned Project Structure
+## Project Structure
 
 ```
 voragon/
@@ -61,9 +62,27 @@ voragon/
 └── k8s/                    # Kubernetes manifests (Phase 5+)
 ```
 
-## Starting Services (Planned)
+## Starting Services
 
-### Backend
+### Recommended: Docker backend + desktop (Phase 4)
+
+Two terminals — no local backend venv required for day-to-day desktop E2E:
+
+```bash
+# Terminal 1
+cd docker && docker compose up --build
+
+# Terminal 2
+cd desktop && pnpm install && pnpm tauri dev
+```
+
+Quick reference: [docker/README.md](../../docker/README.md). WebSocket URL: `ws://localhost:8000/v1/realtime`.
+
+Stop anything else on port **8000** before starting compose.
+
+### Alternative: bare-metal backend
+
+Use when changing backend code or running `pytest` against a local interpreter:
 
 ```bash
 cd backend
@@ -73,6 +92,8 @@ pip install -e ".[dev]"
 python -m app.main
 # Backend available at http://localhost:8000
 ```
+
+Then start desktop as above. See [backend/README.md](../../backend/README.md).
 
 ### Metrics (Prometheus)
 
@@ -118,7 +139,7 @@ On first run, the ASR backend downloads model weights:
 | Whisper Large-v3 Turbo | ~1.5 GB | Hugging Face cache or configured path |
 | Silero VAD | ~2 MB | Downloaded automatically |
 
-Model download is a one-time operation per machine.
+Model download is a one-time operation per machine (or per Docker volume — see [Docker Compose](docker.md)).
 
 Use `ASR_BACKEND=mock` for fast local runs and automated tests without downloading Whisper weights.
 
@@ -157,7 +178,7 @@ Minimal CLI for end-to-end local testing without the Tauri desktop app:
 ```bash
 # Terminal 1 — backend (choose one)
 cd backend && source .venv/bin/activate && python -m app.main
-# Or Docker: cd docker && docker compose up --build  (see Docker Compose Setup)
+# Or Docker: cd docker && docker compose up --build  (see docker/README.md)
 
 # Terminal 2 — test client
 cd tools/realtime-cli && source .venv/bin/activate && pip install -e ".[dev]"
@@ -186,25 +207,32 @@ flowchart TD
     F --> G["Verify transcript in UI"]
 ```
 
-## Testing (Planned)
+## Testing
 
 | Test Type | Tool | Location |
 |-----------|------|----------|
 | Backend unit tests | pytest | `backend/tests/` |
-| Backend integration tests | pytest + httpx | `backend/tests/integration/` |
-| WebSocket protocol tests | pytest + websockets | `backend/tests/ws/` |
 | Desktop unit tests | vitest | `desktop/src/__tests__/` |
-| E2E tests | Manual (Phase 1); automated (Phase 3) | — |
+| Desktop Rust tests | cargo test | `desktop/src-tauri/` |
+| Compose + CLI E2E | `realtime_cli` | `tools/realtime-cli/` |
+| Desktop + backend E2E | Manual | [Phase 3 exit](../roadmap/dev-step-phase3-exit.md), [Phase 4 exit](../roadmap/dev-step-phase4-exit.md) |
 
-## Troubleshooting (Anticipated)
+```bash
+cd backend && source .venv/bin/activate && pytest -q
+cd desktop && pnpm test
+```
+
+## Troubleshooting
 
 | Issue | Likely Cause | Resolution |
 |-------|-------------|------------|
-| Backend fails to start | Missing Python dependencies | `pip install -e ".[dev]"` |
+| Port 8000 in use | Host backend or old container | `docker compose down`; stop `python -m app.main` |
+| Backend fails to start (venv) | Missing Python dependencies | `pip install -e ".[dev]"` |
+| Compose unhealthy long time | First model download | Wait; use `ASR_MODEL=tiny` in compose |
 | Model download fails | Network or disk space | Check internet; ensure ~2 GB free |
 | No audio in transcript | Microphone permission denied | Check OS microphone permissions |
-| High inference latency | CPU-only inference | Use GPU backend or whisper.cpp on Apple Silicon |
-| WebSocket connection refused | Backend not running | Start backend before desktop |
+| High inference latency | CPU-only inference in Docker | Smaller `ASR_MODEL`; bare-metal GPU path later |
+| WebSocket connection refused | Backend not running | Start compose or venv backend before desktop |
 
 ## Related Documents
 

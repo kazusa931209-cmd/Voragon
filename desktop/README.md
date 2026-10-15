@@ -10,8 +10,9 @@ Tauri 2 + React + TypeScript client for the Voragon realtime backend.
 ## Development
 
 ```bash
-# Terminal 1 — backend
-cd ../backend && source .venv/bin/activate && python -m app.main
+# Terminal 1 — backend (choose one)
+cd ../docker && docker compose up --build   # recommended; see docker/README.md
+# Or: cd ../backend && source .venv/bin/activate && python -m app.main
 
 # Terminal 2 — desktop
 cd desktop
@@ -23,9 +24,10 @@ Connect in the app, then **Start transcription**. Global shortcut: **⌘⇧T** (
 
 Default backend URL: `ws://localhost:8000/v1/realtime`
 
-## Phase 3 exit verification
+## Manual verification
 
-Manual checklist (macOS required; Windows smoke optional): [dev-step-phase3-exit.md](../docs/roadmap/dev-step-phase3-exit.md).
+- Phase 3 (desktop): [dev-step-phase3-exit.md](../docs/roadmap/dev-step-phase3-exit.md)
+- Phase 4 (Docker backend + desktop): [dev-step-phase4-exit.md](../docs/roadmap/dev-step-phase4-exit.md)
 
 ## Tests
 

@@ -2,9 +2,9 @@
 
 ## Overview
 
-Docker Compose provides a multi-container local development and testing environment for Voragon. It is introduced in Phase 4, after the single-process local prototype is validated.
+Docker Compose provides a local development and testing environment for Voragon. **Quick start:** [docker/README.md](../../docker/README.md).
 
-**Status:** In progress — [P4-001](../roadmap/dev-step-p4-001-backend-dockerfile.md)–[P4-003](../roadmap/dev-step-p4-003-model-cache-volumes.md) (Dockerfile, compose, model cache volume). Phase 4 exit docs (P4-004) follow.
+**Status:** **Implemented** (CPU, in-process ASR) — [P4-001](../roadmap/dev-step-p4-001-backend-dockerfile.md)–[P4-004](../roadmap/dev-step-p4-004-docker-dev-docs.md). Quick start: [docker/README.md](../../docker/README.md). GPU override and ASR sidecar deferred.
 
 ## Architecture
 
@@ -20,12 +20,12 @@ flowchart LR
 
 The desktop application runs on the host (not containerized) for native audio capture and OS integration. The backend and optional ASR sidecar run in containers.
 
-## Planned Services
+## Services
 
-| Service | Image | Port | GPU | Description |
-|---------|-------|------|-----|-------------|
-| `realtime-backend` | `voragon/realtime-backend` | 8000 | No | FastAPI WebSocket service |
-| `asr-inference` | `voragon/asr-inference` | 8081 | Optional | ASR inference sidecar (if separated) |
+| Service | Image | Port | GPU | Status |
+|---------|-------|------|-----|--------|
+| `realtime-backend` | `voragon/realtime-backend:local` | 8000 | No | **Implemented** ([docker-compose.yml](../../docker/docker-compose.yml)) |
+| `asr-inference` | `voragon/asr-inference` | 8081 | Optional | Planned (sidecar) |
 
 ### When to Use ASR Sidecar
 

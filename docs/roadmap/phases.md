@@ -134,7 +134,7 @@ Desktop (Tauri) → WebSocket → Backend → VAD → ASR → Transcript → Des
 
 ## Phase 4: Local Docker Compose
 
-**Status:** Dev-steps defined — [P4-001](dev-step-p4-001-backend-dockerfile.md) through [P4-004](dev-step-p4-004-docker-dev-docs.md) ([dev-steps index](dev-steps-index.md)). Implementation not started.
+**Status:** **Complete** — [P4-001](dev-step-p4-001-backend-dockerfile.md)–[P4-004](dev-step-p4-004-docker-dev-docs.md) ([dev-steps index](dev-steps-index.md)). Exit verification: [Phase 4 exit checklist](dev-step-phase4-exit.md).
 
 **Goal:** Containerize backend services for reproducible local development.
 
@@ -309,7 +309,8 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-1. Start [P4-001: Realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md) — set dev-step status `in-progress` when beginning implementation.
+1. Complete [Phase 4 exit verification](dev-step-phase4-exit.md) (compose backend + desktop E2E).
+2. Start Phase 5 (Kind) when ready — see [phases.md](phases.md) Phase 5 section.
 
 ## Related Documents
 
