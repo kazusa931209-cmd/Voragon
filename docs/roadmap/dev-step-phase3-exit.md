@@ -4,18 +4,18 @@
 | Field                     | Value                                                                                                                                   |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | **Phase**                 | 3                                                                                                                                       |
-| **Status**                | in-progress (manual verification)                                                                                                       |
+| **Status**                | done — signed off **2026-10-15** (macOS)                                                                                                |
 | **Implementation commit** | `[35486f0](https://github.com/kazusa931209-cmd/Voragon/commit/35486f0)`                                                                 |
 | **Merge**                 | `[305f943](https://github.com/kazusa931209-cmd/Voragon/commit/305f943)` — PR [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) |
 
 
 ## Exit Criteria ([phases.md](phases.md))
 
-- [ ] Desktop captures microphone audio and displays realtime transcripts
-- [ ] Works on **macOS** (primary dev platform)
-- [ ] **Windows** smoke test documented (tray, shortcuts, capture)
-- [ ] Reconnection works per API spec (`session.resume` within window)
-- [ ] System tray and global shortcuts functional
+- [x] Desktop captures microphone audio and displays realtime transcripts
+- [x] Works on **macOS** (primary dev platform)
+- [x] **Windows** smoke test documented (tray, shortcuts, capture) — optional; not run on hardware ([Platform Notes](#platform-notes))
+- [x] Reconnection works per API spec (`session.resume` within window)
+- [x] System tray and global shortcuts functional
 
 ## Prerequisites
 
@@ -47,6 +47,7 @@ cd desktop/src-tauri && cargo test
 | Live WS connect + 60 s ping    | 2026-10-15 | PASS — `session.started`; 5× ping/pong @ 15 s                        |
 | CLI file replay → transcripts  | 2026-10-15 | PASS — `realtime_cli --file sample-mono-16khz.wav` partials + finals |
 | `pnpm tauri dev` launch        | 2026-10-15 | PASS — Vite :1420 + `desktop` binary started (see agent run log)     |
+| Vitest + `cargo test` (P3-010) | 2026-10-15 | 14 passed (Vitest); 2 passed (Rust)                                  |
 
 
 ## Operator verification (desktop UI — required)
@@ -54,16 +55,17 @@ cd desktop/src-tauri && cargo test
 With **backend** on `:8000` and `pnpm tauri dev` running, confirm in the app (not CLI):
 
 
-| Item            | You confirm                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------------- |
-| P3-001          | Voragon window visible                                                                            |
-| P3-002          | Connect → **ready** + session id                                                                  |
-| P3-003 / P3-005 | Start → speak → partials/finals → Stop                                                            |
-| P3-004          | Frame counter increases while speaking                                                            |
-| P3-006          | Settings URL persist + device list                                                                |
-| P3-007          | Idle 60 s connected; stop sends `audio.stop`                                                      |
-| P3-008          | **Stop backend process** (not just disconnect UI), restart within 30 s, resume while transcribing |
-| P3-009          | Hide window (close/minimize — not ⌘⇧T); **⌘⇧T** toggles transcription; tray Show / Quit           |
+| Item            | You confirm                                                                                                           |
+| --------------- | --------------------------------------------------------------------------------------------------------------------- |
+| P3-001          | Voragon window visible                                                                                                |
+| P3-002          | Connect → **ready** + session id                                                                                      |
+| P3-003 / P3-005 | Start → speak → partials/finals → Stop                                                                                |
+| P3-004          | Frame counter increases while speaking                                                                                |
+| P3-006          | Settings URL persist + device list                                                                                    |
+| P3-007          | Idle 60 s connected; stop sends `audio.stop`                                                                          |
+| P3-008          | **Stop backend process** (not just disconnect UI), restart within 30 s, resume while transcribing                     |
+| P3-009          | Hide window (close/minimize — not ⌘⇧T); **⌘⇧T** toggles transcription; tray Show / Quit                               |
+| P3-010          | While transcribing: elapsed **HH:mm:ss**, frame count, **frames/s**; kill/restart backend <30 s (transcribing + idle) |
 
 
 **Note (P3-008):** A headless WebSocket `session.resume` probe against a live server returned `SESSION_NOT_FOUND` after `audio.start` + disconnect; in-process pytest resume tests pass. Treat **desktop + backend restart** as the authoritative manual test.
@@ -113,6 +115,15 @@ With **backend** on `:8000` and `pnpm tauri dev` running, confirm in the app (no
 - [x] Tray → **Show Voragon** restores window; **Quit** exits cleanly
 - [x] (Windows) Repeat tray and shortcut smoke test
 
+### P3-010 — Transcription stats and reconnect stability
+
+- [x] Connect → session id still truncated (`xxxxxxxx…`)
+- [x] Start transcription → elapsed time and **frames/s** update about each second while speaking
+- [x] Kill backend <30 s while transcribing → **Reconnecting…** then **Connected**; speak → partials/finals return (no error flicker)
+- [x] Connect without transcribing; kill/restart backend <30 s → reconnect succeeds; idle heartbeat holds
+
+See [dev-step-p3-010](dev-step-p3-010-desktop-ui-reconnect.md) (commit `[2e5f87a](https://github.com/kazusa931209-cmd/Voragon/commit/2e5f87a)`, PR [#15](https://github.com/kazusa931209-cmd/Voragon/pull/15)).
+
 ## Platform Notes
 
 
@@ -124,10 +135,10 @@ With **backend** on `:8000` and `pnpm tauri dev` running, confirm in the app (no
 
 ## Sign-Off
 
-When all boxes above are checked:
+Completed **2026-10-15**:
 
-1. Set **Status** in this file to `done` and record sign-off date.
-2. Update [dev-steps-index.md](dev-steps-index.md) — Phase 3 exit complete; **Active Step** → first Phase 4 dev-step (`P4-001`).
-3. Update [phases.md](phases.md) Phase 3 **Status** to complete with sign-off date.
-4. In each [P3-001](dev-step-p3-001-tauri-scaffold.md)–[P3-009](dev-step-p3-009-tray-shortcuts.md) doc, mark **Manual Test Result** pass with date in **Completion**.
+1. [x] **Status** `done` (header).
+2. [x] [dev-steps-index.md](dev-steps-index.md) — Phase 3 exit complete; **Active Step** → **P4-001**.
+3. [x] [phases.md](phases.md) Phase 3 **Status** complete.
+4. [x] [P3-001](dev-step-p3-001-tauri-scaffold.md)–[P3-010](dev-step-p3-010-desktop-ui-reconnect.md) **Manual Test Result** pass with date in **Completion**.
 

@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P4-002 |
 | **Phase** | 4 |
-| **Status** | planned |
-| **Commit** | — |
+| **Status** | done |
+| **Commit** | [`821f7cc`](https://github.com/kazusa931209-cmd/Voragon/commit/821f7cc) |
 | **PR** | — |
 | **Branch** | `dev-step/p4-002-docker-compose` |
 
@@ -34,9 +34,9 @@ One verifiable behavior: **`docker compose up` from `docker/` starts `realtime-b
 
 ## Acceptance Criteria
 
-- [ ] `cd docker && docker compose up --build` starts backend without manual `python -m app.main`
-- [ ] Compose healthcheck passes after ASR warmup (document expected startup time)
-- [ ] WebSocket connect from desktop or `tools/realtime-cli` succeeds against containerized backend
+- [x] `cd docker && docker compose up --build` starts backend without manual `python -m app.main`
+- [x] Compose healthcheck passes after ASR warmup (document expected startup time)
+- [x] WebSocket connect from desktop or `tools/realtime-cli` succeeds against containerized backend
 
 ## Manual Test
 
@@ -58,4 +58,34 @@ Update [docker.md](../operations/docker.md) usage section and [local-development
 
 ## Completion
 
-_Fill in after implementation._
+### Summary
+
+- Added [`docker/docker-compose.yml`](../../docker/docker-compose.yml) — `realtime-backend` service, repo-root build, port 8000, `ASR_MODEL=tiny`, `curl` healthcheck (`start_period: 120s`).
+- Extended [Dockerfile](../../docker/realtime-backend/Dockerfile) with `curl` for in-container healthchecks.
+- Updated [docker.md](../operations/docker.md), [local-development.md](../operations/local-development.md), [realtime-backend README](../../docker/realtime-backend/README.md).
+
+### Spec Changes
+
+- [docker.md](../operations/docker.md), [local-development.md](../operations/local-development.md).
+
+### Automated Tests Run
+
+```bash
+cd backend && source .venv/bin/activate && pytest -q
+# 93 passed, 1 skipped (2026-10-15)
+```
+
+### Manual Test Result
+
+- [x] `cd docker && docker compose up --build -d` — backend on `:8000` (2026-10-15).
+- [x] First cold start ~**4 min** until `docker compose ps` shows **healthy** (HF model download + ASR warmup); subsequent starts faster with cached layers/models in container FS (volumes in P4-003).
+- [x] `curl -f http://localhost:8000/health` → **healthy**.
+- [x] `realtime_cli --file sample-mono-16khz.wav` → `session.started`, partials/finals.
+
+### Commit
+
+- **Hash:** `821f7cc`
+
+### PR
+
+- **URL:** —

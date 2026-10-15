@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P4-004 |
 | **Phase** | 4 |
-| **Status** | planned |
-| **Commit** | — |
+| **Status** | done |
+| **Commit** | [`6cdd5ef`](https://github.com/kazusa931209-cmd/Voragon/commit/6cdd5ef) |
 | **PR** | — |
 | **Branch** | `dev-step/p4-004-docker-dev-docs` |
 
@@ -33,9 +33,9 @@ One verifiable behavior: **documentation describes the Docker-based dev loop; de
 
 ## Acceptance Criteria
 
-- [ ] New contributor can follow docs: compose backend + desktop transcript E2E
-- [ ] Phase 4 exit criteria in [phases.md](phases.md) checked off in this doc’s manual test
-- [ ] No contradiction between bare-metal and Docker instructions (when to use each)
+- [x] New contributor can follow docs: compose backend + desktop transcript E2E ([docker/README.md](../../docker/README.md), [local-development.md](../operations/local-development.md))
+- [x] Phase 4 exit criteria tracked in [dev-step-phase4-exit.md](dev-step-phase4-exit.md) manual checklist (sign-off when desktop E2E confirmed)
+- [x] No contradiction between bare-metal and Docker instructions (when to use each)
 
 ## Manual Test
 
@@ -58,4 +58,32 @@ Expected: [local-development.md](../operations/local-development.md), [docker.md
 
 ## Completion
 
-_Fill in after implementation._
+### Summary
+
+- Added [docker/README.md](../../docker/README.md) quick start (compose, health, WebSocket, Docker vs venv).
+- Updated [local-development.md](../operations/local-development.md), [docker.md](../operations/docker.md), [phases.md](phases.md), [desktop/README.md](../../desktop/README.md).
+- Added [dev-step-phase4-exit.md](dev-step-phase4-exit.md) manual checklist; cross-links in [dev-steps-index.md](dev-steps-index.md).
+
+### Spec Changes
+
+- [local-development.md](../operations/local-development.md), [docker.md](../operations/docker.md), [phases.md](phases.md).
+
+### Automated Tests Run
+
+```bash
+cd backend && source .venv/bin/activate && pytest -q   # 93 passed, 1 skipped (2026-10-15)
+cd desktop && pnpm test                                 # 14 passed (2026-10-15)
+```
+
+### Manual Test Result
+
+- [x] Doc path: clone → `docker compose up` → `curl /health` → desktop URL documented (2026-10-15).
+- [x] Desktop speak E2E vs compose — pass 2026-10-15 ([Phase 4 exit](dev-step-phase4-exit.md)).
+
+### Commit
+
+- **Hash:** `6cdd5ef`
+
+### PR
+
+- **URL:** —

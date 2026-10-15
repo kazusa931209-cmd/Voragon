@@ -1,0 +1,25 @@
+# Voragon Docker build context exclusions (repo root builds).
+
+.git
+.github
+**/.venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+
+backend/.env
+backend/:memory:.ses
+
+desktop/
+tools/
+
+**/.vite
+**/node_modules
+**/dist
+desktop/src-tauri/target
+
+docs/
+*.md
+!backend/README.md

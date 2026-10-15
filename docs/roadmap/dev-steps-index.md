@@ -14,9 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**Phase 3 exit** — manual verification: [dev-step-phase3-exit.md](dev-step-phase3-exit.md). Do not start **P4-001** until Phase 3 exit is signed off.
-
-After exit: **P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md).
+**Phase 5+** — see [phases.md](phases.md). Phase 4 exit signed off 2026-10-15: [dev-step-phase4-exit.md](dev-step-phase4-exit.md).
 
 ---
 
@@ -67,7 +65,7 @@ After exit: **P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend
 | P3-007 | Client heartbeat and session lifecycle | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-007-heartbeat.md](dev-step-p3-007-heartbeat.md) |
 | P3-008 | `session.resume` reconnection | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-008-session-resume.md](dev-step-p3-008-session-resume.md) |
 | P3-009 | System tray + global shortcuts | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-009-tray-shortcuts.md](dev-step-p3-009-tray-shortcuts.md) |
-| P3-010 | Transcription stats + reconnect stability | in-progress | — | [dev-step-p3-010-desktop-ui-reconnect.md](dev-step-p3-010-desktop-ui-reconnect.md) |
+| P3-010 | Transcription stats + reconnect stability | done | [#15](https://github.com/kazusa931209-cmd/Voragon/pull/15) | [dev-step-p3-010-desktop-ui-reconnect.md](dev-step-p3-010-desktop-ui-reconnect.md) |
 
 **Phase 3 exit:** [dev-step-phase3-exit.md](dev-step-phase3-exit.md) — manual macOS (required) and Windows (smoke) checklist. See [phases.md](phases.md).
 
@@ -79,14 +77,14 @@ After exit: **P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend
 
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
-| P4-001 | Realtime backend Dockerfile | planned | — | [dev-step-p4-001-backend-dockerfile.md](dev-step-p4-001-backend-dockerfile.md) |
-| P4-002 | Docker Compose (realtime backend) | planned | — | [dev-step-p4-002-docker-compose.md](dev-step-p4-002-docker-compose.md) |
-| P4-003 | Model weight volume caching | planned | — | [dev-step-p4-003-model-cache-volumes.md](dev-step-p4-003-model-cache-volumes.md) |
-| P4-004 | Docker dev docs and Phase 4 exit | planned | — | [dev-step-p4-004-docker-dev-docs.md](dev-step-p4-004-docker-dev-docs.md) |
+| P4-001 | Realtime backend Dockerfile | done | [`6d3c0c2`](https://github.com/kazusa931209-cmd/Voragon/commit/6d3c0c2) | [dev-step-p4-001-backend-dockerfile.md](dev-step-p4-001-backend-dockerfile.md) |
+| P4-002 | Docker Compose (realtime backend) | done | [`821f7cc`](https://github.com/kazusa931209-cmd/Voragon/commit/821f7cc) | [dev-step-p4-002-docker-compose.md](dev-step-p4-002-docker-compose.md) |
+| P4-003 | Model weight volume caching | done | [`981b2cc`](https://github.com/kazusa931209-cmd/Voragon/commit/981b2cc) | [dev-step-p4-003-model-cache-volumes.md](dev-step-p4-003-model-cache-volumes.md) |
+| P4-004 | Docker dev docs and Phase 4 exit | done | [`6cdd5ef`](https://github.com/kazusa931209-cmd/Voragon/commit/6cdd5ef) | [dev-step-p4-004-docker-dev-docs.md](dev-step-p4-004-docker-dev-docs.md) |
 
 **Suggested order:** P4-001 → P4-002 → P4-003 → P4-004.
 
-**Phase 4 exit:** `docker compose up` starts backend; desktop E2E; model cache persists. Optional ASR sidecar deferred. See [phases.md](phases.md).
+**Phase 4 exit:** signed off 2026-10-15 — [dev-step-phase4-exit.md](dev-step-phase4-exit.md). Dev-steps [P4-001](dev-step-p4-001-backend-dockerfile.md)–[P4-004](dev-step-p4-004-docker-dev-docs.md) done.
 
 ---
 

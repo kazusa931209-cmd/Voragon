@@ -102,7 +102,7 @@ Test Client → WebSocket → Backend → VAD → ASR → Transcript
 
 ## Phase 3: Tauri Desktop Application
 
-**Status:** Implementation merged ([PR #14](https://github.com/kazusa931209-cmd/Voragon/pull/14)) — [P3-001](dev-step-p3-001-tauri-scaffold.md) through [P3-009](dev-step-p3-009-tray-shortcuts.md). **Exit verification in progress:** [Phase 3 exit checklist](dev-step-phase3-exit.md) ([dev-steps index](dev-steps-index.md)).
+**Status:** **Complete** (signed off **2026-10-15**) — [P3-001](dev-step-p3-001-tauri-scaffold.md)–[P3-010](dev-step-p3-010-desktop-ui-reconnect.md); [PR #14](https://github.com/kazusa931209-cmd/Voragon/pull/14), [PR #15](https://github.com/kazusa931209-cmd/Voragon/pull/15). [Phase 3 exit checklist](dev-step-phase3-exit.md) ([dev-steps index](dev-steps-index.md)).
 
 **Goal:** Build the cross-platform desktop client.
 
@@ -134,7 +134,7 @@ Desktop (Tauri) → WebSocket → Backend → VAD → ASR → Transcript → Des
 
 ## Phase 4: Local Docker Compose
 
-**Status:** Dev-steps defined — [P4-001](dev-step-p4-001-backend-dockerfile.md) through [P4-004](dev-step-p4-004-docker-dev-docs.md) ([dev-steps index](dev-steps-index.md)). Implementation not started.
+**Status:** **Complete** (signed off **2026-10-15**) — [P4-001](dev-step-p4-001-backend-dockerfile.md)–[P4-004](dev-step-p4-004-docker-dev-docs.md) ([dev-steps index](dev-steps-index.md)). [Phase 4 exit checklist](dev-step-phase4-exit.md).
 
 **Goal:** Containerize backend services for reproducible local development.
 
@@ -309,8 +309,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-1. Complete [Phase 3 exit verification](dev-step-phase3-exit.md) (manual checklist on macOS; Windows smoke optional).
-2. Start [P4-001: Realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md) after Phase 3 exit is signed off.
+1. Define and start Phase 5 dev-steps (local Kind / Kubernetes) when ready — see Phase 5 section above.
 
 ## Related Documents
 
