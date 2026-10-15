@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-004 ALB](../../k8s/eks/alb/README.md) done; [P6-005 API Gateway auth](../../infra/apigateway/README.md) in progress; CloudWatch/DNS (P6-006+) planned.
+**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-006 CloudWatch](../../k8s/eks/logging/README.md) done (P6-006 commit pending); DNS/exit (P6-007+) planned.
 
 ## Architecture
 
@@ -104,6 +104,15 @@ JWT minting for staging WebSocket clients; WSS remains on the ALB ingress.
 
 Token flow and wire format: [realtime-websocket.md](../api/realtime-websocket.md#authentication-production).
 
+## CloudWatch logging (P6-006)
+
+Pod stdout from `realtime-backend` (JSON via `LOG_FORMAT=json`) → **Fluent Bit DaemonSet** → log group **`/voragon/eks/realtime-backend`**.
+
+| Step | Doc |
+|------|-----|
+| Terraform (log group + Fluent Bit Helm) | [infra/eks/README.md](../../infra/eks/README.md) |
+| Verify + Logs Insights | [k8s/eks/logging/README.md](../../k8s/eks/logging/README.md) |
+
 ## Deployment Steps (Planned)
 
 ### Phase 6: EKS + Realtime Service
@@ -114,7 +123,7 @@ Token flow and wire format: [realtime-websocket.md](../api/realtime-websocket.md
 4. Configure ALB Ingress — **[P6-004 k8s/eks/alb](../../k8s/eks/alb/README.md)**
 5. Set up API Gateway JWT auth — **[P6-005 infra/apigateway](../../infra/apigateway/README.md)**
 6. Configure health probes and HPA
-7. Set up CloudWatch logging
+7. Set up CloudWatch logging — **[P6-006 k8s/eks/logging](../../k8s/eks/logging/README.md)**
 8. Validate WebSocket connectivity from desktop
 
 ### Phase 7: GPU Inference

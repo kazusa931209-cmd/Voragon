@@ -4,7 +4,7 @@
 
 Voragon's observability strategy covers metrics, distributed tracing, structured logging, and dashboards. Observability is designed in from Phase 2 (basic metrics) and expanded through production deployment.
 
-**Status:** Phase 2 backend Prometheus metrics ([P2-008](../roadmap/dev-step-p2-008-prometheus-metrics.md)) and structured JSON logging ([P2-009](../roadmap/dev-step-p2-009-structured-json-logging.md)) are implemented; Grafana dashboards, OpenTelemetry tracing (`trace_id`), and GPU metrics remain future phases.
+**Status:** Phase 2 backend Prometheus metrics ([P2-008](../roadmap/dev-step-p2-008-prometheus-metrics.md)) and structured JSON logging ([P2-009](../roadmap/dev-step-p2-009-structured-json-logging.md)) are implemented; EKS staging ships JSON logs to CloudWatch ([P6-006](../roadmap/dev-step-p6-006-cloudwatch-logging.md)). Grafana dashboards, OpenTelemetry tracing (`trace_id`), and GPU metrics remain future phases.
 
 ## Architecture
 
@@ -141,6 +141,20 @@ All services emit JSON logs to stdout:
 | High dropped frame rate | > 5% for 5 min | Warning |
 | Session count near limit | > 80% capacity for 10 min | Warning |
 
+## CloudWatch Logs (EKS)
+
+**Implemented (P6-006):** [Fluent Bit](https://fluentbit.io/) runs as a DaemonSet on the P6-002 cluster ([infra/eks](../../infra/eks/README.md) Terraform). It tails container logs under `/var/log/containers/`, keeps only **`voragon`** namespace pods with label **`app=realtime-backend`**, and writes to CloudWatch log group **`/voragon/eks/realtime-backend`** (14-day retention default).
+
+Log records are the same JSON lines as [P2-009](../roadmap/dev-step-p2-009-structured-json-logging.md) (`service`, `message`, `level`, optional `session_id`, etc.) embedded in `@message`. Use **Logs Insights** queries in [k8s/eks/logging/README.md](../../k8s/eks/logging/README.md).
+
+| Field (JSON log) | Use in Insights |
+|------------------|-----------------|
+| `service` | `realtime-service` |
+| `message` | e.g. `websocket.connected` |
+| `session_id` | Parse from `@message` or filter on connection events |
+
+OpenTelemetry export to CloudWatch remains future work; this step covers **log shipping only**.
+
 ## Implementation Phases
 
 | Phase | Observability Level |
@@ -148,7 +162,7 @@ All services emit JSON logs to stdout:
 | Phase 1 | Structured JSON logging to stdout |
 | Phase 2 | Prometheus metrics on realtime-service; basic Grafana dashboard |
 | Phase 4 | Container-level metrics via Docker |
-| Phase 6 | OpenTelemetry tracing; CloudWatch integration |
+| Phase 6 | CloudWatch Logs for EKS realtime-backend (P6-006); OpenTelemetry tracing planned |
 | Phase 7 | GPU metrics; inference latency dashboards |
 | Phase 8 | AI Gateway routing metrics |
 

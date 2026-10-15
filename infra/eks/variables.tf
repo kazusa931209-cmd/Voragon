@@ -43,3 +43,15 @@ variable "node_max_size" {
   type    = number
   default = 3
 }
+
+variable "cloudwatch_log_group_name" {
+  description = "CloudWatch log group for voragon realtime-backend container logs (P6-006)."
+  type        = string
+  default     = "/voragon/eks/realtime-backend"
+}
+
+variable "cloudwatch_log_retention_days" {
+  description = "Retention for the realtime-backend CloudWatch log group."
+  type        = number
+  default     = 14
+}

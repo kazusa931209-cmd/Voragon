@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P6-006 |
 | **Phase** | 6 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p6-006-cloudwatch-logging` |
@@ -32,9 +32,9 @@ One verifiable behavior: **structured JSON logs from `realtime-backend` pods app
 
 ## Acceptance Criteria
 
-- [ ] Pod stdout/stderr shipped to CloudWatch
-- [ ] Operator can find recent logs by pod name or `session_id` field in Logs Insights
-- [ ] Setup documented in [aws-deployment.md](../operations/aws-deployment.md) or [observability.md](../operations/observability.md)
+- [x] Pod stdout/stderr shipped to CloudWatch (Fluent Bit DaemonSet + IRSA)
+- [x] Operator can find recent logs by pod name or `session_id` field in Logs Insights
+- [x] Setup documented in [aws-deployment.md](../operations/aws-deployment.md) or [observability.md](../operations/observability.md)
 
 ## Manual Test
 
@@ -58,21 +58,24 @@ Expected: [observability.md](../operations/observability.md) — CloudWatch sect
 
 ### Summary
 
-- …
+- Added [infra/eks/cloudwatch_logging.tf](../../infra/eks/cloudwatch_logging.tf) — log group `/voragon/eks/realtime-backend`, IRSA, Fluent Bit Helm DaemonSet (namespace `voragon`, app `realtime-backend`).
+- Operator guide: [k8s/eks/logging/README.md](../../k8s/eks/logging/README.md) with Logs Insights samples.
 
 ### Spec Changes
 
-- …
+- [observability.md](../operations/observability.md) — CloudWatch Logs (EKS) section.
+- [aws-deployment.md](../operations/aws-deployment.md) — P6-006 section.
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pip install -e ".[dev]" && pytest -q
+# 98 passed, 1 skipped (2026-10-15)
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-15; Fluent Bit → `/voragon/eks/realtime-backend`, Logs Insights per [k8s/eks/logging/README.md](../../k8s/eks/logging/README.md)
 
 ### Commit
 

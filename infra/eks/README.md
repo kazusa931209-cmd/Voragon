@@ -48,6 +48,17 @@ kubectl get deployment -n kube-system aws-load-balancer-controller
 
 Then apply the Ingress: [k8s/eks/alb/README.md](../../k8s/eks/alb/README.md).
 
+## CloudWatch logging (P6-006)
+
+The same Terraform apply creates log group `/voragon/eks/realtime-backend` and installs **Fluent Bit** (DaemonSet, IRSA) to ship `voragon` / `realtime-backend` container logs.
+
+```bash
+terraform -chdir=infra/eks apply
+kubectl get daemonset -n amazon-cloudwatch fluent-bit
+```
+
+Verify in AWS console and sample queries: [k8s/eks/logging/README.md](../../k8s/eks/logging/README.md).
+
 ## Optional: ECR pull smoke test
 
 After [pushing an image to ECR](../ecr/README.md):

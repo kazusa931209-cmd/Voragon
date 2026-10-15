@@ -57,6 +57,10 @@ Public HTTPS/WSS via ALB: [alb/README.md](alb/README.md) (after Load Balancer Co
 
 Optional staging auth: [infra/apigateway/README.md](../../infra/apigateway/README.md) mints tokens; enable validation with [jwt-auth.example.yaml](jwt-auth.example.yaml). Desktop uses ALB `wss://` URL plus API Gateway token URL settings.
 
+## CloudWatch logging (P6-006)
+
+Fluent Bit → CloudWatch for `realtime-backend` JSON logs: [logging/README.md](logging/README.md) (Terraform in [infra/eks](../../infra/eks/README.md)).
+
 ## Replicas before ALB (P6-004)
 
 Default **1** replica for first E2E. Before ALB Ingress, scale to **2** for rolling updates with `maxUnavailable: 0`:
