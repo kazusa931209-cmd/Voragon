@@ -278,7 +278,8 @@ export class RealtimeClient {
       } catch {
         this.callbacks.onNotice("Reconnected but could not restart audio streaming.");
       }
-    } else if (!this.streaming) {
+    }
+    if (!this.streaming) {
       this.startPing();
     }
   }

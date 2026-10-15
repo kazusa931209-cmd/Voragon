@@ -156,6 +156,40 @@ describe("RealtimeClient", () => {
     client.disconnect();
   });
 
+  it("starts ping when streaming restore fails after reconnect", async () => {
+    vi.stubGlobal("WebSocket", MockWebSocket as unknown as typeof WebSocket);
+    const client = new RealtimeClient("ws://test", "en", {
+      onStateChange: () => undefined,
+      onMessage: () => undefined,
+      onSessionId: () => undefined,
+      onNotice: () => undefined,
+    });
+    const connectPromise = client.connect();
+    let ws = (client as unknown as { ws: MockWebSocket }).ws;
+    ws.emitJson(sessionStarted("ping-restore-session"));
+    await connectPromise;
+    await client.startAudio();
+
+    vi.spyOn(client, "startAudio").mockRejectedValueOnce(new Error("fail"));
+
+    ws.close();
+    await flushAsync();
+
+    ws = (client as unknown as { ws: MockWebSocket }).ws;
+    ws.emitJson(sessionStarted("interim"));
+    ws.emitJson(sessionStarted("ping-restore-session"));
+    await flushAsync();
+    expect(client.isStreaming()).toBe(false);
+
+    const sentAfterReady = ws.sent.length;
+    await vi.advanceTimersByTimeAsync(15_000);
+    const pings = ws.sent
+      .slice(sentAfterReady)
+      .filter((s) => typeof s === "string" && JSON.parse(s as string).type === "ping");
+    expect(pings.length).toBe(1);
+    client.disconnect();
+  });
+
   it("does not ping before session.started", async () => {
     vi.stubGlobal("WebSocket", MockWebSocket as unknown as typeof WebSocket);
     const client = new RealtimeClient("ws://test", "en", {
