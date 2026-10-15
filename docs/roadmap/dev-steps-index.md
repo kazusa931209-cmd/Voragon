@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend-dockerfile.md) (`in-progress`). Phase 3 exit signed off 2026-10-15: [dev-step-phase3-exit.md](dev-step-phase3-exit.md).
+**P4-002** — [Docker Compose (realtime backend)](dev-step-p4-002-docker-compose.md) (`planned`). P4-001 done @ [`6d3c0c2`](https://github.com/kazusa931209-cmd/Voragon/commit/6d3c0c2).
 
 ---
 
@@ -77,7 +77,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
-| P4-001 | Realtime backend Dockerfile | planned | — | [dev-step-p4-001-backend-dockerfile.md](dev-step-p4-001-backend-dockerfile.md) |
+| P4-001 | Realtime backend Dockerfile | done | [`6d3c0c2`](https://github.com/kazusa931209-cmd/Voragon/commit/6d3c0c2) | [dev-step-p4-001-backend-dockerfile.md](dev-step-p4-001-backend-dockerfile.md) |
 | P4-002 | Docker Compose (realtime backend) | planned | — | [dev-step-p4-002-docker-compose.md](dev-step-p4-002-docker-compose.md) |
 | P4-003 | Model weight volume caching | planned | — | [dev-step-p4-003-model-cache-volumes.md](dev-step-p4-003-model-cache-volumes.md) |
 | P4-004 | Docker dev docs and Phase 4 exit | planned | — | [dev-step-p4-004-docker-dev-docs.md](dev-step-p4-004-docker-dev-docs.md) |

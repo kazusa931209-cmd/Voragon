@@ -4,8 +4,8 @@
 |-------|-------|
 | **ID** | P4-001 |
 | **Phase** | 4 |
-| **Status** | in-progress |
-| **Commit** | — |
+| **Status** | done |
+| **Commit** | [`6d3c0c2`](https://github.com/kazusa931209-cmd/Voragon/commit/6d3c0c2) |
 | **PR** | — |
 | **Branch** | `dev-step/p4-001-backend-dockerfile` |
 
@@ -85,7 +85,7 @@ cd backend && source .venv/bin/activate && pytest -q
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `6d3c0c2`
 
 ### PR
 
