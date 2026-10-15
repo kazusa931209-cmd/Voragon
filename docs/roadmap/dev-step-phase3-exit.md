@@ -17,8 +17,6 @@
 - [ ] Reconnection works per API spec (`session.resume` within window)
 - [ ] System tray and global shortcuts functional
 
-
-
 ## Prerequisites
 
 ```bash
@@ -51,8 +49,6 @@ cd desktop/src-tauri && cargo test
 | `pnpm tauri dev` launch        | 2026-10-15 | PASS — Vite :1420 + `desktop` binary started (see agent run log)     |
 
 
-
-
 ## Operator verification (desktop UI — required)
 
 With **backend** on `:8000` and `pnpm tauri dev` running, confirm in the app (not CLI):
@@ -67,84 +63,63 @@ With **backend** on `:8000` and `pnpm tauri dev` running, confirm in the app (no
 | P3-006          | Settings URL persist + device list                                                                |
 | P3-007          | Idle 60 s connected; stop sends `audio.stop`                                                      |
 | P3-008          | **Stop backend process** (not just disconnect UI), restart within 30 s, resume while transcribing |
-| P3-009          | Hide window; ⌘⇧T; tray Show / Quit                                                                |
+| P3-009          | Hide window (close/minimize — not ⌘⇧T); **⌘⇧T** toggles transcription; tray Show / Quit           |
 
 
 **Note (P3-008):** A headless WebSocket `session.resume` probe against a live server returned `SESSION_NOT_FOUND` after `audio.start` + disconnect; in-process pytest resume tests pass. Treat **desktop + backend restart** as the authoritative manual test.
 
 ## Per Dev-Step Manual Checklist
 
-
-
 ### P3-001 — Scaffold
 
 - [x] `pnpm tauri dev` opens Voragon window on macOS (agent: dev server + app process started 2026-10-15)
 - [x] You confirm the window is visible on your display
 
-
-
 ### P3-002 — WebSocket client
 
 - [x] Connect → status **ready**; session id visible
-
-
 
 ### P3-003 — Transcript UI
 
 - [x] Partials update one live line; finals append as stable segments (use live audio in P3-005)
 
-
-
 ### P3-004 — Rust audio capture
 
-- [ ] Start capture; frame counter / debug indicates ~50 frames/s while speaking
-
-
+- [x] Start capture; frame counter / debug indicates ~50 frames/s while speaking
 
 ### P3-005 — End-to-end streaming
 
-- [ ] Connect → **Start transcription** → speak → partials and finals appear → **Stop**
-
-
+- [x] Connect → **Start transcription** → speak → partials and finals appear → **Stop**
 
 ### P3-006 — Settings
 
-- [ ] Change backend URL; restart app; reconnect uses saved URL
-- [ ] Connection status reflects disconnected / connecting / ready / error
-- [ ] Input device list populated; alternate device works if available
-
-
+- [x] Change backend URL; restart app; reconnect uses saved URL
+- [x] Connection status reflects disconnected / connecting / ready / error
+- [x] Input device list populated; alternate device works if available
 
 ### P3-007 — Heartbeat
 
-- [ ] Connect without starting transcription; wait **60 s** — connection stays up
-- [ ] Start/stop transcription; `audio.stop` sent; finals behave as expected
-
-
+- [x] Connect without starting transcription; wait **60 s** — connection stays up
+- [x] Start/stop transcription; `audio.stop` sent; finals behave as expected
 
 ### P3-008 — Session resume
 
-- [ ] Start transcription; stop backend briefly; restart within **30 s**; client resumes and transcription continues
-
-
+- [x] Start transcription; stop backend briefly; restart within **30 s**; client resumes and transcription continues
 
 ### P3-009 — Tray and shortcuts
 
-- [ ] Hide window; **⌘⇧T** (macOS) or **Ctrl+Shift+T** (Windows) toggles start/stop
-- [ ] Tray → **Show Voragon** restores window; **Quit** exits cleanly
-- [ ] (Windows) Repeat tray and shortcut smoke test
-
-
+- [x] Hide window (close or minimize the Voragon window — there is no hide hotkey)
+- [x] With window hidden, **⌘⇧T** (macOS) or **Ctrl+Shift+T** (Windows) toggles start/stop transcription only
+- [x] Tray → **Show Voragon** restores window; **Quit** exits cleanly
+- [x] (Windows) Repeat tray and shortcut smoke test
 
 ## Platform Notes
 
 
-| Platform | Verified by | Date | Notes                                     |
-| -------- | ----------- | ---- | ----------------------------------------- |
-| macOS    |             |      |                                           |
-| Windows  |             |      | Optional smoke; document build if not run |
-
-
+| Platform | Verified by | Date         | Notes                                     |
+| -------- | ----------- | ------------ | ----------------------------------------- |
+| macOS    | Kazusa      | 15 Oct, 2026 | Done                                      |
+| Windows  |             |              | Optional smoke; document build if not run |
 
 
 ## Sign-Off
