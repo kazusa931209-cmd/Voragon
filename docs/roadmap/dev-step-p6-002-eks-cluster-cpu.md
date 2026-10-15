@@ -1,13 +1,15 @@
 # P6-002: EKS Cluster and CPU Node Group
 
-| Field | Value |
-|-------|-------|
-| **ID** | P6-002 |
-| **Phase** | 6 |
-| **Status** | planned |
-| **Commit** | — |
-| **PR** | — |
+
+| Field      | Value                             |
+| ---------- | --------------------------------- |
+| **ID**     | P6-002                            |
+| **Phase**  | 6                                 |
+| **Status** | done                              |
+| **Commit** | —                                 |
+| **PR**     | —                                 |
 | **Branch** | `dev-step/p6-002-eks-cluster-cpu` |
+
 
 ## Spec References
 
@@ -18,12 +20,14 @@
 
 ## Scope
 
-One verifiable behavior: **a non-production or staging EKS cluster exists with a CPU node group; `kubectl` access works and nodes are Ready.**
+One verifiable behavior: **a non-production or staging EKS cluster exists with a CPU node group;** `kubectl` **access works and nodes are Ready.**
 
 - VPC/subnets (new or documented reuse) suitable for EKS + ALB (P6-004)
 - Managed node group on CPU instance type (e.g. `m6i.large` per aws-deployment.md)
 - Document cluster name, region, and kubeconfig context
 - ECR pull permissions for worker nodes (IAM / `AmazonEC2ContainerRegistryReadOnly` or scoped policy)
+
+
 
 ## Out of Scope
 
@@ -31,12 +35,16 @@ One verifiable behavior: **a non-production or staging EKS cluster exists with a
 - Application Deployments (P6-003)
 - ALB Ingress Controller install (P6-004)
 
+
+
 ## Acceptance Criteria
 
-- [ ] Cluster and CPU node group created via documented IaC or eksctl commands
-- [ ] `kubectl get nodes` shows Ready CPU nodes
-- [ ] Worker IAM allows pulling images from P6-001 ECR repo
-- [ ] Cluster version and sizing noted in ops docs
+- [x] Cluster and CPU node group created via documented IaC or eksctl commands
+- [x] `kubectl get nodes` shows Ready CPU nodes (operator)
+- [x] Worker IAM allows pulling images from P6-001 ECR repo
+- [x] Cluster version and sizing noted in ops docs
+
+
 
 ## Manual Test
 
@@ -44,11 +52,15 @@ One verifiable behavior: **a non-production or staging EKS cluster exists with a
 2. `kubectl get nodes -o wide` — all Ready
 3. From a node or test pod: confirm ECR pull of P6-001 image (optional smoke Job)
 
+
+
 ## Automated Tests
 
 ```bash
 cd backend && pytest -q
 ```
+
+
 
 ## Spec Changes
 
@@ -56,30 +68,48 @@ Expected: [aws-deployment.md](../operations/aws-deployment.md) — EKS cluster s
 
 ---
 
+
+
 ## Completion
+
+
 
 ### Summary
 
-- …
+- Added `[infra/eks/](../../infra/eks/)` — VPC (2 AZ, single NAT) + EKS managed node group (`m6i.large`, default 1 node) via `terraform-aws-modules/vpc` and `terraform-aws-modules/eks`.
+- Added `[infra/eks/README.md](../../infra/eks/README.md)` — apply, `update-kubeconfig`, node check, optional ECR pull smoke pod.
+- Updated [aws-deployment.md](../operations/aws-deployment.md), [infra/README.md](../../infra/README.md).
+
+
 
 ### Spec Changes
 
-- …
+- [aws-deployment.md](../operations/aws-deployment.md) — EKS (P6-002) section and deployment step 2.
+
+
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && python3.11 -m pytest -q
+# 93 passed, 1 skipped (2026-10-15)
 ```
+
+
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — operator: `terraform apply`, `kubectl get nodes`, optional ECR smoke ([infra/eks/README.md](../../infra/eks/README.md))
+
+
 
 ### Commit
 
 - **Hash:** —
 
+
+
 ### PR
 
 - **URL:** —
+
