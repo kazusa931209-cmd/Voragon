@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P6-005** — [API Gateway WebSocket and authentication](dev-step-p6-005-api-gateway-auth.md) (`planned`). P6-004 done (this commit); P6-003 @ [`658bdf8`](https://github.com/kazusa931209-cmd/Voragon/commit/658bdf8).
+**P6-005** — [API Gateway WebSocket and authentication](dev-step-p6-005-api-gateway-auth.md) (`in-progress`). P6-004 @ [`487ef89`](https://github.com/kazusa931209-cmd/Voragon/commit/487ef89); P6-003 @ [`658bdf8`](https://github.com/kazusa931209-cmd/Voragon/commit/658bdf8).
 
 ---
 
@@ -111,8 +111,8 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 | P6-001 | ECR repository and image push | done | [`4f27196`](https://github.com/kazusa931209-cmd/Voragon/commit/4f27196) | [dev-step-p6-001-ecr-image-push.md](dev-step-p6-001-ecr-image-push.md) |
 | P6-002 | EKS cluster and CPU node group | done | — | [dev-step-p6-002-eks-cluster-cpu.md](dev-step-p6-002-eks-cluster-cpu.md) |
 | P6-003 | EKS realtime manifests and deploy | done | [`658bdf8`](https://github.com/kazusa931209-cmd/Voragon/commit/658bdf8) | [dev-step-p6-003-eks-realtime-manifests.md](dev-step-p6-003-eks-realtime-manifests.md) |
-| P6-004 | ALB Ingress for WebSocket | done | — | [dev-step-p6-004-alb-ingress-websocket.md](dev-step-p6-004-alb-ingress-websocket.md) |
-| P6-005 | API Gateway WebSocket and authentication | planned | — | [dev-step-p6-005-api-gateway-auth.md](dev-step-p6-005-api-gateway-auth.md) |
+| P6-004 | ALB Ingress for WebSocket | done | [`487ef89`](https://github.com/kazusa931209-cmd/Voragon/commit/487ef89) | [dev-step-p6-004-alb-ingress-websocket.md](dev-step-p6-004-alb-ingress-websocket.md) |
+| P6-005 | API Gateway WebSocket and authentication | in-progress | — | [dev-step-p6-005-api-gateway-auth.md](dev-step-p6-005-api-gateway-auth.md) |
 | P6-006 | CloudWatch logging | planned | — | [dev-step-p6-006-cloudwatch-logging.md](dev-step-p6-006-cloudwatch-logging.md) |
 | P6-007 | DNS and TLS (Route 53 + ACM) | planned | — | [dev-step-p6-007-dns-tls.md](dev-step-p6-007-dns-tls.md) |
 | P6-008 | AWS dev docs and Phase 6 exit prep | planned | — | [dev-step-p6-008-aws-dev-docs-exit.md](dev-step-p6-008-aws-dev-docs-exit.md) |

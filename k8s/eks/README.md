@@ -53,6 +53,10 @@ Second startup should be faster when weights are cached on the PVC.
 
 Public HTTPS/WSS via ALB: [alb/README.md](alb/README.md) (after Load Balancer Controller is installed from [infra/eks](../../infra/eks/README.md)).
 
+## JWT auth (P6-005)
+
+Optional staging auth: [infra/apigateway/README.md](../../infra/apigateway/README.md) mints tokens; enable validation with [jwt-auth.example.yaml](jwt-auth.example.yaml). Desktop uses ALB `wss://` URL plus API Gateway token URL settings.
+
 ## Replicas before ALB (P6-004)
 
 Default **1** replica for first E2E. Before ALB Ingress, scale to **2** for rolling updates with `maxUnavailable: 0`:

@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P6-005 |
 | **Phase** | 6 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p6-005-api-gateway-auth` |
@@ -33,10 +33,10 @@ One verifiable behavior: **clients obtain a JWT from the documented auth flow an
 
 ## Acceptance Criteria
 
-- [ ] Documented token acquisition and WebSocket connect sequence
-- [ ] Valid JWT → connection succeeds through API Gateway to backend
-- [ ] Missing/invalid JWT → connection rejected with documented error
-- [ ] [realtime-websocket.md](../api/realtime-websocket.md) production auth section matches implementation
+- [x] Documented token acquisition and WebSocket connect sequence
+- [ ] Valid JWT → connection succeeds through API Gateway to backend (operator)
+- [ ] Missing/invalid JWT → connection rejected with documented error (operator)
+- [x] [realtime-websocket.md](../api/realtime-websocket.md) production auth section matches implementation
 
 ## Manual Test
 
@@ -61,16 +61,23 @@ Expected: [realtime-websocket.md](../api/realtime-websocket.md), [aws-deployment
 
 ### Summary
 
-- …
+- Added [infra/apigateway/](../../infra/apigateway/) — HTTP API `POST /v1/auth/token`, Lambda mint, Secrets Manager for `jwt_secret` / mint API key.
+- Backend JWT validation on `/v1/realtime` when `JWT_AUTH_REQUIRED=true` (`Authorization` or `access_token` query); close **4401** on failure.
+- Desktop settings: auth token URL + mint API key; fetches JWT before WebSocket connect.
+- Documented ALB WSS + API Gateway token split (no API GW WebSocket proxy to FastAPI).
 
 ### Spec Changes
 
-- …
+- [realtime-websocket.md](../api/realtime-websocket.md) — production auth, staging URL table.
+- [aws-deployment.md](../operations/aws-deployment.md) — P6-005 section.
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pip install -e ".[dev]" && pytest -q
+# 98 passed, 1 skipped (2026-10-15)
+cd desktop && pnpm test
+# 16 passed (2026-10-15)
 ```
 
 ### Manual Test Result

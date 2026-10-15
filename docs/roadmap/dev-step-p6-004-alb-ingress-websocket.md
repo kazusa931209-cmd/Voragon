@@ -6,7 +6,7 @@
 | **ID**     | P6-004                                  |
 | **Phase**  | 6                                       |
 | **Status** | done                                    |
-| **Commit** | —                                       |
+| **Commit** | [`487ef89`](https://github.com/kazusa931209-cmd/Voragon/commit/487ef89) |
 | **PR**     | —                                       |
 | **Branch** | `dev-step/p6-004-alb-ingress-websocket` |
 
@@ -107,7 +107,7 @@ cd backend && python3.11 -m pytest -q
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** [`487ef89`](https://github.com/kazusa931209-cmd/Voragon/commit/487ef89)
 
 
 

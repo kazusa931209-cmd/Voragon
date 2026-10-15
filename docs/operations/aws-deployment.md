@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-004 ALB](../../k8s/eks/alb/README.md) done; API Gateway/auth (P6-005+) planned.
+**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-004 ALB](../../k8s/eks/alb/README.md) done; [P6-005 API Gateway auth](../../infra/apigateway/README.md) in progress; CloudWatch/DNS (P6-006+) planned.
 
 ## Architecture
 
@@ -92,6 +92,18 @@ Internet-facing ALB with sticky sessions for WebSocket (controller installed by 
 | Ingress + ACM | [k8s/eks/alb/README.md](../../k8s/eks/alb/README.md) |
 | Verify | `curl -f https://<alb-host>/health`, `wss://<alb-host>/v1/realtime` |
 
+## API Gateway auth (P6-005)
+
+JWT minting for staging WebSocket clients; WSS remains on the ALB ingress.
+
+| Step | Doc |
+|------|-----|
+| Terraform (HTTP API + Lambda token) | [infra/apigateway/README.md](../../infra/apigateway/README.md) |
+| Enable backend validation | [k8s/eks/jwt-auth.example.yaml](../../k8s/eks/jwt-auth.example.yaml) |
+| Desktop settings | Auth token URL + mint API key; backend URL = ALB `wss://…/v1/realtime` |
+
+Token flow and wire format: [realtime-websocket.md](../api/realtime-websocket.md#authentication-production).
+
 ## Deployment Steps (Planned)
 
 ### Phase 6: EKS + Realtime Service
@@ -100,7 +112,7 @@ Internet-facing ALB with sticky sessions for WebSocket (controller installed by 
 2. Create EKS cluster with CPU node group — **[P6-002 Terraform](../../infra/eks/README.md)** (`m6i.large` default)
 3. Deploy realtime-service from ECR — **[P6-003 k8s/eks](../../k8s/eks/README.md)** (CPU inference initially)
 4. Configure ALB Ingress — **[P6-004 k8s/eks/alb](../../k8s/eks/alb/README.md)**
-5. Set up API Gateway with WebSocket support
+5. Set up API Gateway JWT auth — **[P6-005 infra/apigateway](../../infra/apigateway/README.md)**
 6. Configure health probes and HPA
 7. Set up CloudWatch logging
 8. Validate WebSocket connectivity from desktop

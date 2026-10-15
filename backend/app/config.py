@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     asr_backend: str = "faster_whisper"
     asr_model: str = "large-v3-turbo"
     asr_partial_interval_ms: int = 300
+    jwt_auth_required: bool = False
+    jwt_secret: str | None = None
+    jwt_audience: str = "voragon-realtime"
 
 
 def get_settings() -> Settings:
