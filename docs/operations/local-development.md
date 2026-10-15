@@ -4,13 +4,14 @@
 
 Local development for Voragon: **desktop on the host**, **backend** either in Docker (recommended for reproducibility) or a Python venv. No cloud dependencies.
 
-**Status:** Implemented — Phase 3 desktop ([Phase 3 exit](../roadmap/dev-step-phase3-exit.md)); Phase 4 Docker backend ([docker/README.md](../../docker/README.md), [Phase 4 exit](../roadmap/dev-step-phase4-exit.md)).
+**Status:** Implemented — Phase 3 desktop ([Phase 3 exit](../roadmap/dev-step-phase3-exit.md)); Phase 4 Docker backend ([docker/README.md](../../docker/README.md), [Phase 4 exit](../roadmap/dev-step-phase4-exit.md)); Phase 5 Kind ([k8s/README.md](../../k8s/README.md), [Phase 5 exit](../roadmap/dev-step-phase5-exit.md)).
 
 ## Prerequisites
 
 | Tool | Version | Purpose |
 |------|---------|---------|
 | Docker + Compose | Latest | Phase 4 backend (optional if using venv backend) |
+| Kind + kubectl | Latest | Phase 5 Kubernetes validation (optional) |
 | Python | 3.11+ | Bare-metal backend and pytest |
 | Node.js | 20+ | Frontend tooling |
 | Rust | 1.77+ | Tauri native layer |
@@ -79,6 +80,20 @@ cd desktop && pnpm install && pnpm tauri dev
 Quick reference: [docker/README.md](../../docker/README.md). WebSocket URL: `ws://localhost:8000/v1/realtime`.
 
 Stop anything else on port **8000** before starting compose.
+
+### Optional: Kind backend + desktop (Phase 5)
+
+Use when validating Kubernetes manifests, probes, or rollouts — not required for day-to-day app work.
+
+```bash
+# Terminal 1 — see k8s/README.md for first-time cluster + image load
+kubectl port-forward -n voragon svc/realtime-service 8000:8000
+
+# Terminal 2
+cd desktop && pnpm tauri dev
+```
+
+Quick reference: [k8s/README.md](../../k8s/README.md). Same WebSocket URL: `ws://localhost:8000/v1/realtime`.
 
 ### Alternative: bare-metal backend
 

@@ -4,33 +4,34 @@
 
 A local Kind (Kubernetes in Docker) cluster validates container images, deployment manifests, health probes, and service discovery before deploying to AWS EKS. Introduced in Phase 5.
 
-**Status:** Planned, not implemented.
+**Status:** **Implemented** (CPU, single `realtime-backend` Deployment, in-process ASR) — [P5-001](../roadmap/dev-step-p5-001-kind-cluster.md)–[P5-005](../roadmap/dev-step-p5-005-k8s-dev-docs-exit.md). Quick start: [k8s/README.md](../../k8s/README.md).
 
 ## Purpose
 
 Kind is used to validate:
 
 - Container images build and run correctly
-- Kubernetes manifests (Deployments, Services, ConfigMaps)
-- Health probes (liveness, readiness)
-- Service-to-service communication
+- Kubernetes manifests (Deployments, Services, ConfigMaps, PVCs)
+- Health probes (liveness, readiness, startup)
 - Port forwarding for desktop connectivity
 
 Kind is **not** used for performance testing or GPU inference validation.
 
-## Architecture
+## Architecture (Phase 5 MVP)
+
+Single pod — same topology as Docker Compose (ASR in-process). A separate `asr-service` appears in production/EKS when the sidecar split exists (Phase 7+).
 
 ```mermaid
 flowchart TB
     subgraph kind ["Kind Cluster"]
         subgraph node ["Single Node"]
-            RT["realtime-service<br/>1 replica"]
-            ASR["asr-service<br/>1 replica"]
+            RT["realtime-backend<br/>1 replica"]
+            PVC["PVC voragon-model-cache"]
         end
     end
 
     Desktop["Desktop App<br/>(host)"] -->|"port-forward :8000"| RT
-    RT --> ASR
+    RT --> PVC
 ```
 
 ## Prerequisites
@@ -40,39 +41,40 @@ flowchart TB
 | Docker | Kind node runtime |
 | Kind | Local Kubernetes cluster |
 | kubectl | Cluster management |
-| Helm (optional) | Package management |
 
-## Setup (Planned)
+## Setup
+
+From the **repository root** (see [k8s/README.md](../../k8s/README.md)):
 
 ```bash
-# Create cluster
-kind create cluster --name voragon
+kind create cluster --name voragon --config k8s/kind/voragon.yaml
 
-# Build and load images
-docker build -t voragon/realtime-backend:latest ./backend
-kind load docker-image voragon/realtime-backend:latest --name voragon
+docker build -f docker/realtime-backend/Dockerfile -t voragon/realtime-backend:local .
+kind load docker-image voragon/realtime-backend:local --name voragon
 
-# Apply manifests
+kubectl apply -f k8s/local/namespace.yaml
 kubectl apply -f k8s/local/
 
-# Port forward for desktop access
-kubectl port-forward svc/realtime-service 8000:8000
+kubectl wait -n voragon --for=condition=ready pod -l app=realtime-backend --timeout=300s
+
+kubectl port-forward -n voragon svc/realtime-service 8000:8000
 ```
 
-## Planned Manifests
+## Manifests
 
 ```
 k8s/
-├── local/
-│   ├── namespace.yaml
-│   ├── realtime-deployment.yaml
-│   ├── realtime-service.yaml
-│   ├── asr-deployment.yaml
-│   ├── asr-service.yaml
-│   └── configmap.yaml
-└── production/
-    ├── ... (Phase 6+)
+├── kind/
+│   └── voragon.yaml
+└── local/
+    ├── namespace.yaml
+    ├── configmap.yaml
+    ├── pvc.yaml
+    ├── realtime-deployment.yaml
+    └── realtime-service.yaml
 ```
+
+Production manifests under `k8s/production/` are Phase 6+.
 
 ## Differences from Production EKS
 
@@ -81,12 +83,13 @@ k8s/
 | Nodes | 1 (no GPU) | CPU + GPU node pools |
 | Ingress | port-forward | ALB + API Gateway |
 | Auth | None | JWT via API Gateway |
-| Scaling | Fixed replicas | HPA |
-| Storage | Local | EBS |
+| Scaling | Fixed 1 replica | HPA |
+| Storage | local-path PVC | EBS |
 | Observability | kubectl logs | Prometheus + Grafana |
 
 ## Related Documents
 
+- [k8s/README.md](../../k8s/README.md) — commands and rollout notes
 - [Docker Compose](docker.md)
 - [Kubernetes Architecture](../architecture/kubernetes.md)
 - [AWS Deployment](aws-deployment.md)

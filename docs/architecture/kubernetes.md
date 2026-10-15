@@ -19,25 +19,30 @@ flowchart LR
 
 A minimal local Kubernetes cluster for validating deployment patterns before AWS.
 
+**Phase 5 (implemented):** one `realtime-backend` Deployment with **in-process ASR** (same image as Docker Compose). No separate `asr-service` pod until the ASR sidecar exists (Phase 7+).
+
 ```mermaid
 flowchart TB
     subgraph kind ["Kind Cluster (local)"]
         subgraph cpu ["CPU Node"]
-            RT["realtime-service<br/>1 replica"]
-            ASR["asr-service<br/>1 replica"]
+            RT["realtime-backend<br/>1 replica"]
+            PVC["PVC model-cache"]
         end
     end
 
     Desktop["Desktop App"] -->|port-forward| RT
-    RT --> ASR
+    RT --> PVC
 ```
 
 | Component | Replicas | Node | GPU |
 |-----------|----------|------|-----|
-| realtime-service | 1 | CPU | No |
-| asr-service | 1 | CPU | No (CPU inference for validation) |
+| realtime-backend (Service: `realtime-service`) | 1 | CPU | No |
 
-Purpose: validate container images, health probes, ConfigMaps, service discovery, and deployment workflows. Not for performance testing.
+Purpose: validate container images, health probes, ConfigMaps, PVCs, and deployment workflows. Not for performance testing.
+
+Operational quick start: [k8s/README.md](../../k8s/README.md).
+
+**Future EKS layout** (not Phase 5): separate `asr-service` on GPU nodes — see Production Architecture below.
 
 ## Production Architecture (Phase 6–8 — AWS EKS)
 

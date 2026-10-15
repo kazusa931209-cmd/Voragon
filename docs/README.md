@@ -113,7 +113,7 @@ flowchart LR
 |----------|-------------|
 | [local-development.md](operations/local-development.md) | Local dev setup (planned) |
 | [docker.md](operations/docker.md) | Docker Compose layout (planned) |
-| [kubernetes-local.md](operations/kubernetes-local.md) | Kind local cluster (planned) |
+| [kubernetes-local.md](operations/kubernetes-local.md) | Kind local cluster ([k8s/README.md](../k8s/README.md)) |
 | [aws-deployment.md](operations/aws-deployment.md) | AWS EKS deployment guide (planned) |
 | [observability.md](operations/observability.md) | Metrics, tracing, dashboards |
 
