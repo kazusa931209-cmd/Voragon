@@ -4,7 +4,7 @@
 
 Local development for Voragon: **desktop on the host**, **backend** either in Docker (recommended for reproducibility) or a Python venv. No cloud dependencies.
 
-**Status:** Implemented — Phase 3 desktop ([Phase 3 exit](../roadmap/dev-step-phase3-exit.md)); Phase 4 Docker backend ([docker/README.md](../../docker/README.md), [Phase 4 exit](../roadmap/dev-step-phase4-exit.md)); Phase 5 Kind ([k8s/README.md](../../k8s/README.md), [Phase 5 exit](../roadmap/dev-step-phase5-exit.md)).
+**Status:** Implemented — Phase 3 desktop ([Phase 3 exit](../roadmap/dev-step-phase3-exit.md)); Phase 4 Docker backend ([docker/README.md](../../docker/README.md), [Phase 4 exit](../roadmap/dev-step-phase4-exit.md)); Phase 5 Kind ([k8s/README.md](../../k8s/README.md), [Phase 5 exit](../roadmap/dev-step-phase5-exit.md)). Phase 6 ECR push: [infra/ecr/README.md](../../infra/ecr/README.md).
 
 ## Prerequisites
 

@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** Planned, not implemented.
+**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md) implemented ([dev-step](../roadmap/dev-step-p6-001-ecr-image-push.md)); EKS and ingress remain planned (P6-002+).
 
 ## Architecture
 
@@ -50,15 +50,26 @@ flowchart TB
 | Secrets Manager | JWT keys, credentials |
 | Route 53 (optional) | DNS for `api.voragon.example` |
 
+## ECR (P6-001)
+
+Create the `voragon/realtime-backend` repository and push images before deploying to EKS.
+
+| Step | Doc |
+|------|-----|
+| Terraform apply | [infra/ecr/README.md](../../infra/ecr/README.md) |
+| Build + push | Same doc — uses `docker/realtime-backend/Dockerfile` from repo root |
+
+Image URI and tags (git SHA, optional `latest`) are consumed by EKS manifests in P6-003.
+
 ## Deployment Steps (Planned)
 
 ### Phase 6: EKS + Realtime Service
 
-1. Create EKS cluster with CPU node group (m6i.large)
-2. Configure ALB Ingress Controller
-3. Set up API Gateway with WebSocket support
-4. Push container images to ECR
-5. Deploy realtime-service (CPU inference initially)
+1. Create ECR repository and push `realtime-backend` image — **[P6-001 done](../../infra/ecr/README.md)**
+2. Create EKS cluster with CPU node group (m6i.large)
+3. Deploy realtime-service from ECR (CPU inference initially)
+4. Configure ALB Ingress Controller
+5. Set up API Gateway with WebSocket support
 6. Configure health probes and HPA
 7. Set up CloudWatch logging
 8. Validate WebSocket connectivity from desktop
@@ -123,6 +134,7 @@ flowchart TB
 
 ## Related Documents
 
+- [infra/ecr/README.md](../../infra/ecr/README.md) — ECR Terraform and push workflow
 - [AWS GPU Strategy](../architecture/aws.md)
 - [Kubernetes Architecture](../architecture/kubernetes.md)
 - [Observability](observability.md)

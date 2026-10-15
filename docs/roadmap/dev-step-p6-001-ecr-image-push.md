@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P6-001 |
 | **Phase** | 6 |
-| **Status** | planned |
+| **Status** | in-progress |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p6-001-ecr-image-push` |
@@ -32,10 +32,10 @@ One verifiable behavior: **the P4 `realtime-backend` image can be built locally 
 
 ## Acceptance Criteria
 
-- [ ] ECR repository defined (Terraform, eksctl addon doc, or `infra/ecr/` + README — pick one approach in implementation)
-- [ ] Documented build and push from repo root using `docker/realtime-backend/Dockerfile`
+- [x] ECR repository defined (Terraform, eksctl addon doc, or `infra/ecr/` + README — pick one approach in implementation)
+- [x] Documented build and push from repo root using `docker/realtime-backend/Dockerfile`
 - [ ] Operator can `docker pull` the pushed tag from ECR (same account/region)
-- [ ] [aws-deployment.md](../operations/aws-deployment.md) references ECR setup and links to repo docs
+- [x] [aws-deployment.md](../operations/aws-deployment.md) references ECR setup and links to repo docs
 
 ## Manual Test
 
@@ -60,21 +60,28 @@ Expected: [aws-deployment.md](../operations/aws-deployment.md) — ECR section s
 
 ### Summary
 
-- …
+- Added [`infra/ecr/`](../../infra/ecr/) Terraform (`aws_ecr_repository` for `voragon/realtime-backend`, scan on push, mutable tags).
+- Added [`infra/ecr/README.md`](../../infra/ecr/README.md) — apply, build, tag, push, verify; tag convention for P6-003.
+- Added [`infra/README.md`](../../infra/README.md) index; root [`.gitignore`](../../.gitignore) Terraform state/local dirs.
+- Cross-linked [aws-deployment.md](../operations/aws-deployment.md), [docker/realtime-backend/README.md](../../docker/realtime-backend/README.md), [local-development.md](../operations/local-development.md).
 
 ### Spec Changes
 
-- …
+- [aws-deployment.md](../operations/aws-deployment.md) — ECR section, Phase 6 step order, partial status.
+- [architecture/aws.md](../architecture/aws.md) — ECR phase 6 (was incorrectly phase 4).
+- [local-development.md](../operations/local-development.md) — ECR doc link.
+- [docker/realtime-backend/README.md](../../docker/realtime-backend/README.md) — Push to ECR section.
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && python3.11 -m pytest -q
+# 93 passed, 1 skipped (2026-10-15)
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [ ] Pass — operator: `terraform apply`, push, `describe-images`, optional `docker pull` ([infra/ecr/README.md](../../infra/ecr/README.md))
 
 ### Commit
 
