@@ -67,6 +67,7 @@ After exit: **P4-001** — [realtime backend Dockerfile](dev-step-p4-001-backend
 | P3-007 | Client heartbeat and session lifecycle | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-007-heartbeat.md](dev-step-p3-007-heartbeat.md) |
 | P3-008 | `session.resume` reconnection | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-008-session-resume.md](dev-step-p3-008-session-resume.md) |
 | P3-009 | System tray + global shortcuts | done | [#14](https://github.com/kazusa931209-cmd/Voragon/pull/14) | [dev-step-p3-009-tray-shortcuts.md](dev-step-p3-009-tray-shortcuts.md) |
+| P3-010 | Transcription stats + reconnect stability | in-progress | — | [dev-step-p3-010-desktop-ui-reconnect.md](dev-step-p3-010-desktop-ui-reconnect.md) |
 
 **Phase 3 exit:** [dev-step-phase3-exit.md](dev-step-phase3-exit.md) — manual macOS (required) and Windows (smoke) checklist. See [phases.md](phases.md).
 

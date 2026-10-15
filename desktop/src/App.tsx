@@ -8,7 +8,10 @@ import { ConnectionStatus } from "./components/ConnectionStatus";
 import { TranscriptPanel } from "./components/TranscriptPanel";
 import { useTranscript } from "./hooks/useTranscript";
 import { DEFAULT_BACKEND_URL, loadSettings, saveSettings, type AppSettings } from "./settings/store";
+import { formatDurationHms } from "./utils/formatDuration";
 import "./App.css";
+
+const RECONNECT_NOISE_ERRORS = new Set(["INVALID_MESSAGE", "AUDIO_NOT_STARTED"]);
 
 interface AudioDevice {
   index: number;
@@ -27,9 +30,13 @@ function App() {
   const [notice, setNotice] = useState<string | null>(null);
   const [transcribing, setTranscribing] = useState(false);
   const [frameCount, setFrameCount] = useState(0);
+  const [transcriptionStartedAt, setTranscriptionStartedAt] = useState<number | null>(null);
+  const [transcriptionTick, setTranscriptionTick] = useState(0);
 
   const clientRef = useRef<RealtimeClient | null>(null);
   const transcribingRef = useRef(false);
+  const toggleInFlightRef = useRef(false);
+  const connectionStateRef = useRef<ConnectionState>("disconnected");
   const { partial, finals, handleMessage, reset } = useTranscript();
 
   useEffect(() => {
@@ -46,6 +53,12 @@ function App() {
       }
       if (message.type === "error") {
         const code = errorCode(message);
+        if (
+          connectionStateRef.current === "reconnecting" &&
+          RECONNECT_NOISE_ERRORS.has(code)
+        ) {
+          return;
+        }
         const text =
           typeof message.payload.message === "string"
             ? message.payload.message
@@ -63,21 +76,27 @@ function App() {
     [handleMessage],
   );
 
+  const onConnectionStateChange = useCallback((state: ConnectionState) => {
+    connectionStateRef.current = state;
+    setConnectionState(state);
+  }, []);
+
   const ensureClient = useCallback(async () => {
-    if (clientRef.current?.getSessionId()) {
-      return clientRef.current;
+    const existing = clientRef.current;
+    if (existing?.getSessionId() || existing?.isRecovering()) {
+      return existing;
     }
-    clientRef.current?.disconnect();
+    existing?.disconnect();
     const client = new RealtimeClient(settings.backendUrl, settings.language, {
-      onStateChange: setConnectionState,
-      onSessionId: setSessionId,
+      onStateChange: onConnectionStateChange,
+      onSessionId: (id) => setSessionId(id || null),
       onMessage: onServerMessage,
       onNotice: (text) => setNotice(text),
     });
     clientRef.current = client;
     await client.connect();
     return client;
-  }, [onServerMessage, settings.backendUrl, settings.language]);
+  }, [onConnectionStateChange, onServerMessage, settings.backendUrl, settings.language]);
 
   const connect = useCallback(async () => {
     setNotice(null);
@@ -99,6 +118,7 @@ function App() {
   const stopTranscription = useCallback(async () => {
     setTranscribing(false);
     transcribingRef.current = false;
+    setTranscriptionStartedAt(null);
     await invoke("stop_audio_capture").catch(() => undefined);
     await clientRef.current?.stopAudio();
   }, []);
@@ -115,6 +135,7 @@ function App() {
       setTranscribing(true);
       transcribingRef.current = true;
       setFrameCount(0);
+      setTranscriptionStartedAt(Date.now());
     } catch {
       setNotice("Failed to start transcription.");
       setTranscribing(false);
@@ -123,10 +144,18 @@ function App() {
   }, [ensureClient, reset, settings.inputDeviceIndex]);
 
   const toggleTranscription = useCallback(async () => {
-    if (transcribingRef.current) {
-      await stopTranscription();
-    } else {
-      await startTranscription();
+    if (toggleInFlightRef.current) {
+      return;
+    }
+    toggleInFlightRef.current = true;
+    try {
+      if (transcribingRef.current) {
+        await stopTranscription();
+      } else {
+        await startTranscription();
+      }
+    } finally {
+      toggleInFlightRef.current = false;
     }
   }, [startTranscription, stopTranscription]);
 
@@ -159,10 +188,30 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!transcribing || transcriptionStartedAt === null) {
+      return;
+    }
+    const id = window.setInterval(() => setTranscriptionTick((t) => t + 1), 1000);
+    return () => window.clearInterval(id);
+  }, [transcribing, transcriptionStartedAt]);
+
   const save = async () => {
     await saveSettings(settings);
     setNotice("Settings saved.");
   };
+
+  const transcriptionStats =
+    transcribing && transcriptionStartedAt !== null
+      ? (() => {
+          void transcriptionTick;
+          const elapsedMs = Date.now() - transcriptionStartedAt;
+          const elapsedSec = Math.max(elapsedMs / 1000, 1);
+          const fps = frameCount / elapsedSec;
+          const fpsLabel = Number.isInteger(fps) ? String(fps) : fps.toFixed(1);
+          return `${formatDurationHms(elapsedMs)} · ${frameCount} frames · ${fpsLabel} frames / s`;
+        })()
+      : "";
 
   return (
     <main className="app">
@@ -184,12 +233,16 @@ function App() {
           type="button"
           className="primary"
           onClick={() => void toggleTranscription()}
-          disabled={connectionState !== "ready" && connectionState !== "reconnecting"}
+          disabled={
+            transcribing
+              ? connectionState !== "ready" && connectionState !== "reconnecting"
+              : connectionState !== "ready"
+          }
         >
           {transcribing ? "Stop transcription" : "Start transcription"}
         </button>
-        <span className="frame-debug" aria-label="Frames sent">
-          {transcribing ? `${frameCount} frames` : ""}
+        <span className="frame-debug" aria-label="Transcription stats">
+          {transcriptionStats}
         </span>
       </section>
 
