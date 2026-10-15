@@ -156,6 +156,8 @@ Desktop (Tauri) → WebSocket → Backend → VAD → ASR → Transcript → Des
 
 ## Phase 5: Local Kubernetes (Kind)
 
+**Status:** **In progress** — [P5-001](dev-step-p5-001-kind-cluster.md)–[P5-005](dev-step-p5-005-k8s-dev-docs-exit.md) ([dev-steps index](dev-steps-index.md)). [Phase 5 exit checklist](dev-step-phase5-exit.md).
+
 **Goal:** Validate Kubernetes deployment patterns locally.
 
 **Deliverables:**
@@ -309,7 +311,7 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-1. Define and start Phase 5 dev-steps (local Kind / Kubernetes) when ready — see Phase 5 section above.
+1. Complete Phase 5 exit sign-off — [dev-step-phase5-exit.md](dev-step-phase5-exit.md); then define Phase 6 dev-steps (EKS).
 
 ## Related Documents
 

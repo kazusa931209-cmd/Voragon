@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**Phase 5+** — see [phases.md](phases.md). Phase 4 exit signed off 2026-10-15: [dev-step-phase4-exit.md](dev-step-phase4-exit.md).
+**P5-001** — [Kind cluster and image load](dev-step-p5-001-kind-cluster.md) (`in-progress`). Phase 4 exit signed off 2026-10-15: [dev-step-phase4-exit.md](dev-step-phase4-exit.md).
 
 ---
 
@@ -88,6 +88,22 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ---
 
-## Phase 5+
+## Phase 5: Local Kubernetes (Kind)
 
-Dev-steps for Phase 5 (Kind) and beyond — see [phases.md](phases.md).
+| ID | Title | Status | PR | Doc |
+|----|-------|--------|-----|-----|
+| P5-001 | Kind cluster and image load | in-progress | — | [dev-step-p5-001-kind-cluster.md](dev-step-p5-001-kind-cluster.md) |
+| P5-002 | Local Kubernetes manifests | in-progress | — | [dev-step-p5-002-local-manifests.md](dev-step-p5-002-local-manifests.md) |
+| P5-003 | Model cache PVC on Kind | in-progress | — | [dev-step-p5-003-model-cache-pvc.md](dev-step-p5-003-model-cache-pvc.md) |
+| P5-004 | Health probes and rolling restart | in-progress | — | [dev-step-p5-004-probes-rolling-restart.md](dev-step-p5-004-probes-rolling-restart.md) |
+| P5-005 | K8s dev docs and Phase 5 exit | in-progress | — | [dev-step-p5-005-k8s-dev-docs-exit.md](dev-step-p5-005-k8s-dev-docs-exit.md) |
+
+**Suggested order:** P5-001 → P5-002 → P5-003 → P5-004 → P5-005.
+
+**Phase 5 exit:** [dev-step-phase5-exit.md](dev-step-phase5-exit.md) (pending sign-off). See [phases.md](phases.md).
+
+---
+
+## Phase 6+
+
+Dev-steps for Phase 6 (EKS) and beyond — see [phases.md](phases.md).
