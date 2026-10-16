@@ -2,7 +2,7 @@
 
 Voragon is a local-first, realtime AI assistant platform. The initial product is realtime voice-to-text; the long-term goal is an extensible AI inference platform supporting speech recognition, transcription, contextual assistance, LLM inference, and additional model capabilities.
 
-**Status:** Phase 0 complete. Implementation proceeds via dev-steps (one commit each). See [Dev-Steps Index](roadmap/dev-steps-index.md).
+**Status:** Phases 1–5 complete; Phase 6 AWS EKS path documented and implemented ([aws-deployment](operations/aws-deployment.md)). Active dev-step: [Dev-Steps Index](roadmap/dev-steps-index.md). Phase 6 operator sign-off: [Phase 6 exit](roadmap/dev-step-phase6-exit.md).
 
 ## How to Read This Documentation
 
@@ -11,7 +11,7 @@ Voragon is a local-first, realtime AI assistant platform. The initial product is
 | New engineer | [Architecture Overview](architecture/overview.md) → [Local Development](operations/local-development.md) |
 | Desktop engineer | [Desktop Architecture](architecture/desktop.md) → [Realtime WebSocket API](api/realtime-websocket.md) |
 | Backend / ML engineer | [Backend Architecture](architecture/backend.md) → [Model Serving](architecture/model-serving.md) → [Realtime Audio](architecture/realtime-audio.md) |
-| Platform / DevOps engineer | [Kubernetes Architecture](architecture/kubernetes.md) → [AWS Strategy](architecture/aws.md) → [Operations](operations/) |
+| Platform / DevOps engineer | [Local Development](operations/local-development.md) → [AWS Deployment](operations/aws-deployment.md) → [Kubernetes Architecture](architecture/kubernetes.md) |
 | Product / planning | [Development Phases](roadmap/phases.md) → [Future Capabilities](roadmap/future.md) |
 
 ## Documentation Map
@@ -111,10 +111,10 @@ flowchart LR
 
 | Document | Description |
 |----------|-------------|
-| [local-development.md](operations/local-development.md) | Local dev setup (planned) |
-| [docker.md](operations/docker.md) | Docker Compose layout (planned) |
+| [local-development.md](operations/local-development.md) | Local dev (Compose, Kind, EKS links) |
+| [docker.md](operations/docker.md) | Docker Compose layout |
 | [kubernetes-local.md](operations/kubernetes-local.md) | Kind local cluster ([k8s/README.md](../k8s/README.md)) |
-| [aws-deployment.md](operations/aws-deployment.md) | AWS EKS deployment guide (planned) |
+| [aws-deployment.md](operations/aws-deployment.md) | AWS EKS staging/prod contributor path (Phase 6) |
 | [observability.md](operations/observability.md) | Metrics, tracing, dashboards |
 
 ### Roadmap
@@ -124,6 +124,7 @@ flowchart LR
 | [dev-steps-index.md](roadmap/dev-steps-index.md) | Dev-step registry (active step, status, PR links) |
 | [dev-step-template.md](roadmap/dev-step-template.md) | Template for new dev-steps |
 | [phases.md](roadmap/phases.md) | Phased development plan with dependencies |
+| [dev-step-phase6-exit.md](roadmap/dev-step-phase6-exit.md) | Phase 6 operator sign-off checklist |
 | [future.md](roadmap/future.md) | Future capabilities and extension points |
 
 ## Development Workflow
@@ -153,17 +154,11 @@ Cursor rule: `.cursor/rules/dev-workflow.mdc`
 | **Final transcript** | Stable transcription result for a speech segment |
 | **Session** | A single connected realtime transcription context |
 
-## What Is Not Implemented Yet
+## Implementation Status
 
-This repository contains **documentation only**. The following do not exist yet:
+Application code, Docker/Kubernetes manifests, and Phase 6 Terraform live in this repository. Not yet implemented: Phase 7+ GPU `asr-service`, AI Gateway (Phase 8), and multi-model routing (Phase 9).
 
-- Application source code (Rust, TypeScript, Python)
-- Dockerfiles and container images
-- Kubernetes manifests
-- Infrastructure-as-code (Terraform, etc.)
-- Benchmark results or performance measurements
-
-All latency targets and capacity estimates in this documentation are **engineering targets**, not measured guarantees.
+Latency targets and capacity estimates remain **engineering targets**, not measured guarantees, until benchmarked in your environment.
 
 ## Related Documents Outside `docs/`
 

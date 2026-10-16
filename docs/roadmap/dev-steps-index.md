@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P6-007** — [DNS and TLS (Route 53 + ACM)](dev-step-p6-007-dns-tls.md) (`in-progress`). P6-006 @ [`e5ffb20`](https://github.com/kazusa931209-cmd/Voragon/commit/e5ffb20).
+**Phase 6 exit** — [Operator sign-off](dev-step-phase6-exit.md) (P6-001–P6-008 done; last dev-step commit on `feat/dev-phase6`).
 
 ---
 
@@ -114,12 +114,12 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 | P6-004 | ALB Ingress for WebSocket | done | [`487ef89`](https://github.com/kazusa931209-cmd/Voragon/commit/487ef89) | [dev-step-p6-004-alb-ingress-websocket.md](dev-step-p6-004-alb-ingress-websocket.md) |
 | P6-005 | API Gateway WebSocket and authentication | done | [`921e438`](https://github.com/kazusa931209-cmd/Voragon/commit/921e438) | [dev-step-p6-005-api-gateway-auth.md](dev-step-p6-005-api-gateway-auth.md) |
 | P6-006 | CloudWatch logging | done | [`e5ffb20`](https://github.com/kazusa931209-cmd/Voragon/commit/e5ffb20) | [dev-step-p6-006-cloudwatch-logging.md](dev-step-p6-006-cloudwatch-logging.md) |
-| P6-007 | DNS and TLS (Route 53 + ACM) | in-progress | — | [dev-step-p6-007-dns-tls.md](dev-step-p6-007-dns-tls.md) |
-| P6-008 | AWS dev docs and Phase 6 exit prep | planned | — | [dev-step-p6-008-aws-dev-docs-exit.md](dev-step-p6-008-aws-dev-docs-exit.md) |
+| P6-007 | DNS and TLS (Route 53 + ACM) | done | — | [dev-step-p6-007-dns-tls.md](dev-step-p6-007-dns-tls.md) |
+| P6-008 | AWS dev docs and Phase 6 exit prep | done | — | [dev-step-p6-008-aws-dev-docs-exit.md](dev-step-p6-008-aws-dev-docs-exit.md) |
 
 **Suggested order:** P6-001 → P6-002 → P6-003 → P6-004 → P6-005 → P6-006 → P6-007 → P6-008 (P6-006 may parallelize after P6-003; P6-007 may overlap P6-004/P6-005 — finish before exit sign-off).
 
-**Phase 6 exit:** [dev-step-phase6-exit.md](dev-step-phase6-exit.md) (pending). See [phases.md](phases.md).
+**Phase 6 exit:** [dev-step-phase6-exit.md](dev-step-phase6-exit.md) (ready for operator sign-off). See [phases.md](phases.md).
 
 ---
 

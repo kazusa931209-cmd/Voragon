@@ -27,6 +27,8 @@ Kind is **not** used for performance testing or GPU inference validation.
 
 Same probes, ConfigMap env, and model-cache PVC pattern; EKS uses `gp2` storage class and Kustomize for the image URI.
 
+Three-way comparison (Compose vs Kind vs EKS): [local-development.md — Compose vs Kind vs EKS](local-development.md#compose-vs-kind-vs-eks).
+
 ## Architecture (Phase 5 MVP)
 
 Single pod — same topology as Docker Compose (ASR in-process). A separate `asr-service` appears in production/EKS when the sidecar split exists (Phase 7+).

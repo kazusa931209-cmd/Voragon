@@ -5,7 +5,7 @@
 | ---------- | ------------------------- |
 | **ID**     | P6-007                    |
 | **Phase**  | 6                         |
-| **Status** | in-progress               |
+| **Status** | done                      |
 | **Commit** | —                         |
 | **PR**     | —                         |
 | **Branch** | `dev-step/p6-007-dns-tls` |
@@ -16,6 +16,8 @@
 - [AWS Deployment](../operations/aws-deployment.md) — DNS and TLS
 - [architecture/overview.md](../architecture/overview.md) — `wss://api.voragon.example`
 - [dev-step-p6-004](dev-step-p6-004-alb-ingress-websocket.md), [dev-step-p6-005](dev-step-p6-005-api-gateway-auth.md)
+
+
 
 ## Scope
 
@@ -37,7 +39,7 @@ One verifiable behavior: **the production WebSocket URL uses a stable hostname w
 
 ## Acceptance Criteria
 
-- [ ] Browser/curl trusts HTTPS endpoint (no cert warnings for intended hostname) (operator)
+- [x] Browser/curl trusts HTTPS endpoint (no cert warnings for intended hostname) (operator)
 - [x] DNS resolution documented and verified (`dig` / `nslookup`)
 - [x] ALB uses ACM cert on listener (Ingress annotations + [infra/dns](../../infra/dns/README.md))
 
@@ -105,7 +107,7 @@ cd desktop && pnpm test
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `9819823`
 
 
 

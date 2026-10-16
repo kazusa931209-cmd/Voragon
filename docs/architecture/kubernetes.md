@@ -46,6 +46,10 @@ Operational quick start: [k8s/README.md](../../k8s/README.md).
 
 ## Production Architecture (Phase 6–8 — AWS EKS)
 
+**Phase 6 (implemented):** EKS runs a single **CPU** `realtime-backend` Deployment with **in-process ASR** (same process model as Kind and Docker Compose). There is no separate `asr-service` pod until [Phase 7 GPU inference](../../roadmap/phases.md). ALB terminates TLS for WebSocket; JWT auth is optional via backend env ([P6-005](../../roadmap/dev-step-p6-005-api-gateway-auth.md)).
+
+The diagram below is the **target** layout through Phase 8 (GPU `asr-service`, `ai-gateway`). Treat GPU and ai-gateway nodes as future unless your cluster has Phase 7+ workloads deployed.
+
 ```mermaid
 flowchart TB
     Internet --> APIGW["AWS API Gateway"]

@@ -4,7 +4,40 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** Partial — [P6-001 ECR](../../infra/ecr/README.md)–[P6-006 CloudWatch](../../k8s/eks/logging/README.md) done; [P6-007 DNS/TLS](../../infra/dns/README.md) in progress; exit prep (P6-008) planned.
+**Status:** **Phase 6 path implemented** ([P6-001](../../infra/ecr/README.md)–[P6-007](../../infra/dns/README.md)). Use this doc for staging/prod bring-up; sign off with [Phase 6 exit](../roadmap/dev-step-phase6-exit.md) before marking Phase 6 complete in [phases.md](../roadmap/phases.md).
+
+## Contributor path (Phase 6 end-to-end)
+
+From a clean clone with AWS credentials, kubectl, Docker, and Terraform installed. Order matters for first-time staging.
+
+| Step | Dev-step | Action | Doc |
+|------|----------|--------|-----|
+| 1 | P6-001 | Create ECR repo; build and push `realtime-backend` image | [infra/ecr/README.md](../../infra/ecr/README.md) |
+| 2 | P6-002 | Apply EKS cluster (CPU node group); configure kubeconfig | [infra/eks/README.md](../../infra/eks/README.md) |
+| 3 | P6-003 | Set ECR image in Kustomize; `kubectl apply -k k8s/eks`; verify `/health` | [k8s/eks/README.md](../../k8s/eks/README.md) |
+| 4 | P6-004 | ALB Ingress + WebSocket stickiness; `curl` ALB `/health` | [k8s/eks/alb/README.md](../../k8s/eks/alb/README.md) |
+| 5 | P6-005 | API Gateway token mint; enable JWT on backend | [infra/apigateway/README.md](../../infra/apigateway/README.md), [jwt-auth.example.yaml](../../k8s/eks/jwt-auth.example.yaml) |
+| 6 | P6-006 | CloudWatch log group + Fluent Bit; verify Logs Insights | [k8s/eks/logging/README.md](../../k8s/eks/logging/README.md) |
+| 7 | P6-007 | ACM + Route 53 alias; Ingress host + cert ARN | [infra/dns/README.md](../../infra/dns/README.md), [k8s/eks/dns/README.md](../../k8s/eks/dns/README.md) |
+| 8 | — | **Desktop E2E:** production URL + auth → Connect → transcription | [desktop/README.md](../../desktop/README.md#production-aws-staging), [realtime-websocket.md](../api/realtime-websocket.md#authentication-production) |
+
+**Smoke checks before desktop:**
+
+```bash
+curl -f "https://<api-host>/health"
+dig +short <api-host>
+```
+
+**JWT (staging):**
+
+```bash
+cd infra/apigateway
+TOKEN_URL="$(terraform output -raw auth_token_url)"
+MINT_KEY="$(terraform output -raw mint_api_key)"
+curl -sS -X POST "$TOKEN_URL" -H "x-api-key: $MINT_KEY" -d '{}' | jq -r .access_token
+```
+
+WebSocket URL: `wss://<api-host>/v1/realtime` (custom host after P6-007, or ALB hostname during bring-up). Token URL stays on API Gateway execute-api unless you extend custom domains.
 
 ## Architecture
 
@@ -125,19 +158,9 @@ Stable hostname and ACM on the ALB Ingress (WSS path). JWT auth remains on API G
 
 Default documented hostname: **`api.voragon.example`** (override `api_fqdn` in Terraform).
 
-## Deployment Steps (Planned)
+## Later deployment phases
 
-### Phase 6: EKS + Realtime Service
-
-1. Create ECR repository and push `realtime-backend` image — **[P6-001 done](../../infra/ecr/README.md)**
-2. Create EKS cluster with CPU node group — **[P6-002 Terraform](../../infra/eks/README.md)** (`m6i.large` default)
-3. Deploy realtime-service from ECR — **[P6-003 k8s/eks](../../k8s/eks/README.md)** (CPU inference initially)
-4. Configure ALB Ingress — **[P6-004 k8s/eks/alb](../../k8s/eks/alb/README.md)**
-5. Set up API Gateway JWT auth — **[P6-005 infra/apigateway](../../infra/apigateway/README.md)**
-6. Configure health probes and HPA
-7. Set up CloudWatch logging — **[P6-006 k8s/eks/logging](../../k8s/eks/logging/README.md)**
-8. DNS and TLS — **[P6-007 infra/dns](../../infra/dns/README.md)**
-9. Validate WebSocket connectivity from desktop
+Phase 6 step-by-step detail is in [Contributor path (Phase 6 end-to-end)](#contributor-path-phase-6-end-to-end) above. Probes and HPA are defined in [k8s/eks](../../k8s/eks/README.md) manifests (P6-003/P6-004).
 
 ### Phase 7: GPU Inference
 

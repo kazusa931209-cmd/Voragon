@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P6-008 |
 | **Phase** | 6 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p6-008-aws-dev-docs-exit` |
@@ -33,10 +33,10 @@ One verifiable behavior: **documentation describes the full AWS staging/prod loo
 
 ## Acceptance Criteria
 
-- [ ] [aws-deployment.md](../operations/aws-deployment.md) status reflects implemented Phase 6 path
-- [ ] [dev-step-phase6-exit.md](dev-step-phase6-exit.md) manual checklist ready for operator sign-off
-- [ ] [dev-steps-index.md](dev-steps-index.md) and [local-development.md](../operations/local-development.md) link EKS path
-- [ ] Desktop production connect documented (URL + auth)
+- [x] [aws-deployment.md](../operations/aws-deployment.md) status reflects implemented Phase 6 path
+- [x] [dev-step-phase6-exit.md](dev-step-phase6-exit.md) manual checklist ready for operator sign-off
+- [x] [dev-steps-index.md](dev-steps-index.md) and [local-development.md](../operations/local-development.md) link EKS path
+- [x] Desktop production connect documented (URL + auth)
 
 ## Manual Test
 
@@ -61,21 +61,30 @@ Expected: [aws-deployment.md](../operations/aws-deployment.md), [local-developme
 
 ### Summary
 
-- …
+- [aws-deployment.md](../operations/aws-deployment.md) — Phase 6 status + ordered **Contributor path** table (ECR → desktop E2E).
+- [local-development.md](../operations/local-development.md) — AWS EKS section, Compose vs Kind vs EKS table, EKS links.
+- [desktop/README.md](../../desktop/README.md) — **Production (AWS staging)** settings (WSS URL, token URL, mint key).
+- [kubernetes.md](../architecture/kubernetes.md) — Phase 6 CPU in-process ASR note vs Phase 7–8 diagram.
+- [docs/README.md](../README.md) — ops index, Phase 6 exit link, implementation status.
+- [phases.md](phases.md) — Phase 6 implemented, pending exit sign-off; recommended next steps.
+- [dev-step-phase6-exit.md](dev-step-phase6-exit.md) — `ready` status, contributor-path prerequisites, operator checklist.
 
 ### Spec Changes
 
-- …
+- Listed files above (no API contract changes).
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pytest -q
+# 98 passed, 1 skipped (2026-10-16)
+cd desktop && pnpm test
+# 16 passed (2026-10-16)
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-16; contributor path, cross-links, desktop production settings verified
 
 ### Commit
 

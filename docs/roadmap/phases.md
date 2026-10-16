@@ -178,7 +178,7 @@ Desktop (Tauri) → WebSocket → Backend → VAD → ASR → Transcript → Des
 
 ## Phase 6: AWS EKS
 
-**Status:** Planned — [P6-001](dev-step-p6-001-ecr-image-push.md)–[P6-008](dev-step-p6-008-aws-dev-docs-exit.md) defined ([dev-steps index](dev-steps-index.md)). [Phase 6 exit checklist](dev-step-phase6-exit.md).
+**Status:** Implemented — [P6-001](dev-step-p6-001-ecr-image-push.md)–[P6-008](dev-step-p6-008-aws-dev-docs-exit.md) ([dev-steps index](dev-steps-index.md)). **Pending operator sign-off:** [Phase 6 exit checklist](dev-step-phase6-exit.md) (desktop WSS + auth + CloudWatch).
 
 **Goal:** Deploy to production Kubernetes on AWS.
 
@@ -313,7 +313,8 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-1. Implement [P6-007](dev-step-p6-007-dns-tls.md) (DNS and TLS) — one dev-step = one commit; P6-006 @ `e5ffb20`.
+1. Complete [Phase 6 exit](dev-step-phase6-exit.md) manual sign-off (follow [aws-deployment.md](../operations/aws-deployment.md)).
+2. Plan Phase 7 GPU inference dev-steps ([Phase 7](#phase-7-gpu-inference) below).
 
 ## Related Documents
 
