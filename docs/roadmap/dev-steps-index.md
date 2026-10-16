@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P7-008** — [GPU dev docs and Phase 7 exit prep](dev-step-p7-008-gpu-dev-docs-exit.md) (`planned`).
+**Phase 7 exit** — [Phase 7 exit verification](dev-step-phase7-exit.md) (operator sign-off; P7-001–P7-008 done).
 
 ---
 
@@ -134,11 +134,11 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 | P7-005 | Model weights on GPU pods | done | — | [dev-step-p7-005-model-weights-gpu.md](dev-step-p7-005-model-weights-gpu.md) |
 | P7-006 | Realtime backend remote ASR | done | — | [dev-step-p7-006-realtime-remote-asr.md](dev-step-p7-006-realtime-remote-asr.md) |
 | P7-007 | GPU utilization metrics | done | — | [dev-step-p7-007-gpu-metrics.md](dev-step-p7-007-gpu-metrics.md) |
-| P7-008 | GPU dev docs and Phase 7 exit prep | planned | — | [dev-step-p7-008-gpu-dev-docs-exit.md](dev-step-p7-008-gpu-dev-docs-exit.md) |
+| P7-008 | GPU dev docs and Phase 7 exit prep | done | — | [dev-step-p7-008-gpu-dev-docs-exit.md](dev-step-p7-008-gpu-dev-docs-exit.md) |
 
 **Suggested order:** P7-001 → P7-002 → P7-003 → P7-004 → P7-005 → P7-006 → P7-007 → P7-008 (P7-003 may start in parallel after P7-001; P7-006 requires P7-004 Service reachable).
 
-**Phase 7 exit:** [dev-step-phase7-exit.md](dev-step-phase7-exit.md) (pending). See [phases.md](phases.md).
+**Phase 7 exit:** [dev-step-phase7-exit.md](dev-step-phase7-exit.md) — operator E2E sign-off after [phase7-gpu-path.md](../operations/phase7-gpu-path.md). All P7 dev-steps done. See [phases.md](phases.md).
 
 ---
 

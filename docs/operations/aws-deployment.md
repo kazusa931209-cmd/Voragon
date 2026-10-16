@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** **Phase 6 complete** (signed off **2026-10-16**) — [P6-001](../../infra/ecr/README.md)–[P6-008](../roadmap/dev-step-p6-008-aws-dev-docs-exit.md). Use this doc for staging/prod bring-up and regression; [Phase 6 exit](../roadmap/dev-step-phase6-exit.md) records operator verification.
+**Status:** **Phase 6 complete** (signed off **2026-10-16**) — [P6-001](../../infra/ecr/README.md)–[P6-008](../roadmap/dev-step-p6-008-aws-dev-docs-exit.md). **Phase 7 GPU path implemented** (P7-001–P7-007) — follow [Phase 7 end-to-end (GPU)](phase7-gpu-path.md); [Phase 7 exit](../roadmap/dev-step-phase7-exit.md) for operator sign-off.
 
 ## Contributor path (Phase 6 end-to-end)
 
@@ -67,7 +67,7 @@ flowchart TB
 | Phase | Components | Infrastructure |
 |-------|-----------|---------------|
 | Phase 6 | realtime-service on EKS | EKS cluster, CPU nodes, ALB, API Gateway |
-| Phase 7 | asr-service on GPU nodes | GPU node pool (g5.xlarge) |
+| Phase 7 | asr-service on GPU nodes; remote ASR from realtime | GPU node pool (g5.xlarge) — [phase7-gpu-path.md](phase7-gpu-path.md) |
 | Phase 8 | ai-gateway | Additional CPU deployment |
 
 ## Prerequisites
@@ -162,15 +162,20 @@ Default documented hostname: **`api.voragon.example`** (override `api_fqdn` in T
 
 Phase 6 step-by-step detail is in [Contributor path (Phase 6 end-to-end)](#contributor-path-phase-6-end-to-end) above. Probes and HPA are defined in [k8s/eks](../../k8s/eks/README.md) manifests (P6-003/P6-004).
 
-### Phase 7: GPU Inference
+### Phase 7: GPU Inference (implemented)
 
-1. Create GPU node group (g5.xlarge) — **[P7-001 infra/eks](../../infra/eks/README.md#gpu-node-pool-p7-001)**
-2. Install NVIDIA device plugin — **[P7-002 infra/eks](../../infra/eks/README.md#nvidia-device-plugin-p7-002)** · [k8s/eks/gpu](../../k8s/eks/gpu/README.md)
-3. Build and push ASR container image — **[P7-003 docker/asr-inference](../../docker/asr-inference/README.md)** · [infra/ecr](../../infra/ecr/README.md)
-4. Deploy asr-service with GPU resource requests — **[P7-004 k8s/eks](../../k8s/eks/gpu/README.md)**
-5. Configure model weight loading (init container or volume) — **[P7-005 k8s/eks](../../k8s/eks/README.md#model-weight-pvcs-p7-005)** (`voragon-asr-model-cache`, 10Gi)
-6. Update realtime-service to call asr-service — **[P7-006 k8s/eks](../../k8s/eks/README.md)** (`ASR_BACKEND=remote`)
-7. Validate inference latency and GPU utilization
+Full contributor path: **[Phase 7 end-to-end (GPU)](phase7-gpu-path.md)**.
+
+| Step | Status | Dev-step | Doc |
+|------|--------|----------|-----|
+| 1 | Implemented | P7-001 | [GPU node group](../../infra/eks/README.md#gpu-node-pool-p7-001) |
+| 2 | Implemented | P7-002 | [NVIDIA device plugin](../../infra/eks/README.md#nvidia-device-plugin-p7-002) · [k8s/eks/gpu](../../k8s/eks/gpu/README.md) |
+| 3 | Implemented | P7-003 | [ASR image + ECR](../../docker/asr-inference/README.md) |
+| 4 | Implemented | P7-004 | [asr-service on GPU](../../k8s/eks/gpu/README.md) |
+| 5 | Implemented | P7-005 | [Model PVC](../../k8s/eks/README.md#model-weight-pvcs-p7-005) |
+| 6 | Implemented | P7-006 | [Remote ASR](../../k8s/eks/README.md) (`ASR_BACKEND=remote`) |
+| 7 | Implemented | P7-007 | [GPU + inference metrics](../../k8s/eks/gpu/README.md#gpu-metrics-p7-007) · [observability.md](observability.md) |
+| 8 | Operator | — | Latency: scrape `voragon_asr_inference_duration_seconds`; record p50/p95 in [Phase 7 exit](../roadmap/dev-step-phase7-exit.md) |
 
 ### Phase 8: AI Gateway
 
@@ -230,4 +235,5 @@ Phase 6 step-by-step detail is in [Contributor path (Phase 6 end-to-end)](#contr
 - [AWS GPU Strategy](../architecture/aws.md)
 - [Kubernetes Architecture](../architecture/kubernetes.md)
 - [Observability](observability.md)
+- [Phase 7 GPU path](phase7-gpu-path.md)
 - [Local Kubernetes](kubernetes-local.md)

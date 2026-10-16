@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P7-008 |
 | **Phase** | 7 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p7-008-gpu-dev-docs-exit` |
@@ -30,9 +30,9 @@ One verifiable behavior: **documentation describes the GPU inference loop; [dev-
 
 ## Acceptance Criteria
 
-- [ ] aws-deployment Phase 7 reflects implemented path
-- [ ] Phase 7 exit checklist ready for operator sign-off
-- [ ] dev-steps-index and docs README link GPU path
+- [x] aws-deployment Phase 7 reflects implemented path
+- [x] Phase 7 exit checklist ready for operator sign-off
+- [x] dev-steps-index and docs README link GPU path
 
 ## Manual Test
 
@@ -57,21 +57,25 @@ Expected: [aws-deployment.md](../operations/aws-deployment.md), [docs/README.md]
 
 ### Summary
 
-- …
+- [phase7-gpu-path.md](../operations/phase7-gpu-path.md) — Phase 7 end-to-end contributor narrative.
+- [aws-deployment.md](../operations/aws-deployment.md) — implemented P7-001–P7-007 table + latency step.
+- [dev-step-phase7-exit.md](dev-step-phase7-exit.md) — prerequisites and manual checklist aligned with [phases.md](phases.md).
+- Cross-links: [docs/README.md](../README.md), [kubernetes.md](../architecture/kubernetes.md), [dev-steps-index.md](dev-steps-index.md).
 
 ### Spec Changes
 
-- …
+- [phase7-gpu-path.md](../operations/phase7-gpu-path.md), [aws-deployment.md](../operations/aws-deployment.md), [dev-step-phase7-exit.md](dev-step-phase7-exit.md), [phases.md](phases.md), [kubernetes.md](../architecture/kubernetes.md), [docs/README.md](../README.md).
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pytest -q tests/test_phase7_gpu_path_docs.py
+# 3 passed
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-16; contributor path + exit checklist cross-links verified
 
 ### Commit
 

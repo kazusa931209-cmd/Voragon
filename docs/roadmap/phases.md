@@ -203,7 +203,7 @@ Desktop (Tauri) → WebSocket → Backend → VAD → ASR → Transcript → Des
 
 ## Phase 7: GPU Inference
 
-**Status:** Planned — [P7-001](dev-step-p7-001-gpu-node-pool.md)–[P7-008](dev-step-p7-008-gpu-dev-docs-exit.md) defined ([dev-steps index](dev-steps-index.md)). [Phase 7 exit checklist](dev-step-phase7-exit.md).
+**Status:** **Dev-steps complete** (P7-001–P7-008) — [Phase 7 GPU path](../operations/phase7-gpu-path.md) and [exit checklist](dev-step-phase7-exit.md). **Operator exit sign-off** pending on [dev-step-phase7-exit.md](dev-step-phase7-exit.md).
 
 **Goal:** Move ASR inference to GPU nodes for production performance.
 

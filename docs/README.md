@@ -2,7 +2,7 @@
 
 Voragon is a local-first, realtime AI assistant platform. The initial product is realtime voice-to-text; the long-term goal is an extensible AI inference platform supporting speech recognition, transcription, contextual assistance, LLM inference, and additional model capabilities.
 
-**Status:** Phases 1–6 complete; Phase 7 in progress. **Active:** [P7-008 GPU dev docs and Phase 7 exit prep](roadmap/dev-step-p7-008-gpu-dev-docs-exit.md) — [Dev-Steps Index](roadmap/dev-steps-index.md).
+**Status:** Phases 1–6 complete; Phase 7 dev-steps done (P7-001–P7-008). **Active:** [Phase 7 exit verification](roadmap/dev-step-phase7-exit.md) (operator sign-off) — [Dev-Steps Index](roadmap/dev-steps-index.md).
 
 ## How to Read This Documentation
 
@@ -11,7 +11,7 @@ Voragon is a local-first, realtime AI assistant platform. The initial product is
 | New engineer | [Architecture Overview](architecture/overview.md) → [Local Development](operations/local-development.md) |
 | Desktop engineer | [Desktop Architecture](architecture/desktop.md) → [Realtime WebSocket API](api/realtime-websocket.md) |
 | Backend / ML engineer | [Backend Architecture](architecture/backend.md) → [Model Serving](architecture/model-serving.md) → [Realtime Audio](architecture/realtime-audio.md) |
-| Platform / DevOps engineer | [Local Development](operations/local-development.md) → [AWS Deployment](operations/aws-deployment.md) → [Kubernetes Architecture](architecture/kubernetes.md) |
+| Platform / DevOps engineer | [Local Development](operations/local-development.md) → [AWS Deployment](operations/aws-deployment.md) → [Phase 7 GPU path](operations/phase7-gpu-path.md) → [Kubernetes Architecture](architecture/kubernetes.md) |
 | Product / planning | [Development Phases](roadmap/phases.md) → [Future Capabilities](roadmap/future.md) |
 
 ## Documentation Map
@@ -154,9 +154,17 @@ Cursor rule: `.cursor/rules/dev-workflow.mdc`
 | **Final transcript** | Stable transcription result for a speech segment |
 | **Session** | A single connected realtime transcription context |
 
+## GPU inference (Phase 7)
+
+| Resource | Description |
+|----------|-------------|
+| [Phase 7 end-to-end (GPU)](operations/phase7-gpu-path.md) | Contributor path: GPU pool → ASR deploy → remote ASR → metrics |
+| [Phase 7 exit checklist](roadmap/dev-step-phase7-exit.md) | Operator sign-off after EKS GPU E2E |
+| [Dev-steps P7-001–P7-008](roadmap/dev-steps-index.md#phase-7-gpu-inference) | Implementation history |
+
 ## Implementation Status
 
-Application code, Docker/Kubernetes manifests, and Phase 6 Terraform live in this repository. Not yet implemented: Phase 7+ GPU `asr-service`, AI Gateway (Phase 8), and multi-model routing (Phase 9).
+Application code, Docker/Kubernetes manifests, Phase 6 Terraform, and **Phase 7 GPU ASR on EKS** (P7-001–P7-008, including [contributor path](operations/phase7-gpu-path.md)) live in this repository. Phase 7 **operator exit** pending [checklist](roadmap/dev-step-phase7-exit.md). Not yet implemented: AI Gateway (Phase 8) and multi-model routing (Phase 9).
 
 Latency targets and capacity estimates remain **engineering targets**, not measured guarantees, until benchmarked in your environment.
 
