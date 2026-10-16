@@ -4,7 +4,7 @@
 
 This document describes the planned AWS production deployment for Voragon. Introduced in Phase 6 (EKS) with GPU inference in Phase 7.
 
-**Status:** **Phase 6 path implemented** ([P6-001](../../infra/ecr/README.md)–[P6-007](../../infra/dns/README.md)). Use this doc for staging/prod bring-up; sign off with [Phase 6 exit](../roadmap/dev-step-phase6-exit.md) before marking Phase 6 complete in [phases.md](../roadmap/phases.md).
+**Status:** **Phase 6 complete** (signed off **2026-10-16**) — [P6-001](../../infra/ecr/README.md)–[P6-008](../roadmap/dev-step-p6-008-aws-dev-docs-exit.md). Use this doc for staging/prod bring-up and regression; [Phase 6 exit](../roadmap/dev-step-phase6-exit.md) records operator verification.
 
 ## Contributor path (Phase 6 end-to-end)
 

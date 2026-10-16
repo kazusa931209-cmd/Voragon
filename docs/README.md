@@ -2,7 +2,7 @@
 
 Voragon is a local-first, realtime AI assistant platform. The initial product is realtime voice-to-text; the long-term goal is an extensible AI inference platform supporting speech recognition, transcription, contextual assistance, LLM inference, and additional model capabilities.
 
-**Status:** Phases 1–5 complete; Phase 6 AWS EKS path documented and implemented ([aws-deployment](operations/aws-deployment.md)). Active dev-step: [Dev-Steps Index](roadmap/dev-steps-index.md). Phase 6 operator sign-off: [Phase 6 exit](roadmap/dev-step-phase6-exit.md).
+**Status:** Phases 1–6 complete (Phase 6 signed off **2026-10-16** — [exit checklist](roadmap/dev-step-phase6-exit.md)). Next: Phase 7 GPU inference — [Dev-Steps Index](roadmap/dev-steps-index.md), [phases.md](roadmap/phases.md).
 
 ## How to Read This Documentation
 

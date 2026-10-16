@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**Phase 6 exit** — [Operator sign-off](dev-step-phase6-exit.md) (P6-001–P6-008 done; last dev-step commit on `feat/dev-phase6`).
+**Phase 7** — GPU inference (planning). Dev-steps not yet defined; see [phases.md](phases.md#phase-7-gpu-inference). Phase 6 signed off **2026-10-16** — [dev-step-phase6-exit.md](dev-step-phase6-exit.md).
 
 ---
 
@@ -119,7 +119,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 **Suggested order:** P6-001 → P6-002 → P6-003 → P6-004 → P6-005 → P6-006 → P6-007 → P6-008 (P6-006 may parallelize after P6-003; P6-007 may overlap P6-004/P6-005 — finish before exit sign-off).
 
-**Phase 6 exit:** [dev-step-phase6-exit.md](dev-step-phase6-exit.md) (ready for operator sign-off). See [phases.md](phases.md).
+**Phase 6 exit:** signed off **2026-10-16** — [dev-step-phase6-exit.md](dev-step-phase6-exit.md). Dev-steps [P6-001](dev-step-p6-001-ecr-image-push.md)–[P6-008](dev-step-p6-008-aws-dev-docs-exit.md) done.
 
 ---
 
