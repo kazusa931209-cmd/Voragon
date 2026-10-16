@@ -9,3 +9,9 @@ variable "repository_name" {
   type        = string
   default     = "voragon/realtime-backend"
 }
+
+variable "asr_repository_name" {
+  description = "ECR repository for ASR inference images (P7-003)."
+  type        = string
+  default     = "voragon/asr-inference"
+}

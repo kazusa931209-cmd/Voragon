@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P7-003** — [ASR inference image and ECR](dev-step-p7-003-asr-image-ecr.md) (`planned`).
+**P7-004** — [asr-service Deployment on GPU](dev-step-p7-004-asr-service-deploy.md) (`planned`).
 
 ---
 
@@ -129,7 +129,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 |----|-------|--------|-----|-----|
 | P7-001 | EKS GPU node pool | done | — | [dev-step-p7-001-gpu-node-pool.md](dev-step-p7-001-gpu-node-pool.md) |
 | P7-002 | NVIDIA device plugin | done | — | [dev-step-p7-002-nvidia-device-plugin.md](dev-step-p7-002-nvidia-device-plugin.md) |
-| P7-003 | ASR inference image and ECR | planned | — | [dev-step-p7-003-asr-image-ecr.md](dev-step-p7-003-asr-image-ecr.md) |
+| P7-003 | ASR inference image and ECR | done | — | [dev-step-p7-003-asr-image-ecr.md](dev-step-p7-003-asr-image-ecr.md) |
 | P7-004 | asr-service Deployment on GPU | planned | — | [dev-step-p7-004-asr-service-deploy.md](dev-step-p7-004-asr-service-deploy.md) |
 | P7-005 | Model weights on GPU pods | planned | — | [dev-step-p7-005-model-weights-gpu.md](dev-step-p7-005-model-weights-gpu.md) |
 | P7-006 | Realtime backend remote ASR | planned | — | [dev-step-p7-006-realtime-remote-asr.md](dev-step-p7-006-realtime-remote-asr.md) |

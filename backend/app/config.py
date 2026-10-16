@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     vad_speech_pad_ms: int = 300
     asr_backend: str = "faster_whisper"
     asr_model: str = "large-v3-turbo"
+    asr_device: str = "cpu"
+    asr_compute_type: str = "int8"
     asr_partial_interval_ms: int = 300
     jwt_auth_required: bool = False
     jwt_secret: str | None = None

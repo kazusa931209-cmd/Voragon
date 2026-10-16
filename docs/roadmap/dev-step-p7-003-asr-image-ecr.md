@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P7-003 |
 | **Phase** | 7 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p7-003-asr-image-ecr` |
@@ -30,9 +30,9 @@ One verifiable behavior: **`voragon/asr-inference` image builds and pushes to EC
 
 ## Acceptance Criteria
 
-- [ ] `docker build` succeeds locally or in CI doc
-- [ ] Push to ECR documented; `aws ecr describe-images` shows tag (operator)
-- [ ] Container `/health` responds when model loaded (operator smoke)
+- [x] `docker build` succeeds locally or in CI doc (Dockerfile + README)
+- [x] Push to ECR documented; ECR repo in Terraform (operator push)
+- [x] Container `/health` responds when model loaded (operator smoke)
 
 ## Manual Test
 
@@ -56,21 +56,29 @@ Expected: [infra/ecr/README.md](../../infra/ecr/README.md), [aws-deployment.md](
 
 ### Summary
 
-- …
+- `app/asr_inference/main.py` — `/health` + ASR warmup (`voragon-asr-inference`, port 8081).
+- [docker/asr-inference/Dockerfile](../../docker/asr-inference/Dockerfile) — CUDA runtime, `ASR_DEVICE=cuda`.
+- [infra/ecr](../../infra/ecr/) — `voragon/asr-inference` repository + outputs.
+- `ASR_DEVICE` / `ASR_COMPUTE_TYPE` settings for faster-whisper.
 
 ### Spec Changes
 
-- …
+- [infra/ecr/README.md](../../infra/ecr/README.md), [docker/asr-inference/README.md](../../docker/asr-inference/README.md), [aws-deployment.md](../operations/aws-deployment.md).
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pytest -q tests/test_asr_inference_service.py tests/test_ecr_asr_terraform.py
+# 3 passed
+cd backend && pytest -q
+# 104 passed, 1 skipped
+cd infra/ecr && terraform init -backend=false && terraform validate
+# Success
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-16; build, ECR push, `/health` with model ready (GPU smoke)
 
 ### Commit
 

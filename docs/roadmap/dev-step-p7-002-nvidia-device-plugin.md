@@ -80,7 +80,7 @@ cd desktop && pnpm test
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `56822cb`
 
 ### PR
 

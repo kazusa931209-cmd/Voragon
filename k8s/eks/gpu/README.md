@@ -16,7 +16,10 @@ kubectl describe node -l node-type=gpu | grep -A5 'Capacity:\|Allocatable:'
 
 Allocatable should include `nvidia.com/gpu`.
 
+## ASR image (P7-003)
+
+Build and push: [docker/asr-inference/README.md](../../../docker/asr-inference/README.md).
+
 ## Next
 
-- P7-003 — ASR inference image + ECR
 - P7-004 — `asr-service` Deployment with `resources.limits.nvidia.com/gpu: 1`
