@@ -82,7 +82,7 @@ cd backend && pytest -q
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `ee43b41`
 
 ### PR
 
