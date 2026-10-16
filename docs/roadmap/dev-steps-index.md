@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**Phase 7** — GPU inference (planning). Dev-steps not yet defined; see [phases.md](phases.md#phase-7-gpu-inference). Phase 6 signed off **2026-10-16** — [dev-step-phase6-exit.md](dev-step-phase6-exit.md).
+**P7-001** — [EKS GPU node pool](dev-step-p7-001-gpu-node-pool.md) (`planned`). Phase 6 signed off **2026-10-16** — [dev-step-phase6-exit.md](dev-step-phase6-exit.md).
 
 ---
 
@@ -123,6 +123,25 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ---
 
-## Phase 7+
+## Phase 7: GPU Inference
 
-Dev-steps for Phase 7 (GPU inference) and beyond — see [phases.md](phases.md).
+| ID | Title | Status | PR | Doc |
+|----|-------|--------|-----|-----|
+| P7-001 | EKS GPU node pool | planned | — | [dev-step-p7-001-gpu-node-pool.md](dev-step-p7-001-gpu-node-pool.md) |
+| P7-002 | NVIDIA device plugin | planned | — | [dev-step-p7-002-nvidia-device-plugin.md](dev-step-p7-002-nvidia-device-plugin.md) |
+| P7-003 | ASR inference image and ECR | planned | — | [dev-step-p7-003-asr-image-ecr.md](dev-step-p7-003-asr-image-ecr.md) |
+| P7-004 | asr-service Deployment on GPU | planned | — | [dev-step-p7-004-asr-service-deploy.md](dev-step-p7-004-asr-service-deploy.md) |
+| P7-005 | Model weights on GPU pods | planned | — | [dev-step-p7-005-model-weights-gpu.md](dev-step-p7-005-model-weights-gpu.md) |
+| P7-006 | Realtime backend remote ASR | planned | — | [dev-step-p7-006-realtime-remote-asr.md](dev-step-p7-006-realtime-remote-asr.md) |
+| P7-007 | GPU utilization metrics | planned | — | [dev-step-p7-007-gpu-metrics.md](dev-step-p7-007-gpu-metrics.md) |
+| P7-008 | GPU dev docs and Phase 7 exit prep | planned | — | [dev-step-p7-008-gpu-dev-docs-exit.md](dev-step-p7-008-gpu-dev-docs-exit.md) |
+
+**Suggested order:** P7-001 → P7-002 → P7-003 → P7-004 → P7-005 → P7-006 → P7-007 → P7-008 (P7-003 may start in parallel after P7-001; P7-006 requires P7-004 Service reachable).
+
+**Phase 7 exit:** [dev-step-phase7-exit.md](dev-step-phase7-exit.md) (pending). See [phases.md](phases.md).
+
+---
+
+## Phase 8+
+
+Dev-steps for Phase 8 (AI Gateway) and beyond — see [phases.md](phases.md).

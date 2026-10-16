@@ -203,6 +203,8 @@ Desktop (Tauri) → WebSocket → Backend → VAD → ASR → Transcript → Des
 
 ## Phase 7: GPU Inference
 
+**Status:** Planned — [P7-001](dev-step-p7-001-gpu-node-pool.md)–[P7-008](dev-step-p7-008-gpu-dev-docs-exit.md) defined ([dev-steps index](dev-steps-index.md)). [Phase 7 exit checklist](dev-step-phase7-exit.md).
+
 **Goal:** Move ASR inference to GPU nodes for production performance.
 
 **Deliverables:**
@@ -313,8 +315,8 @@ Phases 3 and 4 can proceed in parallel after Phase 2 is complete.
 
 ## Recommended Next Step
 
-1. Define Phase 7 GPU inference dev-steps ([Phase 7](#phase-7-gpu-inference) below) in [dev-steps-index.md](dev-steps-index.md).
-2. Implement P7-001 when the first dev-step doc is written (one dev-step = one commit).
+1. Implement [P7-001](dev-step-p7-001-gpu-node-pool.md) (EKS GPU node pool) — one dev-step = one commit; branch `dev-step/p7-001-gpu-node-pool`.
+2. Confirm AWS GPU instance quota (g5) in target region before apply.
 
 ## Related Documents
 
