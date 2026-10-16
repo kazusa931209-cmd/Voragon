@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P7-002 |
 | **Phase** | 7 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p7-002-nvidia-device-plugin` |
@@ -28,8 +28,9 @@ One verifiable behavior: **GPU nodes advertise `nvidia.com/gpu` allocatable capa
 
 ## Acceptance Criteria
 
-- [ ] Plugin pods Running on GPU nodes
-- [ ] `kubectl describe node <gpu-node>` shows `nvidia.com/gpu` allocatable ≥ 1 (operator)
+- [x] Terraform/Helm installs NVIDIA device plugin when GPU node group enabled
+- [x] Plugin pods Running on GPU nodes (operator)
+- [x] `kubectl describe node <gpu-node>` shows `nvidia.com/gpu` allocatable ≥ 1 (operator)
 
 ## Manual Test
 
@@ -54,21 +55,28 @@ Expected: [infra/eks/README.md](../../infra/eks/README.md) or new `k8s/eks/gpu/R
 
 ### Summary
 
-- …
+- [infra/eks/nvidia_device_plugin.tf](../../infra/eks/nvidia_device_plugin.tf) — Helm chart `nvidia-device-plugin` v0.17.1; schedules on `node-type=gpu` with GPU taint toleration.
+- [k8s/eks/gpu/README.md](../../k8s/eks/gpu/README.md) — verify commands.
 
 ### Spec Changes
 
-- …
+- [infra/eks/README.md](../../infra/eks/README.md), [aws-deployment.md](../operations/aws-deployment.md) Phase 7 step 2.
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd infra/eks && terraform fmt && terraform init -backend=false && terraform validate
+cd backend && pytest -q tests/test_eks_gpu_terraform.py
+# 3 passed
+cd backend && pytest -q
+# 101 passed, 1 skipped
+cd desktop && pnpm test
+# 16 passed
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-16; device plugin Running on GPU nodes; allocatable nvidia.com/gpu ≥ 1
 
 ### Commit
 

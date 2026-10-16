@@ -165,7 +165,7 @@ Phase 6 step-by-step detail is in [Contributor path (Phase 6 end-to-end)](#contr
 ### Phase 7: GPU Inference
 
 1. Create GPU node group (g5.xlarge) — **[P7-001 infra/eks](../../infra/eks/README.md#gpu-node-pool-p7-001)**
-2. Install NVIDIA device plugin
+2. Install NVIDIA device plugin — **[P7-002 infra/eks](../../infra/eks/README.md#nvidia-device-plugin-p7-002)** · [k8s/eks/gpu](../../k8s/eks/gpu/README.md)
 3. Build and push ASR container image
 4. Deploy asr-service with GPU resource requests
 5. Configure model weight loading (init container or volume)

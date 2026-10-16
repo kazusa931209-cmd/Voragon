@@ -38,6 +38,11 @@ output "gpu_node_instance_types" {
   value       = var.enable_gpu_node_group ? var.gpu_node_instance_types : []
 }
 
+output "nvidia_device_plugin_installed" {
+  description = "Whether the NVIDIA device plugin Helm release is managed (P7-002)."
+  value       = var.enable_gpu_node_group
+}
+
 output "cloudwatch_log_group_name" {
   description = "CloudWatch log group for realtime-backend stdout (P6-006)."
   value       = aws_cloudwatch_log_group.realtime_backend.name

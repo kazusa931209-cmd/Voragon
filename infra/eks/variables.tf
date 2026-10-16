@@ -72,6 +72,12 @@ variable "gpu_node_max_size" {
   default = 2
 }
 
+variable "nvidia_device_plugin_chart_version" {
+  description = "Helm chart version for NVIDIA k8s-device-plugin (P7-002)."
+  type        = string
+  default     = "0.17.1"
+}
+
 variable "cloudwatch_log_group_name" {
   description = "CloudWatch log group for voragon realtime-backend container logs (P6-006)."
   type        = string

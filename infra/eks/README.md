@@ -63,7 +63,17 @@ kubectl get nodes -L node-type --show-labels
 kubectl describe node -l node-type=gpu | grep -A2 Taints
 ```
 
-NVIDIA device plugin is **P7-002** — GPU nodes may show `nvidia.com/gpu` allocatable only after that step.
+## NVIDIA device plugin (P7-002)
+
+When `enable_gpu_node_group` is true, the same Terraform apply installs the [NVIDIA device plugin](https://github.com/NVIDIA/k8s-device-plugin) (Helm `0.17.1` by default) into `kube-system`. The DaemonSet tolerates `nvidia.com/gpu` taints and runs only on nodes labeled `node-type=gpu`.
+
+```bash
+terraform -chdir=infra/eks apply
+kubectl get pods -n kube-system -l app.kubernetes.io/name=nvidia-device-plugin
+kubectl describe node -l node-type=gpu | grep -E 'nvidia.com/gpu|Taints'
+```
+
+Expect **allocatable** `nvidia.com/gpu: 1` (or more) on each Ready GPU node. More detail: [k8s/eks/gpu/README.md](../../k8s/eks/gpu/README.md).
 
 ## AWS Load Balancer Controller (P6-004)
 
