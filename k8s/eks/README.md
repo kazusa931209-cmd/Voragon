@@ -1,25 +1,27 @@
-# EKS: realtime-backend (P6-003)
+# EKS: realtime-backend (P6-003) + asr-service (P7-004)
 
-Deploy **in-process ASR** `realtime-backend` to the [P6-002 EKS cluster](../../infra/eks/README.md) using the [P6-001 ECR image](../../infra/ecr/README.md).
+Deploy **in-process ASR** `realtime-backend` (CPU) and optional **GPU** `asr-service` to the [P6-002 EKS cluster](../../infra/eks/README.md) using [ECR images](../../infra/ecr/README.md).
 
-Parity with [k8s/local/](../local/) (Kind), with ECR image pull and `gp2` PVC for model cache.
+Parity with [k8s/local/](../local/) for realtime (Kind), with ECR image pull and `gp2` PVC for model cache. **`asr-service` is EKS-only** (GPU node pool); see [gpu/README.md](gpu/README.md).
 
 ## Prerequisites
 
 - P6-002 cluster and kubeconfig (`aws eks update-kubeconfig …`)
 - Image pushed to ECR ([infra/ecr/README.md](../../infra/ecr/README.md))
 
-## 1. Point the Deployment at ECR
+## 1. Point Deployments at ECR
 
 From the **repository root**:
 
 ```bash
 export AWS_REGION="${AWS_REGION:-ap-northeast-1}"
 export ECR_URI="$(terraform -chdir=infra/ecr output -raw repository_url)"
+export ASR_ECR_URI="$(terraform -chdir=infra/ecr output -raw asr_repository_url)"
 export TAG="${TAG:-$(git rev-parse --short HEAD)}"
 
 cd k8s/eks
 kustomize edit set image "voragon/realtime-backend=${ECR_URI}:${TAG}"
+kustomize edit set image "voragon/asr-inference=${ASR_ECR_URI}:${TAG}"
 ```
 
 This updates `kustomization.yaml` locally (do not commit your account-specific URI unless intentional).
@@ -29,9 +31,10 @@ This updates `kustomization.yaml` locally (do not commit your account-specific U
 ```bash
 kubectl apply -k .
 kubectl wait -n voragon --for=condition=ready pod -l app=realtime-backend --timeout=600s
+kubectl wait -n voragon --for=condition=ready pod -l app=asr-service --timeout=900s
 ```
 
-First startup may take several minutes (ASR warmup + model download into PVC).
+First startup may take several minutes (ASR warmup + model download into PVC). GPU `asr-service` pods schedule only on nodes with `node-type=gpu` ([gpu/README.md](gpu/README.md)).
 
 ## 3. Health check
 

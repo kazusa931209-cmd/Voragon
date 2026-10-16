@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P7-004 |
 | **Phase** | 7 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p7-004-asr-service-deploy` |
@@ -30,9 +30,9 @@ One verifiable behavior: **`asr-service` runs on GPU nodes with `nvidia.com/gpu:
 
 ## Acceptance Criteria
 
-- [ ] `kubectl apply -k` deploys asr-service to GPU nodes only
-- [ ] `kubectl get pods -n voragon -l app=asr-service` Ready (operator)
-- [ ] In-cluster `curl` to Service `/health` succeeds from debug pod
+- [x] `kubectl apply -k` deploys asr-service to GPU nodes only
+- [x] `kubectl get pods -n voragon -l app=asr-service` Ready (operator)
+- [x] In-cluster `curl` to Service `/health` succeeds from debug pod
 
 ## Manual Test
 
@@ -57,21 +57,28 @@ Expected: [k8s/eks/README.md](../../k8s/eks/README.md), [kubernetes-local.md](..
 
 ### Summary
 
-- …
+- `k8s/eks/asr-{configmap,deployment,service}.yaml` — GPU scheduling, `nvidia.com/gpu: 1`, ClusterIP `:8081`, probes per [kubernetes.md](../architecture/kubernetes.md).
+- `k8s/eks/kustomization.yaml` — includes ASR resources and `voragon/asr-inference` image transform.
+- `app/asr_inference/main.py` — `/health` returns HTTP 503 until ASR model is ready (readiness probe).
 
 ### Spec Changes
 
-- …
+- [k8s/eks/README.md](../../k8s/eks/README.md), [k8s/eks/gpu/README.md](../../k8s/eks/gpu/README.md), [kubernetes-local.md](../operations/kubernetes-local.md), [aws-deployment.md](../operations/aws-deployment.md).
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pytest -q tests/test_eks_asr_manifests.py tests/test_asr_inference_service.py
+# 5 passed
+cd backend && pytest -q
+# 107 passed, 1 skipped
+cd desktop && pnpm test
+# 16 passed
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-16; GPU scheduling, Ready pod, in-cluster `/health`
 
 ### Commit
 

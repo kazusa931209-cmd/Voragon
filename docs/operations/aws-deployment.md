@@ -167,7 +167,7 @@ Phase 6 step-by-step detail is in [Contributor path (Phase 6 end-to-end)](#contr
 1. Create GPU node group (g5.xlarge) — **[P7-001 infra/eks](../../infra/eks/README.md#gpu-node-pool-p7-001)**
 2. Install NVIDIA device plugin — **[P7-002 infra/eks](../../infra/eks/README.md#nvidia-device-plugin-p7-002)** · [k8s/eks/gpu](../../k8s/eks/gpu/README.md)
 3. Build and push ASR container image — **[P7-003 docker/asr-inference](../../docker/asr-inference/README.md)** · [infra/ecr](../../infra/ecr/README.md)
-4. Deploy asr-service with GPU resource requests
+4. Deploy asr-service with GPU resource requests — **[P7-004 k8s/eks](../../k8s/eks/gpu/README.md)**
 5. Configure model weight loading (init container or volume)
 6. Update realtime-service to call asr-service
 7. Validate inference latency and GPU utilization

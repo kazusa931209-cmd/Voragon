@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 from app.asr.base import ASREngine, create_asr_engine
 from app.config import get_settings
@@ -45,16 +46,18 @@ async def health(request: Request) -> dict[str, object]:
     """Health for Kubernetes probes and operator smoke tests."""
     asr_engine: ASREngine = request.app.state.asr_engine
     asr_health = await asr_engine.health()
-    return {
-        "status": "healthy" if asr_health.ready else "degraded",
+    ready = asr_health.ready
+    payload: dict[str, object] = {
+        "status": "healthy" if ready else "degraded",
         "service": SERVICE_NAME,
         "asr": {
-            "ready": asr_health.ready,
+            "ready": ready,
             "backend": asr_health.backend,
             "model": asr_health.model,
             "device": get_settings().asr_device,
         },
     }
+    return JSONResponse(status_code=200 if ready else 503, content=payload)
 
 
 def main() -> None:
