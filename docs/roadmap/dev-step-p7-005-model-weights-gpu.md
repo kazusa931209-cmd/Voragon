@@ -77,7 +77,7 @@ cd backend && pytest -q
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `26fba6d`
 
 ### PR
 
