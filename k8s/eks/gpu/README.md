@@ -60,4 +60,16 @@ kubectl port-forward -n voragon svc/asr-service 8081:8081
 curl -sf http://localhost:8081/health | jq .
 ```
 
-Model weight PVC caching is [P7-005](../../../docs/roadmap/dev-step-p7-005-model-weights-gpu.md).
+## Model weight cache (P7-005)
+
+`asr-service` mounts PVC **`voragon-asr-model-cache`** (10Gi `gp2`) at **`/var/lib/voragon/model-cache`**. Hugging Face / faster-whisper caches use **`HF_HOME=/var/lib/voragon/model-cache/huggingface`** and **`TORCH_HOME=/var/lib/voragon/model-cache/torch`** (`asr-config`). Model id: **`ASR_MODEL`** (default `tiny`).
+
+After first Ready, delete the pod and confirm faster startup:
+
+```bash
+kubectl delete pod -n voragon -l app=asr-service
+kubectl wait -n voragon --for=condition=ready pod -l app=asr-service --timeout=900s
+kubectl get pvc -n voragon voragon-asr-model-cache
+```
+
+See [k8s/eks/README.md](../README.md#model-weight-pvcs-p7-005) for the full PVC table.

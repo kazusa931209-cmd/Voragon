@@ -40,6 +40,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: asr-config
+          volumeMounts:
+            - name: model-cache
+              mountPath: /var/lib/voragon/model-cache
           resources:
             requests:
               cpu: "2"
@@ -66,3 +69,7 @@ spec:
               port: http
             periodSeconds: 15
             timeoutSeconds: 5
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: voragon-asr-model-cache

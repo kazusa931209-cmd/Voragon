@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P7-005** — [Model weights on GPU pods](dev-step-p7-005-model-weights-gpu.md) (`planned`).
+**P7-006** — [Realtime backend remote ASR](dev-step-p7-006-realtime-remote-asr.md) (`planned`).
 
 ---
 
@@ -131,7 +131,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 | P7-002 | NVIDIA device plugin | done | — | [dev-step-p7-002-nvidia-device-plugin.md](dev-step-p7-002-nvidia-device-plugin.md) |
 | P7-003 | ASR inference image and ECR | done | — | [dev-step-p7-003-asr-image-ecr.md](dev-step-p7-003-asr-image-ecr.md) |
 | P7-004 | asr-service Deployment on GPU | done | — | [dev-step-p7-004-asr-service-deploy.md](dev-step-p7-004-asr-service-deploy.md) |
-| P7-005 | Model weights on GPU pods | planned | — | [dev-step-p7-005-model-weights-gpu.md](dev-step-p7-005-model-weights-gpu.md) |
+| P7-005 | Model weights on GPU pods | done | — | [dev-step-p7-005-model-weights-gpu.md](dev-step-p7-005-model-weights-gpu.md) |
 | P7-006 | Realtime backend remote ASR | planned | — | [dev-step-p7-006-realtime-remote-asr.md](dev-step-p7-006-realtime-remote-asr.md) |
 | P7-007 | GPU utilization metrics | planned | — | [dev-step-p7-007-gpu-metrics.md](dev-step-p7-007-gpu-metrics.md) |
 | P7-008 | GPU dev docs and Phase 7 exit prep | planned | — | [dev-step-p7-008-gpu-dev-docs-exit.md](dev-step-p7-008-gpu-dev-docs-exit.md) |

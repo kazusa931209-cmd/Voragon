@@ -168,7 +168,7 @@ Phase 6 step-by-step detail is in [Contributor path (Phase 6 end-to-end)](#contr
 2. Install NVIDIA device plugin — **[P7-002 infra/eks](../../infra/eks/README.md#nvidia-device-plugin-p7-002)** · [k8s/eks/gpu](../../k8s/eks/gpu/README.md)
 3. Build and push ASR container image — **[P7-003 docker/asr-inference](../../docker/asr-inference/README.md)** · [infra/ecr](../../infra/ecr/README.md)
 4. Deploy asr-service with GPU resource requests — **[P7-004 k8s/eks](../../k8s/eks/gpu/README.md)**
-5. Configure model weight loading (init container or volume)
+5. Configure model weight loading (init container or volume) — **[P7-005 k8s/eks](../../k8s/eks/README.md#model-weight-pvcs-p7-005)** (`voragon-asr-model-cache`, 10Gi)
 6. Update realtime-service to call asr-service
 7. Validate inference latency and GPU utilization
 
@@ -195,7 +195,7 @@ Phase 6 step-by-step detail is in [Contributor path (Phase 6 end-to-end)](#contr
 | Service settings | ConfigMap | Phase 6 |
 | Model registry | ConfigMap | Phase 8 |
 | JWT keys | Secrets Manager | Phase 6 |
-| Model weights | EBS volume or init container download | Phase 7 |
+| Model weights | EBS PVC (`voragon-model-cache` CPU, `voragon-asr-model-cache` GPU; 10Gi `gp2`, `/var/lib/voragon/model-cache`) | Phase 7 |
 
 ## DNS and TLS
 

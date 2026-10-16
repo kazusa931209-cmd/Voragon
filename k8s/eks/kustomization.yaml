@@ -8,6 +8,7 @@ resources:
   - configmap.yaml
   - asr-configmap.yaml
   - pvc.yaml
+  - asr-pvc.yaml
   - realtime-deployment.yaml
   - realtime-service.yaml
   - asr-deployment.yaml

@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P7-005 |
 | **Phase** | 7 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p7-005-model-weights-gpu` |
@@ -29,9 +29,9 @@ One verifiable behavior: **ASR model weights persist across asr-service pod rest
 
 ## Acceptance Criteria
 
-- [ ] First pod start downloads or mounts weights; readiness becomes true
-- [ ] Delete pod → replacement Ready faster (cached weights) (operator)
-- [ ] Document disk size and cache path in k8s README
+- [x] First pod start downloads or mounts weights; readiness becomes true
+- [x] Delete pod → replacement Ready faster (cached weights) (operator)
+- [x] Document disk size and cache path in k8s README
 
 ## Manual Test
 
@@ -55,21 +55,25 @@ Expected: [k8s/eks/README.md](../../k8s/eks/README.md), [aws-deployment.md](../o
 
 ### Summary
 
-- …
+- `k8s/eks/asr-pvc.yaml` — `voragon-asr-model-cache` (10Gi `gp2`, ReadWriteOnce).
+- `asr-deployment.yaml` — mount `/var/lib/voragon/model-cache`; `asr-config` sets `HF_HOME` / `TORCH_HOME` and `ASR_MODEL`.
 
 ### Spec Changes
 
-- …
+- [k8s/eks/README.md](../../k8s/eks/README.md), [k8s/eks/gpu/README.md](../../k8s/eks/gpu/README.md), [aws-deployment.md](../operations/aws-deployment.md).
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pytest -q tests/test_eks_asr_manifests.py
+# 5 passed
+cd backend && pytest -q
+# 109 passed, 1 skipped
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-16; PVC bound, faster restart after pod delete
 
 ### Commit
 

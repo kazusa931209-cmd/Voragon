@@ -14,3 +14,5 @@ data:
   ASR_BACKEND: "faster_whisper"
   ASR_DEVICE: "cuda"
   ASR_COMPUTE_TYPE: "float16"
+  HF_HOME: "/var/lib/voragon/model-cache/huggingface"
+  TORCH_HOME: "/var/lib/voragon/model-cache/torch"

@@ -52,6 +52,23 @@ kubectl wait -n voragon --for=condition=ready pod -l app=realtime-backend --time
 
 Second startup should be faster when weights are cached on the PVC.
 
+## Model weight PVCs (P7-005)
+
+| PVC | Workload | Node pool | Size | Mount path | Cache env |
+|-----|----------|-----------|------|------------|-----------|
+| `voragon-model-cache` | `realtime-backend` | CPU | 10Gi (`gp2`) | `/var/lib/voragon/model-cache` | `HF_HOME`, `TORCH_HOME` in `realtime-config` |
+| `voragon-asr-model-cache` | `asr-service` | GPU | 10Gi (`gp2`) | `/var/lib/voragon/model-cache` | `HF_HOME`, `TORCH_HOME` in `asr-config` |
+
+Whisper weights download on first Ready; faster-whisper uses `ASR_MODEL` from `asr-config` (default `tiny`). GPU pods use a **separate** PVC because `ReadWriteOnce` EBS volumes attach to one node (CPU vs GPU).
+
+ASR pod restart (verify cache):
+
+```bash
+kubectl delete pod -n voragon -l app=asr-service
+kubectl wait -n voragon --for=condition=ready pod -l app=asr-service --timeout=900s
+kubectl exec -n voragon deploy/asr-service -- ls -la /var/lib/voragon/model-cache/huggingface
+```
+
 ## ALB Ingress (P6-004)
 
 Public HTTPS/WSS via ALB: [alb/README.md](alb/README.md) (after Load Balancer Controller is installed from [infra/eks](../../infra/eks/README.md)).
