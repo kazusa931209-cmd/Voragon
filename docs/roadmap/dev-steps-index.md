@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P7-007** — [GPU utilization metrics](dev-step-p7-007-gpu-metrics.md) (`planned`).
+**P7-008** — [GPU dev docs and Phase 7 exit prep](dev-step-p7-008-gpu-dev-docs-exit.md) (`planned`).
 
 ---
 
@@ -133,7 +133,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 | P7-004 | asr-service Deployment on GPU | done | — | [dev-step-p7-004-asr-service-deploy.md](dev-step-p7-004-asr-service-deploy.md) |
 | P7-005 | Model weights on GPU pods | done | — | [dev-step-p7-005-model-weights-gpu.md](dev-step-p7-005-model-weights-gpu.md) |
 | P7-006 | Realtime backend remote ASR | done | — | [dev-step-p7-006-realtime-remote-asr.md](dev-step-p7-006-realtime-remote-asr.md) |
-| P7-007 | GPU utilization metrics | planned | — | [dev-step-p7-007-gpu-metrics.md](dev-step-p7-007-gpu-metrics.md) |
+| P7-007 | GPU utilization metrics | done | — | [dev-step-p7-007-gpu-metrics.md](dev-step-p7-007-gpu-metrics.md) |
 | P7-008 | GPU dev docs and Phase 7 exit prep | planned | — | [dev-step-p7-008-gpu-dev-docs-exit.md](dev-step-p7-008-gpu-dev-docs-exit.md) |
 
 **Suggested order:** P7-001 → P7-002 → P7-003 → P7-004 → P7-005 → P7-006 → P7-007 → P7-008 (P7-003 may start in parallel after P7-001; P7-006 requires P7-004 Service reachable).
