@@ -82,7 +82,7 @@ cd infra/ecr && terraform init -backend=false && terraform validate
 
 ### Commit
 
-- **Hash:** —
+- **Hash:** `9591163`
 
 ### PR
 
