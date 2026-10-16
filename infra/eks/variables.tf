@@ -44,6 +44,34 @@ variable "node_max_size" {
   default = 3
 }
 
+variable "enable_gpu_node_group" {
+  description = "Create a managed GPU node group (P7-001). Requires g5 quota in the region."
+  type        = bool
+  default     = true
+}
+
+variable "gpu_node_instance_types" {
+  description = "GPU instance types for the managed node group (ADR-010: g5.xlarge)."
+  type        = list(string)
+  default     = ["g5.xlarge"]
+}
+
+variable "gpu_node_desired_size" {
+  description = "Desired GPU worker count (staging default: 1)."
+  type        = number
+  default     = 1
+}
+
+variable "gpu_node_min_size" {
+  type    = number
+  default = 0
+}
+
+variable "gpu_node_max_size" {
+  type    = number
+  default = 2
+}
+
 variable "cloudwatch_log_group_name" {
   description = "CloudWatch log group for voragon realtime-backend container logs (P6-006)."
   type        = string

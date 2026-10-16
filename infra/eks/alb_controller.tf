@@ -14,13 +14,13 @@ module "aws_load_balancer_controller_irsa" {
 }
 
 resource "helm_release" "aws_load_balancer_controller" {
-  name             = "aws-load-balancer-controller"
-  repository       = "https://aws.github.io/eks-charts"
-  chart            = "aws-load-balancer-controller"
-  namespace        = "kube-system"
-  version          = "1.11.0"
-  wait             = true
-  timeout          = 600
+  name       = "aws-load-balancer-controller"
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+  version    = "1.11.0"
+  wait       = true
+  timeout    = 600
 
   set {
     name  = "clusterName"

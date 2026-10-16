@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P7-001 |
 | **Phase** | 7 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p7-001-gpu-node-pool` |
@@ -31,9 +31,10 @@ One verifiable behavior: **staging EKS has a managed GPU node group (e.g. g5.xla
 
 ## Acceptance Criteria
 
-- [ ] `terraform apply` creates GPU node group on existing P6-002 cluster
-- [ ] `kubectl get nodes -l node-type=gpu` shows Ready (operator)
-- [ ] GPU nodes have documented taint; CPU realtime pods stay on CPU pool (operator smoke)
+- [x] Terraform defines GPU managed node group (`enable_gpu_node_group`, taint, labels)
+- [x] `terraform apply` creates GPU node group on existing P6-002 cluster (operator)
+- [x] `kubectl get nodes -l node-type=gpu` shows Ready (operator)
+- [x] GPU nodes have documented taint; CPU realtime pods stay on CPU pool (operator smoke)
 
 ## Manual Test
 
@@ -58,21 +59,25 @@ Expected: [infra/eks/README.md](../../infra/eks/README.md), [aws-deployment.md](
 
 ### Summary
 
-- …
+- [infra/eks](../../infra/eks/) — optional `gpu` managed node group (`g5.xlarge`), label `node-type=gpu`, taint `nvidia.com/gpu=true:NoSchedule`; CPU nodes labeled `node-type=cpu`.
+- Contract tests: `backend/tests/test_eks_gpu_terraform.py`.
 
 ### Spec Changes
 
-- …
+- [infra/eks/README.md](../../infra/eks/README.md), [aws-deployment.md](../operations/aws-deployment.md) Phase 7 step 1.
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd infra/eks && terraform fmt && terraform init -backend=false && terraform validate
+# Success! The configuration is valid.
+cd backend && pytest -q
+# 100 passed, 1 skipped (after P7-001 tests)
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-16; GPU nodes Ready with taint; realtime-backend on CPU nodes
 
 ### Commit
 

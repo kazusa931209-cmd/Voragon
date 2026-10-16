@@ -28,6 +28,16 @@ output "node_instance_types" {
   value       = var.node_instance_types
 }
 
+output "gpu_node_group_enabled" {
+  description = "Whether the GPU managed node group is configured (P7-001)."
+  value       = var.enable_gpu_node_group
+}
+
+output "gpu_node_instance_types" {
+  description = "GPU instance types when the GPU node group is enabled."
+  value       = var.enable_gpu_node_group ? var.gpu_node_instance_types : []
+}
+
 output "cloudwatch_log_group_name" {
   description = "CloudWatch log group for realtime-backend stdout (P6-006)."
   value       = aws_cloudwatch_log_group.realtime_backend.name

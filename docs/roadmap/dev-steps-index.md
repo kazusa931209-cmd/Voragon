@@ -14,7 +14,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 ## Active Step
 
-**P7-001** — [EKS GPU node pool](dev-step-p7-001-gpu-node-pool.md) (`planned`). Phase 6 signed off **2026-10-16** — [dev-step-phase6-exit.md](dev-step-phase6-exit.md).
+**P7-002** — [NVIDIA device plugin](dev-step-p7-002-nvidia-device-plugin.md) (`planned`).
 
 ---
 
@@ -127,7 +127,7 @@ Registry of all dev-steps. **One dev-step = one commit** (a PR may include multi
 
 | ID | Title | Status | PR | Doc |
 |----|-------|--------|-----|-----|
-| P7-001 | EKS GPU node pool | planned | — | [dev-step-p7-001-gpu-node-pool.md](dev-step-p7-001-gpu-node-pool.md) |
+| P7-001 | EKS GPU node pool | done | — | [dev-step-p7-001-gpu-node-pool.md](dev-step-p7-001-gpu-node-pool.md) |
 | P7-002 | NVIDIA device plugin | planned | — | [dev-step-p7-002-nvidia-device-plugin.md](dev-step-p7-002-nvidia-device-plugin.md) |
 | P7-003 | ASR inference image and ECR | planned | — | [dev-step-p7-003-asr-image-ecr.md](dev-step-p7-003-asr-image-ecr.md) |
 | P7-004 | asr-service Deployment on GPU | planned | — | [dev-step-p7-004-asr-service-deploy.md](dev-step-p7-004-asr-service-deploy.md) |

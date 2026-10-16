@@ -1,6 +1,6 @@
-# EKS: staging CPU cluster (P6-002)
+# EKS: staging cluster (P6-002 CPU, P7-001 GPU)
 
-Terraform provisions a **staging** EKS cluster with a **CPU managed node group** (`m6i.large` by default), VPC (2 AZs, NAT), and subnet tags for a future ALB Ingress (P6-004).
+Terraform provisions a **staging** EKS cluster with a **CPU managed node group** (`m6i.large` by default), an optional **GPU managed node group** (`g5.xlarge`, P7-001), VPC (2 AZs, NAT), and subnet tags for ALB Ingress (P6-004).
 
 **Default cluster name:** `voragon-staging`  
 **Default region:** `ap-northeast-1` (same as [infra/ecr](../ecr/README.md))
@@ -36,6 +36,34 @@ kubectl get nodes -o wide
 ```
 
 All nodes should be **Ready**.
+
+## GPU node pool (P7-001)
+
+Adds a second managed node group for Phase 7 ASR on GPU ([ADR-010](../../docs/decisions/ADR-010-gpu-node-pool.md)):
+
+| Setting | Default |
+|---------|---------|
+| Instance | `g5.xlarge` |
+| Label | `node-type=gpu` |
+| Taint | `nvidia.com/gpu=true:NoSchedule` |
+| Count | desired 1, min 0, max 2 |
+
+CPU nodes are labeled `node-type=cpu`. Existing `realtime-backend` pods (no GPU toleration) stay on CPU nodes.
+
+**Quota:** Request **G** instance vCPU limit for `g5.xlarge` in your region before apply. Disable the pool without removing CPU cluster:
+
+```bash
+terraform -chdir=infra/eks apply -var="enable_gpu_node_group=false"
+```
+
+Verify after apply:
+
+```bash
+kubectl get nodes -L node-type --show-labels
+kubectl describe node -l node-type=gpu | grep -A2 Taints
+```
+
+NVIDIA device plugin is **P7-002** — GPU nodes may show `nvidia.com/gpu` allocatable only after that step.
 
 ## AWS Load Balancer Controller (P6-004)
 
@@ -80,10 +108,11 @@ If the pod becomes Ready, the node pulled the image from ECR successfully.
 | Setting | Default |
 |---------|---------|
 | Kubernetes | 1.31 |
-| Nodes | 1 × `m6i.large` (min 1, max 3) |
+| CPU nodes | 1 × `m6i.large` (min 1, max 3) |
+| GPU nodes | 1 × `g5.xlarge` when enabled (min 0, max 2) — **~$1/hr+** when running |
 | NAT | Single NAT gateway (cost saving) |
 
-Override with `-var` or `TF_VAR_*` (e.g. `node_desired_size`, `cluster_name`).
+Override with `-var` or `TF_VAR_*` (e.g. `node_desired_size`, `enable_gpu_node_group`, `gpu_node_desired_size`).
 
 ## Destroy
 

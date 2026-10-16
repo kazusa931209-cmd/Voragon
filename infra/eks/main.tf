@@ -19,13 +19,13 @@ module "vpc" {
   enable_dns_support   = true
 
   public_subnet_tags = {
-    "kubernetes.io/role/elb"                      = "1"
-    "kubernetes.io/cluster/${var.cluster_name}"   = "shared"
+    "kubernetes.io/role/elb"                    = "1"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 
   private_subnet_tags = {
-    "kubernetes.io/role/internal-elb"             = "1"
-    "kubernetes.io/cluster/${var.cluster_name}"   = "shared"
+    "kubernetes.io/role/internal-elb"           = "1"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 }
 
@@ -43,14 +43,40 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  eks_managed_node_groups = {
-    cpu = {
-      instance_types = var.node_instance_types
-      min_size       = var.node_min_size
-      max_size       = var.node_max_size
-      desired_size   = var.node_desired_size
+  eks_managed_node_groups = merge(
+    {
+      cpu = {
+        instance_types = var.node_instance_types
+        min_size       = var.node_min_size
+        max_size       = var.node_max_size
+        desired_size   = var.node_desired_size
 
-      # Default node role includes AmazonEC2ContainerRegistryReadOnly (same-account ECR pull).
-    }
-  }
+        labels = {
+          node-type = "cpu"
+        }
+
+        # Default node role includes AmazonEC2ContainerRegistryReadOnly (same-account ECR pull).
+      }
+    },
+    var.enable_gpu_node_group ? {
+      gpu = {
+        instance_types = var.gpu_node_instance_types
+        min_size       = var.gpu_node_min_size
+        max_size       = var.gpu_node_max_size
+        desired_size   = var.gpu_node_desired_size
+
+        labels = {
+          node-type = "gpu"
+        }
+
+        taints = {
+          gpu = {
+            key    = "nvidia.com/gpu"
+            value  = "true"
+            effect = "NO_SCHEDULE"
+          }
+        }
+      }
+    } : {}
+  )
 }
