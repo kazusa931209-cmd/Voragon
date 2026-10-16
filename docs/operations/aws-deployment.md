@@ -169,7 +169,7 @@ Phase 6 step-by-step detail is in [Contributor path (Phase 6 end-to-end)](#contr
 3. Build and push ASR container image — **[P7-003 docker/asr-inference](../../docker/asr-inference/README.md)** · [infra/ecr](../../infra/ecr/README.md)
 4. Deploy asr-service with GPU resource requests — **[P7-004 k8s/eks](../../k8s/eks/gpu/README.md)**
 5. Configure model weight loading (init container or volume) — **[P7-005 k8s/eks](../../k8s/eks/README.md#model-weight-pvcs-p7-005)** (`voragon-asr-model-cache`, 10Gi)
-6. Update realtime-service to call asr-service
+6. Update realtime-service to call asr-service — **[P7-006 k8s/eks](../../k8s/eks/README.md)** (`ASR_BACKEND=remote`)
 7. Validate inference latency and GPU utilization
 
 ### Phase 8: AI Gateway

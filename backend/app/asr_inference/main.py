@@ -15,6 +15,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.asr.base import ASREngine, create_asr_engine
+from app.asr.inference_routes import router as inference_router
 from app.config import get_settings
 from app.observability.logging_config import configure_logging
 
@@ -39,6 +40,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Voragon ASR Inference", version="0.1.0", lifespan=lifespan)
+app.include_router(inference_router)
 
 
 @app.get("/health")

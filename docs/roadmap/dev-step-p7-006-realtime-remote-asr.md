@@ -4,7 +4,7 @@
 |-------|-------|
 | **ID** | P7-006 |
 | **Phase** | 7 |
-| **Status** | planned |
+| **Status** | done |
 | **Commit** | — |
 | **PR** | — |
 | **Branch** | `dev-step/p7-006-realtime-remote-asr` |
@@ -32,9 +32,9 @@ One verifiable behavior: **realtime-service transcribes via HTTP (or gRPC) to in
 
 ## Acceptance Criteria
 
-- [ ] pytest covers remote adapter (mock server or contract tests)
-- [ ] EKS: realtime pods call asr-service; desktop E2E partials/finals on GPU path (operator)
-- [ ] `ASR_BACKEND` in-process still works for Compose/Kind (regression)
+- [x] pytest covers remote adapter (mock server or contract tests)
+- [x] EKS: realtime pods call asr-service; desktop E2E partials/finals on GPU path (operator)
+- [x] `ASR_BACKEND` in-process still works for Compose/Kind (regression)
 
 ## Manual Test
 
@@ -59,21 +59,26 @@ Expected: [backend.md](../architecture/backend.md), [realtime-websocket.md](../a
 
 ### Summary
 
-- …
+- `app/asr/remote.py` — `RemoteASREngine` (`ASR_BACKEND=remote`) calling `POST /v1/inference/asr`.
+- `app/asr/inference_routes.py` on `asr-service` — partial/final transcription over HTTP.
+- `k8s/eks/configmap.yaml` — `ASR_BACKEND=remote`, `ASR_REMOTE_BASE_URL=http://asr-service:8081`.
 
 ### Spec Changes
 
-- …
+- [backend.md](../architecture/backend.md), [k8s/eks/README.md](../../k8s/eks/README.md), [backend/.env.example](../../backend/.env.example).
 
 ### Automated Tests Run
 
 ```bash
-# paste command and result
+cd backend && pytest -q tests/test_remote_asr.py tests/test_eks_remote_realtime_config.py
+# 6 passed
+cd backend && pytest -q
+# 115 passed, 1 skipped
 ```
 
 ### Manual Test Result
 
-- [ ] Pass — date, notes
+- [x] Pass — 2026-10-16; remote ASR E2E, degraded when asr-service scaled to 0
 
 ### Commit
 
