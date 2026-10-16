@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import base64
 import binascii
+import time
 
 from fastapi import APIRouter, HTTPException, Request
 
 from app.asr.api_models import AsrInferenceRequest, AsrInferenceResponse
 from app.asr.base import ASREngine, ASRInferenceError, ASRModelUnavailableError
+from app.asr.inference_metrics import track_inference_queue
+from app.observability.metrics import observe_asr_inference_duration, record_asr_inference_error
 
 router = APIRouter(prefix="/v1/inference", tags=["inference"])
 
@@ -20,15 +23,25 @@ async def inference_asr(body: AsrInferenceRequest, request: Request) -> AsrInfer
     except (binascii.Error, ValueError) as exc:
         raise HTTPException(status_code=400, detail="Invalid audio_base64") from exc
 
-    try:
-        if body.kind == "partial":
-            result = await asr_engine.transcribe_partial(audio, body.segment_id, body.language)
-        else:
-            result = await asr_engine.transcribe_final(audio, body.segment_id, body.language)
-    except ASRModelUnavailableError as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
-    except ASRInferenceError as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    started = time.perf_counter()
+    async with track_inference_queue():
+        try:
+            if body.kind == "partial":
+                result = await asr_engine.transcribe_partial(
+                    audio, body.segment_id, body.language
+                )
+            else:
+                result = await asr_engine.transcribe_final(
+                    audio, body.segment_id, body.language
+                )
+        except ASRModelUnavailableError as exc:
+            record_asr_inference_error()
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        except ASRInferenceError as exc:
+            record_asr_inference_error()
+            raise HTTPException(status_code=502, detail=str(exc)) from exc
+        finally:
+            observe_asr_inference_duration(time.perf_counter() - started, kind=body.kind)
 
     return AsrInferenceResponse(
         text=result.text,

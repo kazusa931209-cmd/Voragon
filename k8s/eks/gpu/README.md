@@ -73,3 +73,14 @@ kubectl get pvc -n voragon voragon-asr-model-cache
 ```
 
 See [k8s/eks/README.md](../README.md#model-weight-pvcs-p7-005) for the full PVC table.
+
+## GPU metrics (P7-007)
+
+`asr-service` exposes Prometheus metrics at **`GET /metrics`** (port 8081), including `voragon_gpu_utilization`, `voragon_gpu_memory_used_bytes`, and `voragon_asr_inference_duration_seconds`. Requires `nvidia-ml-py` in the ASR image (see [docker/asr-inference/Dockerfile](../../../docker/asr-inference/Dockerfile)).
+
+```bash
+kubectl port-forward -n voragon svc/asr-service 8081:8081
+curl -s http://localhost:8081/metrics | grep voragon_gpu
+```
+
+During active transcription, `voragon_gpu_utilization{gpu_index="0"}` should be non-zero on GPU nodes. See [observability.md](../../../docs/operations/observability.md).

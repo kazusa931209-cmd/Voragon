@@ -8,16 +8,22 @@ Run locally:
 from __future__ import annotations
 
 import logging
+import time
 from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 from app.asr.base import ASREngine, create_asr_engine
 from app.asr.inference_routes import router as inference_router
 from app.config import get_settings
 from app.observability.logging_config import configure_logging
+from app.observability.metrics import (
+    asr_service_metrics_body,
+    metrics_content_type,
+    observe_model_load_duration,
+)
 
 SERVICE_NAME = "voragon-asr-inference"
 
@@ -34,13 +40,22 @@ async def lifespan(app: FastAPI):
         app_settings.asr_model,
         app_settings.asr_device,
     )
+    load_started = time.perf_counter()
     await asr_engine.warmup()
+    observe_model_load_duration(time.perf_counter() - load_started)
     app.state.asr_engine = asr_engine
     yield
 
 
 app = FastAPI(title="Voragon ASR Inference", version="0.1.0", lifespan=lifespan)
 app.include_router(inference_router)
+
+
+@app.get("/metrics")
+async def metrics() -> Response:
+    """Prometheus scrape endpoint (GPU util + ASR inference metrics)."""
+    body = await asr_service_metrics_body()
+    return Response(content=body, media_type=metrics_content_type())
 
 
 @app.get("/health")

@@ -23,7 +23,8 @@ COPY backend/app ./app
 RUN pip install --no-cache-dir \
     --index-url https://download.pytorch.org/whl/cu124 \
     "torch>=2.2.0" "torchaudio>=2.2.0" \
-    && pip install --no-cache-dir .
+    && pip install --no-cache-dir . \
+    && pip install --no-cache-dir nvidia-ml-py
 
 ENV HOST=0.0.0.0
 ENV PORT=8081
